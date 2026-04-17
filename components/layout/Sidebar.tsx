@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
   GitBranch,
@@ -14,6 +14,7 @@ import {
   ShieldCheck,
 } from 'lucide-react'
 import type { Profile } from '@/lib/types'
+import { supabase } from '@/lib/supabase'
 import Logo from '@/components/layout/Logo'
 import {
   Tooltip,
@@ -53,6 +54,13 @@ export default function Sidebar({ profile }: SidebarProps) {
     setCollapsed(next)
     localStorage.setItem(STORAGE_KEY, String(next))
     document.documentElement.style.setProperty('--sidebar-width', next ? '64px' : '220px')
+  }
+
+  const router = useRouter()
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    router.push('/login')
   }
 
   const visibleItems = NAV_ITEMS.filter((item) =>
@@ -173,15 +181,13 @@ export default function Sidebar({ profile }: SidebarProps) {
                   <p className="text-[11px] text-[#A0A09A] capitalize">{profile.role}</p>
                 </div>
               </div>
-              <form action="/login" method="GET">
-                <button
-                  type="submit"
-                  className="flex items-center gap-2 text-xs text-[#A0A09A] hover:text-[#1A1A18] transition-colors w-full px-1"
-                >
-                  <LogOut className="w-3.5 h-3.5" />
-                  Logout
-                </button>
-              </form>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 text-xs text-[#A0A09A] hover:text-[#1A1A18] transition-colors w-full px-1"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+                Logout
+              </button>
             </>
           )}
         </div>
