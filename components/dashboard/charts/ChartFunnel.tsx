@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Cell, LabelList } from 'recharts'
 import type { FunnelChartItem } from '@/lib/dashboard/charts'
 import { formatMilyar } from '@/lib/dashboard/formatters'
@@ -19,6 +20,13 @@ interface ChartFunnelProps {
 }
 
 export default function ChartFunnel({ data }: ChartFunnelProps) {
+  const [isMobile, setIsMobile] = useState(false)
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
   if (data.length === 0) return null
 
   const chartData = data.map((d) => ({
@@ -29,15 +37,15 @@ export default function ChartFunnel({ data }: ChartFunnelProps) {
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
       <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Sales Funnel</h3>
-      <div className="h-[280px]">
+      <div className="h-[240px] md:h-[280px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData} layout="vertical" margin={{ left: 120, right: 100 }}>
+          <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: isMobile ? 60 : 80 }}>
             <XAxis type="number" hide />
             <YAxis
               type="category"
               dataKey="label"
               tick={{ fontSize: 11, fill: '#6B6B65' }}
-              width={110}
+              width={isMobile ? 80 : 130}
               axisLine={false}
               tickLine={false}
             />
@@ -48,7 +56,7 @@ export default function ChartFunnel({ data }: ChartFunnelProps) {
               <LabelList
                 dataKey="displayLabel"
                 position="right"
-                style={{ fontSize: 10, fill: '#6B6B65' }}
+                style={{ fontSize: isMobile ? 9 : 10, fill: '#6B6B65' }}
               />
             </Bar>
           </BarChart>

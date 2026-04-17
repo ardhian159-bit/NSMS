@@ -19,12 +19,17 @@ export default async function PipelinePage() {
   if (!profileRow) redirect('/login')
   const profile = mapProfileRow(profileRow as ProfileRow)
 
-  // Fetch leads for this user (by owner_name = pic_name)
-  const { data: leadRows } = await supabase
+  // Fetch leads for this user (superadmin/admin get all, others get by owner_name = pic_name)
+  let leadsQuery = supabase
     .from('leads')
     .select('*')
-    .ilike('owner_name', profile.picName)
     .order('created_at', { ascending: false })
+
+  if (!['superadmin', 'admin'].includes(profile.role)) {
+    leadsQuery = leadsQuery.ilike('owner_name', profile.picName)
+  }
+
+  const { data: leadRows } = await leadsQuery
 
   const leads = (leadRows as LeadRow[] | null)?.map(mapLeadRow) ?? []
 

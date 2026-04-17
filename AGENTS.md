@@ -367,3 +367,30 @@ tk=0    Gagal         → gray    bg-neutral-100 text-neutral-400 line-through
 
 1. **Region data** (`provinsi → kab/kota`): static JSON file atau tabel Supabase?
 2. **`api.ts`**: Supabase direct client saja, atau tambah Next.js API routes di `/api/*`?
+
+## Supabase Auth Trigger — Wajib Diperhatikan
+
+Setiap function yang dipanggil dari trigger `on_auth_user_created` (atau trigger Auth lainnya)
+WAJIB menggunakan dua modifier berikut:
+
+```sql
+create or replace function handle_new_user()
+returns trigger
+language plpgsql
+security definer
+set search_path = public  -- ← WAJIB, tanpa ini trigger gagal saat create user
+as $$
+begin
+  insert into public.profiles (id, username)
+  values (new.id, new.email);
+  return new;
+end;
+$$;
+```
+
+**Tanpa `set search_path = public`:**
+- Supabase Auth gagal create user via dashboard maupun API
+- Error message: "Database error creating new user"
+- Root cause: `supabase_auth_admin` role tidak punya `public` di search_path-nya
+
+**Rule:** Semua Auth trigger functions = `security definer` + `set search_path = public`.

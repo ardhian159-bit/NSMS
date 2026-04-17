@@ -32,6 +32,9 @@ export default async function AppLayout({
         {children}
       </main>
       <BottomNav profile={profile} />
+      <footer className="text-center text-xs text-[#A0A09A] py-4 mt-4">
+        made with 🔥 by Adrian
+      </footer>
     </div>
   )
 }
