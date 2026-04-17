@@ -24,7 +24,8 @@ export async function middleware(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
 
     // Belum login → redirect ke login (kecuali sudah di /login)
-    if (!user && !request.nextUrl.pathname.startsWith('/login')) {
+    const pathname = request.nextUrl.pathname
+    if (!user && !pathname.startsWith('/login') && pathname !== '/') {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
