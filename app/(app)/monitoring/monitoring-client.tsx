@@ -1,10 +1,11 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { TrackerEntry, Profile } from '@/lib/types'
 import Badge from '@/components/dashboard/Badge'
 import { formatRupiahShort, truncateText } from '@/lib/dashboard/formatters'
+import { getISOWeekInfo } from '@/lib/dashboard/week'
 import { Pencil, Check, X, Search } from 'lucide-react'
 
 interface MonitoringClientProps {
@@ -43,13 +44,38 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
   const [sortCol, setSortCol] = useState<keyof TrackerEntry>('createdAt')
   const [sortAsc, setSortAsc] = useState(false)
 
-  // Admin notes inline edit
-  const [editingId, setEditingId] = useState<number | null>(null)
-  const [editNotes, setEditNotes] = useState('')
-  const [savingId, setSavingId] = useState<number | null>(null)
   const [selectedEntry, setSelectedEntry] = useState<TrackerEntry | null>(null)
+  const [editingNotes, setEditingNotes] = useState(false)
+  const [draftNotes, setDraftNotes] = useState('')
+  const [savingNotes, setSavingNotes] = useState(false)
 
   const isAdmin = profile.role === 'superadmin' || profile.role === 'admin'
+
+  const [activeTab, setActiveTab] = useState<'detail' | 'history'>('detail')
+  const [nettoLog, setNettoLog] = useState<{
+    id: number
+    old_netto: number
+    new_netto: number
+    changed_at: string
+    profiles: { pic_name: string } | null
+  }[]>([])
+  const [loadingLog, setLoadingLog] = useState(false)
+
+  useEffect(() => {
+    if (!selectedEntry) return
+    setActiveTab('detail')
+    setNettoLog([])
+    setLoadingLog(true)
+    supabase
+      .from('leads_netto_log')
+      .select('id, old_netto, new_netto, changed_at, profiles(pic_name)')
+      .eq('funnel_id', selectedEntry.funnelId)
+      .order('changed_at', { ascending: false })
+      .then(({ data }) => {
+        setNettoLog((data as any) ?? [])
+        setLoadingLog(false)
+      })
+  }, [selectedEntry])
 
   // Derived filter options
   const picOptions = useMemo(
@@ -102,15 +128,19 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
     return <span>{sortAsc ? '↑' : '↓'}</span>
   }
 
-  // Admin notes save
-  const handleSaveNotes = async (id: number) => {
-    setSavingId(id)
-    await supabase.from('tracker').update({ admin_notes: editNotes }).eq('id', id)
+  const handleSaveAdminNotes = async () => {
+    if (!selectedEntry) return
+    setSavingNotes(true)
+    await supabase
+      .from('tracker')
+      .update({ admin_notes: draftNotes })
+      .eq('id', selectedEntry.id)
     setLocalTrackers((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, adminNotes: editNotes } : t))
+      prev.map((t) => t.id === selectedEntry.id ? { ...t, adminNotes: draftNotes } : t)
     )
-    setSavingId(null)
-    setEditingId(null)
+    setSelectedEntry((prev) => prev ? { ...prev, adminNotes: draftNotes } : prev)
+    setSavingNotes(false)
+    setEditingNotes(false)
   }
 
 
@@ -118,10 +148,19 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Monitoring</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">Pantau update mingguan semua PIC</p>
-      </div>
+      {(() => {
+        const { week, year, dateLabel } = getISOWeekInfo()
+        return (
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold text-[#1A1A18]">Monitoring</h1>
+              <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-[#F0FDF4] text-[#065F46] border border-[#BBF7D0] rounded-full px-2 py-0.5">W{week} · {year}</span>
+            </div>
+            <p className="text-sm text-[#A0A09A] mt-0.5">Pantau update mingguan semua PIC</p>
+            <p className="text-xs text-[#6B6B65] mt-0.5">{dateLabel}</p>
+          </div>
+        )
+      })()}
 
       {/* Filter Bar */}
       <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
@@ -266,57 +305,9 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                       {t.notes || '-'}
                     </td>
                     <td className="px-3 py-3 min-w-[180px]">
-                      {isAdmin ? (
-                        editingId === t.id ? (
-                          <div className="flex items-center gap-1">
-                            <textarea
-                              value={editNotes}
-                              onChange={(e) => setEditNotes(e.target.value)}
-                              rows={2}
-                              className="form-input text-xs resize-none flex-1"
-                              autoFocus
-                            />
-                            <button
-                              onClick={() => handleSaveNotes(t.id)}
-                              disabled={savingId === t.id}
-                              className="p-1.5 rounded-md text-green-600 hover:bg-green-50 transition-colors"
-                              title="Simpan"
-                            >
-                              <Check className="w-3.5 h-3.5" />
-                            </button>
-                            <button
-                              onClick={() => setEditingId(null)}
-                              className="p-1.5 rounded-md text-red-500 hover:bg-red-50 transition-colors"
-                              title="Batal"
-                            >
-                              <X className="w-3.5 h-3.5" />
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-1">
-                            <span
-                              className="text-[#6B6B65] truncate max-w-[130px]"
-                              title={t.adminNotes}
-                            >
-                              {t.adminNotes || '-'}
-                            </span>
-                            <button
-                              onClick={() => {
-                                setEditingId(t.id)
-                                setEditNotes(t.adminNotes)
-                              }}
-                              className="p-1 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] opacity-0 group-hover:opacity-100 transition-all"
-                              title="Edit admin notes"
-                            >
-                              <Pencil className="w-3 h-3" />
-                            </button>
-                          </div>
-                        )
-                      ) : (
-                        <span className="text-[#6B6B65] truncate max-w-[150px]" title={t.adminNotes}>
-                          {t.adminNotes || '-'}
-                        </span>
-                      )}
+                      <span className="text-[#6B6B65] truncate max-w-[150px]" title={t.adminNotes}>
+                        {t.adminNotes || '-'}
+                      </span>
                     </td>
                   </tr>
                 ))
@@ -329,7 +320,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
         {selectedEntry && (
           <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
-            onClick={() => setSelectedEntry(null)}
+            onClick={() => { setSelectedEntry(null); setEditingNotes(false) }}
           >
             <div
               className="bg-white rounded-xl border border-[#EBEBE7] shadow-lg w-full max-w-lg mx-4 p-6"
@@ -346,50 +337,156 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                   </h3>
                 </div>
                 <button
-                  onClick={() => setSelectedEntry(null)}
+                  onClick={() => { setSelectedEntry(null); setEditingNotes(false) }}
                   className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2]"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
-              {/* Meta grid */}
-              <div className="grid grid-cols-2 gap-3 text-sm mb-4">
-                <div>
-                  <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">PIC</span>
-                  <p className="text-[#1A1A18] font-medium">{selectedEntry.pic}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Week</span>
-                  <p className="font-[family-name:var(--font-dm-mono)] text-[#1A1A18]">{selectedEntry.week}</p>
-                </div>
-                <div>
-                  <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Status</span>
-                  <div className="mt-0.5">
-                    <Badge tk={STATUS_TO_TK[selectedEntry.statusBaru] ?? 0} />
+              {/* Tab Bar */}
+              <div className="flex gap-1 mb-4 border-b border-[#EBEBE7]">
+                {(['detail', 'history'] as const).map((tab) => (
+                  <button
+                    key={tab}
+                    onClick={() => setActiveTab(tab)}
+                    className={`px-3 py-1.5 text-xs font-medium transition-colors ${
+                      activeTab === tab
+                        ? 'text-[#064E3B] border-b-2 border-[#064E3B] -mb-px'
+                        : 'text-[#A0A09A] hover:text-[#6B6B65]'
+                    }`}
+                  >
+                    {tab === 'detail' ? 'Detail' : 'Netto History'}
+                  </button>
+                ))}
+              </div>
+
+              {/* Detail Tab */}
+              {activeTab === 'detail' && (
+                <div className="space-y-4">
+                  {/* Meta grid */}
+                  <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div>
+                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">PIC</span>
+                      <p className="text-[#1A1A18] font-medium">{selectedEntry.pic}</p>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Week</span>
+                      <p className="font-[family-name:var(--font-dm-mono)] text-[#1A1A18]">{selectedEntry.week}</p>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Status</span>
+                      <div className="mt-0.5">
+                        <Badge tk={STATUS_TO_TK[selectedEntry.statusBaru] ?? 0} />
+                      </div>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Forecast Netto</span>
+                      <p className="text-[#1A1A18] font-semibold">{formatRupiahShort(selectedEntry.forecastNetto)}</p>
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  <div>
+                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Notes</span>
+                    <p className="mt-1 text-sm text-[#6B6B65] whitespace-pre-wrap">
+                      {selectedEntry.notes || '-'}
+                    </p>
+                  </div>
+
+                  {/* Admin Notes */}
+                  <div>
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Admin Notes</span>
+                      {isAdmin && !editingNotes && (
+                        <button
+                          onClick={() => { setDraftNotes(selectedEntry.adminNotes || ''); setEditingNotes(true) }}
+                          className="p-1 rounded text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                        >
+                          <Pencil className="w-3 h-3" />
+                        </button>
+                      )}
+                    </div>
+                    {editingNotes ? (
+                      <div className="space-y-2">
+                        <textarea
+                          value={draftNotes}
+                          onChange={(e) => setDraftNotes(e.target.value)}
+                          rows={4}
+                          className="form-input text-sm resize-none w-full"
+                          autoFocus
+                        />
+                        <div className="flex gap-2 justify-end">
+                          <button
+                            onClick={() => setEditingNotes(false)}
+                            className="px-3 py-1.5 text-xs rounded-lg border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] transition-colors"
+                          >
+                            Batal
+                          </button>
+                          <button
+                            onClick={handleSaveAdminNotes}
+                            disabled={savingNotes}
+                            className="px-3 py-1.5 text-xs rounded-lg bg-[#064E3B] text-white hover:bg-[#065F46] transition-colors disabled:opacity-50"
+                          >
+                            {savingNotes ? 'Menyimpan...' : 'Simpan'}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="mt-1 text-sm text-[#6B6B65] whitespace-pre-wrap">
+                        {selectedEntry.adminNotes || '-'}
+                      </p>
+                    )}
                   </div>
                 </div>
-                <div>
-                  <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Forecast Netto</span>
-                  <p className="text-[#1A1A18] font-semibold">{formatRupiahShort(selectedEntry.forecastNetto)}</p>
+              )}
+
+              {/* History Tab */}
+              {activeTab === 'history' && (
+                <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
+                  {loadingLog ? (
+                    <p className="text-xs text-[#A0A09A] text-center py-6">Memuat...</p>
+                  ) : nettoLog.length === 0 ? (
+                    <p className="text-xs text-[#A0A09A] text-center py-6">
+                      Belum ada perubahan netto tercatat.
+                    </p>
+                  ) : (
+                    nettoLog.map((log) => (
+                      <div
+                        key={log.id}
+                        className="flex items-start gap-3 p-3 bg-[#FAFAF8] rounded-lg border border-[#EBEBE7]"
+                      >
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 text-xs">
+                            <span className="text-[#A0A09A] line-through">
+                              {formatRupiahShort(log.old_netto)}
+                            </span>
+                            <span className="text-[#A0A09A]">→</span>
+                            <span className="font-semibold text-[#064E3B]">
+                              {formatRupiahShort(log.new_netto)}
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[10px] text-[#A0A09A]">
+                              {log.profiles?.pic_name ?? 'Unknown'}
+                            </span>
+                            <span className="text-[10px] text-[#A0A09A]">·</span>
+                            <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-[#A0A09A]">
+                              {new Date(log.changed_at).toLocaleString('id-ID', {
+                                day: 'numeric',
+                                month: 'short',
+                                year: 'numeric',
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </div>
-              </div>
-
-              {/* Notes */}
-              <div className="mb-3">
-                <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Notes</span>
-                <p className="mt-1 text-sm text-[#6B6B65] whitespace-pre-wrap">
-                  {selectedEntry.notes || '-'}
-                </p>
-              </div>
-
-              {/* Admin Notes */}
-              <div>
-                <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Admin Notes</span>
-                <p className="mt-1 text-sm text-[#6B6B65] whitespace-pre-wrap">
-                  {selectedEntry.adminNotes || '-'}
-                </p>
-              </div>
+              )}
             </div>
           </div>
         )}

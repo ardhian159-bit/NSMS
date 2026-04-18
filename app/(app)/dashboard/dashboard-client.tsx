@@ -15,6 +15,7 @@ import {
 import { getTrackerHistory } from '@/lib/dashboard/detail'
 import { getTopClosingLeads } from '@/lib/dashboard/filters'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
+import { getISOWeekInfo } from '@/lib/dashboard/week'
 
 import KpiCards from '@/components/dashboard/KpiCards'
 import FilterBar from '@/components/dashboard/FilterBar'
@@ -98,10 +99,19 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Dashboard</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">Overview pipeline nasional</p>
-      </div>
+      {(() => {
+        const { week, year, dateLabel } = getISOWeekInfo()
+        return (
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl font-semibold text-[#1A1A18]">Dashboard</h1>
+              <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-[#F0FDF4] text-[#065F46] border border-[#BBF7D0] rounded-full px-2 py-0.5">W{week} · {year}</span>
+            </div>
+            <p className="text-sm text-[#A0A09A] mt-0.5">Overview pipeline nasional</p>
+            <p className="text-xs text-[#6B6B65] mt-0.5">{dateLabel}</p>
+          </div>
+        )
+      })()}
 
       {/* KPI Cards */}
       <KpiCards kpis={kpis} />

@@ -38,3 +38,21 @@ export function getCurrentWeekLabel(): string {
 export function getCurrentYear(): number {
   return new Date().getFullYear()
 }
+
+/**
+ * Get current ISO week info for display badges.
+ * Returns { week, year, dateLabel } where dateLabel is e.g. "18 April 2026"
+ */
+export function getISOWeekInfo(): { week: number; year: number; dateLabel: string } {
+  const now = new Date()
+  const week = getISOWeek(now)
+  const d = new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()))
+  d.setUTCDate(d.getUTCDate() + 4 - (d.getUTCDay() || 7))
+  const year = d.getUTCFullYear()
+  const dateLabel = now.toLocaleDateString('id-ID', {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  })
+  return { week, year, dateLabel }
+}
