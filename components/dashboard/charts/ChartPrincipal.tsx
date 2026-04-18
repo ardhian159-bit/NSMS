@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LabelList } from 'recharts'
 import type { PrincipalChartItem } from '@/lib/dashboard/charts'
 import { formatMilyar } from '@/lib/dashboard/formatters'
@@ -9,6 +10,15 @@ interface ChartPrincipalProps {
 }
 
 export default function ChartPrincipal({ data }: ChartPrincipalProps) {
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   if (data.length === 0) return null
 
   const chartData = data.map((d) => ({
@@ -21,13 +31,20 @@ export default function ChartPrincipal({ data }: ChartPrincipalProps) {
       <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Principal</h3>
       <div>
         <ResponsiveContainer width="100%" height={Math.max(200, data.length * 36)} minWidth={0}>
-          <BarChart data={chartData} layout="vertical" margin={{ left: 100, right: 120 }}>
+          <BarChart
+            data={chartData}
+            layout="vertical"
+            margin={{
+              left: isMobile ? 0 : 100,
+              right: isMobile ? 80 : 120,
+            }}
+          >
             <XAxis type="number" hide />
             <YAxis
               type="category"
               dataKey="name"
-              tick={{ fontSize: 11, fill: '#6B6B65' }}
-              width={90}
+              tick={{ fontSize: isMobile ? 10 : 11, fill: '#6B6B65' }}
+              width={isMobile ? 36 : 90}
               axisLine={false}
               tickLine={false}
             />
@@ -35,7 +52,7 @@ export default function ChartPrincipal({ data }: ChartPrincipalProps) {
               <LabelList
                 dataKey="displayLabel"
                 position="right"
-                style={{ fontSize: 10, fill: '#6B6B65' }}
+                style={{ fontSize: isMobile ? 9 : 10, fill: '#6B6B65' }}
               />
             </Bar>
           </BarChart>

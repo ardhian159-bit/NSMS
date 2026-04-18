@@ -60,14 +60,14 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
   )
 
   const topClosing = useMemo(
-    () => getTopClosingLeads(filteredData, 5),
+    () => getTopClosingLeads(filteredData, 10),
     [filteredData]
   )
 
   // Charts
   const funnelChart = useMemo(() => buildFunnelChartData(filteredData), [filteredData])
   const quarterChart = useMemo(() => buildQuarterChartData(filteredData), [filteredData])
-  const picChart = useMemo(() => buildPicChartData(filteredData, 10), [filteredData])
+  const picChart = useMemo(() => buildPicChartData(filteredData), [filteredData])
   const sumberDanaChart = useMemo(() => buildSumberDanaChartData(filteredData), [filteredData])
   const principalChart = useMemo(() => buildPrincipalChartData(filteredData), [filteredData])
 
@@ -109,10 +109,10 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
       {/* Top 5 Closing */}
       {topClosing.length > 0 && (
         <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-          <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">🏆 Top 5 Closing</h3>
-          <div className="overflow-x-auto">
+          <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">🏆 Top 10 Closing</h3>
+          <div className="overflow-x-auto overflow-y-auto max-h-[260px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#EBEBE7] [&::-webkit-scrollbar-thumb]:rounded-full">
             <table className="w-full text-sm">
-              <thead>
+              <thead className="sticky top-0 bg-white z-10">
                 <tr className="text-xs text-[#A0A09A] uppercase border-b border-[#EBEBE7]">
                   <th className="text-left px-3 py-2 font-medium">#</th>
                   <th className="text-left px-3 py-2 font-medium">PIC</th>
@@ -143,13 +143,6 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
         </div>
       )}
 
-      {/* Filter Bar */}
-      <FilterBar
-        filters={filters}
-        onFilterChange={handleFilterChange}
-        options={filterOptions}
-      />
-
       {/* Charts Row 1: Funnel + Quarter */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ChartFunnel data={funnelChart} />
@@ -164,6 +157,13 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
 
       {/* Charts Row 3: Principal */}
       <ChartPrincipal data={principalChart} />
+
+      {/* Filter Bar */}
+      <FilterBar
+        filters={filters}
+        onFilterChange={handleFilterChange}
+        options={filterOptions}
+      />
 
       {/* Data Table */}
       <div>

@@ -78,7 +78,7 @@ export function buildQuarterChartData(data: Lead[]): QuarterChartItem[] {
  * Build top PIC chart data sorted by netto.
  * Source: dashboard.html line 1160-1166
  */
-export function buildPicChartData(data: Lead[], limit: number = 10): PicChartItem[] {
+export function buildPicChartData(data: Lead[]): PicChartItem[] {
   const picMap: Record<string, { netto: number; count: number }> = {}
 
   data.forEach((d) => {
@@ -91,7 +91,6 @@ export function buildPicChartData(data: Lead[], limit: number = 10): PicChartIte
   return Object.entries(picMap)
     .map(([name, { netto, count }]) => ({ name, netto, count }))
     .sort((a, b) => b.netto - a.netto)
-    .slice(0, limit)
 }
 
 /**
