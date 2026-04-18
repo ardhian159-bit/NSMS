@@ -9,9 +9,8 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) redirect('/login')
-  console.log('USER ID:', user?.id)
+
   const { data: roleCheck } = await supabase.rpc('get_my_role')
-  console.log('ROLE:', roleCheck)
 
   // Ganti fetch leads di page.tsx dengan ini:
   const { data: leadRows, error: leadsErr } = await supabase

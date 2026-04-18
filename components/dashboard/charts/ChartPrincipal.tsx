@@ -19,8 +19,8 @@ export default function ChartPrincipal({ data }: ChartPrincipalProps) {
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
       <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Principal</h3>
-      <div style={{ height: Math.max(200, data.length * 36) }}>
-        <ResponsiveContainer width="100%" height="100%">
+      <div>
+        <ResponsiveContainer width="100%" height={Math.max(200, data.length * 36)} minWidth={0}>
           <BarChart data={chartData} layout="vertical" margin={{ left: 100, right: 120 }}>
             <XAxis type="number" hide />
             <YAxis

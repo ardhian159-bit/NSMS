@@ -14,8 +14,8 @@ export default function ChartQuarter({ data }: ChartQuarterProps) {
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
       <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Distribusi Quarter</h3>
-      <div className="h-[280px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div>
+        <ResponsiveContainer width="100%" height={280} minWidth={0}>
           <BarChart data={data} margin={{ top: 20, right: 10, left: 10, bottom: 5 }}>
             <XAxis
               dataKey="quarter"

@@ -37,8 +37,8 @@ export default function ChartFunnel({ data }: ChartFunnelProps) {
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
       <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Sales Funnel</h3>
-      <div className="h-[240px] md:h-[280px]">
-        <ResponsiveContainer width="100%" height="100%">
+      <div>
+        <ResponsiveContainer width="100%" height={280} minWidth={0}>
           <BarChart data={chartData} layout="vertical" margin={{ left: 0, right: isMobile ? 60 : 80 }}>
             <XAxis type="number" hide />
             <YAxis

@@ -20,8 +20,8 @@ export default function ChartSumberDana({ data }: ChartSumberDanaProps) {
       <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Sumber Dana</h3>
       <div className="flex flex-col md:flex-row items-center gap-4">
         {/* Chart */}
-        <div className="h-[200px] w-[200px] relative flex-shrink-0">
-          <ResponsiveContainer width="100%" height="100%">
+        <div className="w-[200px] relative flex-shrink-0">
+          <ResponsiveContainer width="100%" height={200} minWidth={0}>
             <PieChart>
               <Pie
                 data={data}
