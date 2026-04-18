@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Logo from '@/components/layout/Logo'
 
 export default function LandingPage() {
   return (
@@ -6,14 +7,8 @@ export default function LandingPage() {
       
       {/* Navbar (simpel, logo kiri, tombol kanan) */}
       <header className="max-w-6xl mx-auto px-6 py-6 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-[#1A1A18] flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-xs font-bold">N</span>
-          </div>
-          <div>
-            <p className="text-sm font-semibold text-[#1A1A18] leading-tight">NSMS</p>
-            <p className="text-[10px] text-[#A0A09A] leading-tight">Intan Pariwara</p>
-          </div>
+        <div className="scale-125 origin-left">
+          <Logo collapsed={false} />
         </div>
         <Link 
           href="/login" 

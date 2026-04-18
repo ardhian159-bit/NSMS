@@ -28,7 +28,10 @@ export default function ChartPrincipal({ data }: ChartPrincipalProps) {
 
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-      <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Principal</h3>
+      <div className="mb-4">
+        <h3 className="text-sm font-semibold text-[#1A1A18]">Principal</h3>
+        <p className="text-xs text-[#A0A09A] mt-0.5">Forecast Netto</p>
+      </div>
       <div>
         <ResponsiveContainer width="100%" height={Math.max(200, data.length * 36)} minWidth={0}>
           <BarChart

@@ -30,9 +30,12 @@ export default function ChartTopPic({ data }: ChartTopPicProps) {
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
       {/* Header with toggle */}
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-[#1A1A18]">
-          {mode === 'top' ? 'Top 10 PIC' : 'Perlu Boost'}
-        </h3>
+        <div>
+          <h3 className="text-sm font-semibold text-[#1A1A18]">
+            {mode === 'top' ? 'Top 10 PIC' : 'Perlu Boost'}
+          </h3>
+          <p className="text-xs text-[#A0A09A] mt-0.5">Forecast Netto</p>
+        </div>
         <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5">
           <button
             onClick={() => setMode('top')}
