@@ -5,7 +5,7 @@ import { redirect } from 'next/navigation'
 export default async function MonitoringPage() {
   const profile = await fetchCurrentProfile()
   if (!profile) redirect('/login')
-  if (!['superadmin', 'admin', 'mp', 'sp', 'dirut'].includes(profile.role)) {
+  if (!['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'].includes(profile.role)) {
     redirect('/dashboard')
   }
 

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import { TK_STATUS_MAP, TK_VALUES, QUARTER_OPTIONS } from '@/lib/constants'
 import { calcDPP, calcForecastNetto, formatDotted, parseCurrency } from '@/lib/dashboard/formatters'
 import { getWeekLabel } from '@/lib/dashboard/week'
 import { PROVINSI_LIST, getKabKotaList } from '@/lib/region-data'
-import type { AppSettings } from '@/lib/types'
+import type { AppSettings, Lead } from '@/lib/types'
 
 interface InputLeadFormProps {
   /** Pre-fill PIC as read-only (pipeline/sales mode) */
@@ -17,6 +17,10 @@ interface InputLeadFormProps {
   settings: AppSettings
   /** Callback after successful submit */
   onSuccess?: () => void
+  /** Lead to edit (switches to edit mode) */
+  editLead?: Lead | null
+  /** Cancel edit callback */
+  onCancelEdit?: () => void
 }
 
 interface FormData {
@@ -66,6 +70,8 @@ export default function InputLeadForm({
   picOptions,
   settings,
   onSuccess,
+  editLead,
+  onCancelEdit,
 }: InputLeadFormProps) {
   const [form, setForm] = useState<FormData>({
     ...INITIAL_FORM,
@@ -74,6 +80,35 @@ export default function InputLeadForm({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+
+  const isEditMode = !!editLead
+
+  useEffect(() => {
+    if (editLead) {
+      setForm({
+        namaPaket: editLead.namaPaket || '',
+        instansi: editLead.instansi || '',
+        provinsi: editLead.provinsi || '',
+        kabKota: editLead.kabKota || '',
+        wilayah: editLead.wilayah || editLead.kabKota || '',
+        sumberDana: editLead.sumberDana || '',
+        quarter: editLead.quarter || '',
+        tk: editLead.tk.toString(),
+        principal: editLead.principal || '',
+        jenisProduk: editLead.jenisProduk || '',
+        produk: editLead.produk || '',
+        qty: editLead.qty ? editLead.qty.toString() : '',
+        satuan: editLead.satuan || '',
+        ppn: editLead.ppn || 'PPN',
+        perkiraanCb: editLead.perkiraanCb ? editLead.perkiraanCb.toString() : '',
+        nilaiAnggaran: editLead.nilaiAnggaran > 0 ? formatDotted(editLead.nilaiAnggaran) : '',
+        keterangan: editLead.keterangan || '',
+        ownerName: editLead.ownerName || defaultOwnerName || '',
+      })
+      setError('')
+      setSuccess('')
+    }
+  }, [editLead])
 
   // Auto-calc netto
   const brutto = parseCurrency(form.nilaiAnggaran)
@@ -129,44 +164,79 @@ export default function InputLeadForm({
     setLoading(true)
 
     try {
-      // Generate funnel_id
-      const funnelId = await generateFunnelId(form.ownerName)
+      if (isEditMode && editLead) {
+        // === EDIT MODE ===
+        const { error: updateErr } = await supabase
+          .from('leads')
+          .update({
+            nama_paket: form.namaPaket,
+            instansi: form.instansi,
+            provinsi: form.provinsi,
+            kab_kota: form.kabKota,
+            wilayah: form.wilayah,
+            sumber_dana: form.sumberDana,
+            quarter: form.quarter,
+            tk: parseInt(form.tk),
+            status,
+            principal: form.principal,
+            jenis_produk: form.jenisProduk,
+            produk: form.produk,
+            qty: form.qty ? parseInt(form.qty) : null,
+            satuan: form.satuan,
+            ppn: form.ppn,
+            perkiraan_cb: cb,
+            nilai_anggaran: brutto,
+            dpp,
+            forecast_netto: forecastNetto,
+            keterangan: form.keterangan,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', editLead.id)
 
-      const now = new Date()
-      const weekLabel = getWeekLabel(now)
+        if (updateErr) throw updateErr
 
-      const { error: insertErr } = await supabase.from('leads').insert({
-        funnel_id: funnelId,
-        nama_paket: form.namaPaket,
-        instansi: form.instansi,
-        provinsi: form.provinsi,
-        kab_kota: form.kabKota,
-        wilayah: form.wilayah,
-        sumber_dana: form.sumberDana,
-        quarter: form.quarter,
-        tk: parseInt(form.tk),
-        status,
-        principal: form.principal,
-        jenis_produk: form.jenisProduk,
-        produk: form.produk,
-        qty: form.qty ? parseInt(form.qty) : null,
-        satuan: form.satuan,
-        ppn: form.ppn,
-        perkiraan_cb: cb,
-        nilai_anggaran: brutto,
-        dpp,
-        forecast_netto: forecastNetto,
-        keterangan: form.keterangan,
-        owner_name: form.ownerName,
-        input_week_label: weekLabel,
-        input_date: now.toISOString().split('T')[0],
-      })
+        setSuccess(`Lead ${editLead.funnelId} berhasil diupdate!`)
+        onCancelEdit?.()
+        onSuccess?.()
+      } else {
+        // === INSERT MODE ===
+        const funnelId = await generateFunnelId(form.ownerName)
+        const now = new Date()
+        const weekLabel = getWeekLabel(now)
 
-      if (insertErr) throw insertErr
+        const { error: insertErr } = await supabase.from('leads').insert({
+          funnel_id: funnelId,
+          nama_paket: form.namaPaket,
+          instansi: form.instansi,
+          provinsi: form.provinsi,
+          kab_kota: form.kabKota,
+          wilayah: form.wilayah,
+          sumber_dana: form.sumberDana,
+          quarter: form.quarter,
+          tk: parseInt(form.tk),
+          status,
+          principal: form.principal,
+          jenis_produk: form.jenisProduk,
+          produk: form.produk,
+          qty: form.qty ? parseInt(form.qty) : null,
+          satuan: form.satuan,
+          ppn: form.ppn,
+          perkiraan_cb: cb,
+          nilai_anggaran: brutto,
+          dpp,
+          forecast_netto: forecastNetto,
+          keterangan: form.keterangan,
+          owner_name: form.ownerName,
+          input_week_label: weekLabel,
+          input_date: now.toISOString().split('T')[0],
+        })
 
-      setSuccess(`Lead ${funnelId} berhasil ditambahkan!`)
-      reset()
-      onSuccess?.()
+        if (insertErr) throw insertErr
+
+        setSuccess(`Lead ${funnelId} berhasil ditambahkan!`)
+        reset()
+        onSuccess?.()
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Gagal menyimpan data')
     } finally {
@@ -177,7 +247,7 @@ export default function InputLeadForm({
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
       <h3 className="text-sm font-semibold text-[#1A1A18] mb-5 pb-3 border-b border-[#EBEBE7]">
-        Input Funnel Baru
+        {isEditMode ? `Edit Lead — ${editLead?.funnelId}` : 'Input Funnel Baru'}
       </h3>
 
       {error && (
@@ -459,18 +529,28 @@ export default function InputLeadForm({
 
       {/* Actions */}
       <div className="flex justify-end gap-3 pt-3 border-t border-[#EBEBE7]">
-        <button
-          onClick={reset}
-          className="px-4 py-2 rounded-lg text-sm font-medium text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
-        >
-          Reset
-        </button>
+        {isEditMode && (
+          <button
+            onClick={() => { reset(); onCancelEdit?.() }}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+          >
+            Batal Edit
+          </button>
+        )}
+        {!isEditMode && (
+          <button
+            onClick={reset}
+            className="px-4 py-2 rounded-lg text-sm font-medium text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+          >
+            Reset
+          </button>
+        )}
         <button
           onClick={handleSubmit}
           disabled={loading}
           className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#1A1A18] hover:bg-[#2A2A28] disabled:opacity-50 transition-colors"
         >
-          {loading ? 'Menyimpan...' : 'Tambah ke Pipeline'}
+          {loading ? 'Menyimpan...' : isEditMode ? 'Simpan Perubahan' : 'Tambah ke Pipeline'}
         </button>
       </div>
     </div>

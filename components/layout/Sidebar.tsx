@@ -30,10 +30,10 @@ interface SidebarProps {
 const STORAGE_KEY = 'nsms_sidebar_collapsed'
 
 const NAV_ITEMS = [
-  { href: '/dashboard',  label: 'Dashboard',     icon: LayoutDashboard, roles: ['superadmin', 'admin', 'guest', 'mp', 'sp', 'dirut'] },
+  { href: '/dashboard',  label: 'Dashboard',     icon: LayoutDashboard, roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
   { href: '/pipeline',   label: 'Pipeline',      icon: GitBranch,       roles: ['superadmin', 'admin', 'sales', 'am'] },
   { href: '/admin',      label: 'Admin Panel',   icon: ShieldCheck,     roles: ['superadmin', 'admin'] },
-  { href: '/monitoring', label: 'Monitoring',     icon: Eye,             roles: ['superadmin', 'admin', 'mp', 'sp', 'dirut'] },
+  { href: '/monitoring', label: 'Monitoring',     icon: Eye,             roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
   { href: '/control',    label: 'Control Panel',  icon: Settings,        roles: ['superadmin'] },
 ]
 

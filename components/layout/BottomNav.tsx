@@ -16,8 +16,8 @@ interface BottomNavProps {
 }
 
 const NAV_ITEMS = [
-  { href: '/dashboard',  label: 'Dashboard',  icon: LayoutDashboard, roles: ['superadmin', 'admin', 'guest', 'mp', 'sp', 'dirut'] },
-  { href: '/monitoring', label: 'Monitoring',  icon: Eye,             roles: ['superadmin', 'admin', 'mp', 'sp', 'dirut'] },
+  { href: '/dashboard',  label: 'Dashboard',  icon: LayoutDashboard, roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
+  { href: '/monitoring', label: 'Monitoring',  icon: Eye,             roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
   // FAB placeholder — handled separately
   { href: '/pipeline',   label: 'Pipeline',    icon: GitBranch,       roles: ['superadmin', 'admin', 'sales', 'am'] },
   { href: '/control',    label: 'Kontrol',     icon: Settings,        roles: ['superadmin'] },

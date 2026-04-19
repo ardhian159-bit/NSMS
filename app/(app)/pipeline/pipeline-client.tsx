@@ -2,12 +2,14 @@
 
 import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search } from 'lucide-react'
+import { Search, Pencil } from 'lucide-react'
 import type { Lead, TrackerEntry, AppSettings, Profile } from '@/lib/types'
 import { getTrackerHistory } from '@/lib/dashboard/detail'
 import LeadListItem from '@/components/pipeline/LeadListItem'
 import UpdateForm from '@/components/pipeline/UpdateForm'
 import InputLeadForm from '@/components/shared/InputLeadForm'
+import Badge from '@/components/dashboard/Badge'
+import { formatRupiahShort } from '@/lib/dashboard/formatters'
 
 interface PipelineClientProps {
   leads: Lead[]
@@ -28,6 +30,7 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
   const [activeTab, setActiveTab] = useState<TabKey>('update')
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
+  const [editingLead, setEditingLead] = useState<Lead | null>(null)
 
   const filteredLeads = useMemo(() => {
     if (!search) return leads
@@ -133,11 +136,81 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
 
       {/* Tab: Input Lead */}
       {activeTab === 'input' && (
-        <InputLeadForm
-          defaultOwnerName={profile.picName}
-          settings={settings}
-          onSuccess={refetch}
-        />
+        <div className="space-y-6">
+          <InputLeadForm
+            defaultOwnerName={profile.picName}
+            settings={settings}
+            onSuccess={() => { setEditingLead(null); refetch() }}
+            editLead={editingLead}
+            onCancelEdit={() => setEditingLead(null)}
+          />
+
+          {/* Tabel leads untuk edit */}
+          <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+            <div className="px-4 py-3 border-b border-[#EBEBE7] bg-[#FAFAF8]">
+              <h3 className="text-xs font-semibold text-[#A0A09A] uppercase tracking-wider">
+                Daftar Lead — {leads.length} paket
+              </h3>
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm text-left">
+                <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+                  <tr>
+                    <th className="px-3 py-2.5 font-medium">Funnel ID</th>
+                    <th className="px-3 py-2.5 font-medium">Nama Paket</th>
+                    <th className="px-3 py-2.5 font-medium text-center">Status</th>
+                    <th className="px-3 py-2.5 font-medium text-right">Netto</th>
+                    <th className="px-3 py-2.5 font-medium text-center w-16">Edit</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#EBEBE7]">
+                  {leads.map((lead) => {
+                    const isLocked = lead.tk === 100 || lead.tk === 0
+                    const isEditing = editingLead?.id === lead.id
+                    return (
+                      <tr
+                        key={lead.id}
+                        className={`transition-colors ${
+                          isEditing
+                            ? 'bg-green-50 border-l-2 border-l-[#064E3B]'
+                            : 'hover:bg-[#FAFAF8]'
+                        }`}
+                      >
+                        <td className="px-3 py-2.5 font-[family-name:var(--font-dm-mono)] text-xs text-[#A0A09A]">
+                          {lead.funnelId}
+                          {isLocked && (
+                            <span className="ml-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
+                              TERKUNCI
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-3 py-2.5 text-[#1A1A18]">{lead.namaPaket || '-'}</td>
+                        <td className="px-3 py-2.5 text-center"><Badge tk={lead.tk} /></td>
+                        <td className="px-3 py-2.5 text-right font-semibold text-[#1A1A18]">
+                          {formatRupiahShort(lead.forecastNetto)}
+                        </td>
+                        <td className="px-3 py-2.5 text-center">
+                          {!isLocked && (
+                            <button
+                              onClick={() => {
+                                setEditingLead(lead)
+                                window.scrollTo({ top: 0, behavior: 'smooth' })
+                              }}
+                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                              title="Edit lead ini"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    )
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   )

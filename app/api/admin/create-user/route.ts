@@ -25,13 +25,13 @@ export async function POST(req: Request) {
 
   const { error: profileError } = await supabaseAdmin
     .from('profiles')
-    .insert({
+    .upsert({
       id: authData.user.id,
       username: email,
       pic_name: picName,
       role,
       branch: branch || null,
-    })
+    }, { onConflict: 'id' })
 
   if (profileError) {
     return NextResponse.json({ error: profileError.message }, { status: 500 })
