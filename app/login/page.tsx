@@ -28,40 +28,57 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <div className="bg-white p-8 rounded-lg shadow w-full max-w-sm">
-        <h1 className="text-2xl font-bold mb-6 text-center">NSMS Login</h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#F5F5F2] px-4">
+      <div className="bg-white p-8 rounded-[12px] border border-[#EBEBE7] w-full max-w-sm">
+        <div className="mb-8 text-center space-y-1">
+          <h1 className="font-[family-name:var(--font-dm-mono)] font-bold text-xl tracking-[0.2em] text-[#064E3B]">
+            NS MS
+          </h1>
+          <p className="text-xs text-[#A0A09A]">National Sales Management System</p>
+        </div>
+        
         <form onSubmit={handleLogin} className="space-y-4">
+          {error && (
+            <div className="bg-red-50 border border-red-200 text-red-600 text-sm rounded-lg px-3 py-2">
+              {error}
+            </div>
+          )}
+
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
+            <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">Email</label>
             <input
               type="email"
               value={email}
               onChange={e => setEmail(e.target.value)}
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border border-[#EBEBE7] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#064E3B] focus:border-[#064E3B] transition-colors"
               required
             />
           </div>
+          
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">Password</label>
             <input
               type="password"
               value={password}
               onChange={e => setPassword(e.target.value)}
-              className="w-full border rounded px-3 py-2 text-sm"
+              className="w-full border border-[#EBEBE7] rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#064E3B] focus:border-[#064E3B] transition-colors"
               required
             />
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+            className="w-full bg-[#064E3B] text-white py-2.5 rounded-lg text-sm font-semibold hover:bg-[#065F46] disabled:opacity-50 transition-colors mt-2"
           >
-            {loading ? 'Loading...' : 'Login'}
+            {loading ? 'Masuk...' : 'Login'}
           </button>
         </form>
       </div>
+      
+      <p className="text-xs text-[#A0A09A] text-center mt-6">
+        made with 🔥 by Adrian
+      </p>
     </div>
   )
 }
