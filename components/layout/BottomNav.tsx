@@ -8,6 +8,7 @@ import {
   Plus,
   GitBranch,
   Settings,
+  UserCog,
 } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 
@@ -21,6 +22,7 @@ const NAV_ITEMS = [
   // FAB placeholder — handled separately
   { href: '/pipeline',   label: 'Pipeline',    icon: GitBranch,       roles: ['superadmin', 'admin', 'sales', 'am'] },
   { href: '/control',    label: 'Kontrol',     icon: Settings,        roles: ['superadmin'] },
+  { href: '/settings',   label: 'Pengaturan',  icon: UserCog,         roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
 ]
 
 export default function BottomNav({ profile }: BottomNavProps) {
@@ -30,7 +32,7 @@ export default function BottomNav({ profile }: BottomNavProps) {
     (item) => item.roles.includes(profile.role) && (item.href === '/dashboard' || item.href === '/monitoring')
   )
   const rightItems = NAV_ITEMS.filter(
-    (item) => item.roles.includes(profile.role) && (item.href === '/pipeline' || item.href === '/control')
+    (item) => item.roles.includes(profile.role) && (item.href === '/pipeline' || item.href === '/control' || item.href === '/settings')
   )
 
   const showFab = ['superadmin', 'admin', 'sales', 'am'].includes(profile.role)
