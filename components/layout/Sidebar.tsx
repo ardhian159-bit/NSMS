@@ -13,6 +13,7 @@ import {
   PanelLeftOpen,
   ShieldCheck,
   UserCog,
+  MapPin,
 } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 import { supabase } from '@/lib/supabase'
@@ -35,6 +36,7 @@ const NAV_ITEMS = [
   { href: '/pipeline',   label: 'Pipeline',      icon: GitBranch,       roles: ['superadmin', 'admin', 'sales', 'am'] },
   { href: '/admin',      label: 'Admin Panel',   icon: ShieldCheck,     roles: ['superadmin', 'admin'] },
   { href: '/monitoring', label: 'Monitoring',     icon: Eye,             roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
+  { href: '/map',        label: 'Peta Sebaran',   icon: MapPin,          roles: ['superadmin', 'admin', 'mp', 'sp', 'dirut', 'am'] },
   { href: '/control',    label: 'Control Panel',  icon: Settings,        roles: ['superadmin'] },
   { href: '/settings',   label: 'Pengaturan',     icon: UserCog,         roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
 ]

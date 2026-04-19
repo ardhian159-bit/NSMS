@@ -9,6 +9,7 @@ import {
   GitBranch,
   Settings,
   UserCog,
+  MapPin,
 } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 
@@ -19,6 +20,7 @@ interface BottomNavProps {
 const NAV_ITEMS = [
   { href: '/dashboard',  label: 'Dashboard',  icon: LayoutDashboard, roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
   { href: '/monitoring', label: 'Monitoring',  icon: Eye,             roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
+  { href: '/map',        label: 'Peta',         icon: MapPin,          roles: ['superadmin', 'admin', 'mp', 'sp', 'dirut', 'am'] },
   // FAB placeholder — handled separately
   { href: '/pipeline',   label: 'Pipeline',    icon: GitBranch,       roles: ['superadmin', 'admin', 'sales', 'am'] },
   { href: '/control',    label: 'Kontrol',     icon: Settings,        roles: ['superadmin'] },
@@ -29,7 +31,7 @@ export default function BottomNav({ profile }: BottomNavProps) {
   const pathname = usePathname()
 
   const leftItems = NAV_ITEMS.filter(
-    (item) => item.roles.includes(profile.role) && (item.href === '/dashboard' || item.href === '/monitoring')
+    (item) => item.roles.includes(profile.role) && (item.href === '/dashboard' || item.href === '/monitoring' || item.href === '/map')
   )
   const rightItems = NAV_ITEMS.filter(
     (item) => item.roles.includes(profile.role) && (item.href === '/pipeline' || item.href === '/control' || item.href === '/settings')
