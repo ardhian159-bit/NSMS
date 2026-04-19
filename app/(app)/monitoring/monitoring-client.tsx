@@ -57,7 +57,8 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
     old_netto: number
     new_netto: number
     changed_at: string
-    profiles: { pic_name: string } | null
+    changed_by: string
+    changedByName: string
   }[]>([])
   const [loadingLog, setLoadingLog] = useState(false)
 
@@ -66,13 +67,32 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
     setActiveTab('detail')
     setNettoLog([])
     setLoadingLog(true)
+
     supabase
       .from('leads_netto_log')
-      .select('id, old_netto, new_netto, changed_at, profiles(pic_name)')
+      .select('id, old_netto, new_netto, changed_at, changed_by')
       .eq('funnel_id', selectedEntry.funnelId)
       .order('changed_at', { ascending: false })
-      .then(({ data }) => {
-        setNettoLog((data as any) ?? [])
+      .then(async ({ data }) => {
+        if (!data || data.length === 0) {
+          setNettoLog([])
+          setLoadingLog(false)
+          return
+        }
+        const uids = [...new Set(data.map((d) => d.changed_by).filter(Boolean))]
+        const { data: profilesData } = await supabase
+          .from('profiles')
+          .select('id, pic_name')
+          .in('id', uids)
+        const nameMap: Record<string, string> = {}
+        profilesData?.forEach((p) => { nameMap[p.id] = p.pic_name })
+
+        setNettoLog(
+          data.map((d) => ({
+            ...d,
+            changedByName: nameMap[d.changed_by] ?? 'Unknown',
+          }))
+        )
         setLoadingLog(false)
       })
   }, [selectedEntry])
@@ -468,7 +488,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                           </div>
                           <div className="flex items-center gap-2 mt-1">
                             <span className="text-[10px] text-[#A0A09A]">
-                              {log.profiles?.pic_name ?? 'Unknown'}
+                              {log.changedByName}
                             </span>
                             <span className="text-[10px] text-[#A0A09A]">·</span>
                             <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-[#A0A09A]">

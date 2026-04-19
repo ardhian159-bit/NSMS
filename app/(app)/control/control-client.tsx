@@ -71,6 +71,55 @@ export default function ControlClient({
     setSaving(false)
   }
 
+  // Add User
+  const [showAddUser, setShowAddUser] = useState(false)
+  const [newEmail, setNewEmail] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [newPicName, setNewPicName] = useState('')
+  const [newRole, setNewRole] = useState('sales')
+  const [newBranch, setNewBranch] = useState('')
+  const [addingUser, setAddingUser] = useState(false)
+  const [addUserError, setAddUserError] = useState('')
+
+  const handleAddUser = async () => {
+    setAddingUser(true)
+    setAddUserError('')
+    const res = await fetch('/api/admin/create-user', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: newEmail,
+        password: newPassword,
+        picName: newPicName,
+        role: newRole,
+        branch: newBranch,
+      }),
+    })
+    const json = await res.json()
+    if (!res.ok) {
+      setAddUserError(json.error ?? 'Terjadi kesalahan')
+      setAddingUser(false)
+      return
+    }
+    setLocalProfiles((prev) => [
+      ...prev,
+      {
+        id: json.userId,
+        username: newEmail,
+        picName: newPicName,
+        role: newRole as Profile['role'],
+        branch: newBranch || null,
+      } as Profile,
+    ])
+    setShowAddUser(false)
+    setNewEmail('')
+    setNewPassword('')
+    setNewPicName('')
+    setNewRole('sales')
+    setNewBranch('')
+    setAddingUser(false)
+  }
+
   // === TAB 2: Settings ===
   const [localSettings, setLocalSettings] = useState(settingsRaw)
   const [activeCategory, setActiveCategory] = useState('picNames')
@@ -239,10 +288,14 @@ export default function ControlClient({
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8]">
-            <p className="text-xs text-[#A0A09A]">
-              Untuk menambah atau menghapus user, gunakan Supabase Dashboard
-            </p>
+          <div className="px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8] flex items-center justify-between">
+            <p className="text-xs text-[#A0A09A]">{localProfiles.length} user terdaftar</p>
+            <button
+              onClick={() => setShowAddUser(true)}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] transition-colors"
+            >
+              + Tambah User
+            </button>
           </div>
         </div>
       )}
@@ -393,6 +446,106 @@ export default function ControlClient({
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* Add User Modal */}
+      {showAddUser && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+          onClick={() => setShowAddUser(false)}
+        >
+          <div
+            className="bg-white rounded-xl border border-[#EBEBE7] shadow-lg w-full max-w-md mx-4 p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-5">
+              <h3 className="text-base font-semibold text-[#1A1A18]">Tambah User Baru</h3>
+              <button
+                onClick={() => setShowAddUser(false)}
+                className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2]"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3">
+              <div>
+                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Email *</label>
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  placeholder="user@email.com"
+                  className="form-input mt-1 w-full"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Password *</label>
+                <input
+                  type="password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  placeholder="Min. 6 karakter"
+                  className="form-input mt-1 w-full"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">PIC Name *</label>
+                <input
+                  type="text"
+                  value={newPicName}
+                  onChange={(e) => setNewPicName(e.target.value)}
+                  placeholder="Nama lengkap"
+                  className="form-input mt-1 w-full"
+                />
+              </div>
+              <div>
+                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Role *</label>
+                <select
+                  value={newRole}
+                  onChange={(e) => setNewRole(e.target.value)}
+                  className="form-select mt-1 w-full"
+                >
+                  {ROLE_OPTIONS.map((r) => (
+                    <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Branch</label>
+                <input
+                  type="text"
+                  value={newBranch}
+                  onChange={(e) => setNewBranch(e.target.value)}
+                  placeholder="Opsional"
+                  className="form-input mt-1 w-full"
+                />
+              </div>
+            </div>
+
+            {addUserError && (
+              <p className="mt-3 text-xs text-red-500 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+                {addUserError}
+              </p>
+            )}
+
+            <div className="flex gap-2 mt-5 justify-end">
+              <button
+                onClick={() => setShowAddUser(false)}
+                className="px-4 py-2 rounded-lg text-sm text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleAddUser}
+                disabled={addingUser || !newEmail || !newPassword || !newPicName}
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] disabled:opacity-50 transition-colors"
+              >
+                {addingUser ? 'Membuat...' : 'Buat User'}
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
