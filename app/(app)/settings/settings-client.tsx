@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Profile } from '@/lib/types'
-import { KeyRound, User } from 'lucide-react'
+import { KeyRound, User, Download } from 'lucide-react'
 
 interface SettingsClientProps {
   profile: Profile
@@ -17,6 +17,15 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState('')
+  const [isExporting, setIsExporting] = useState(false)
+
+  const isAdmin = profile.role === 'admin' || profile.role === 'superadmin'
+
+  const handleExport = () => {
+    setIsExporting(true)
+    window.location.href = '/api/admin/export'
+    setTimeout(() => setIsExporting(false), 3000)
+  }
 
   const handleChangePassword = async () => {
     setError('')
@@ -161,6 +170,31 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
           </button>
         </div>
       </div>
+
+      {/* Export Data */}
+      {profile.role !== 'guest' && (
+        <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
+          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#EBEBE7]">
+            <Download className="w-4 h-4 text-[#6B6B65]" />
+            <h2 className="text-sm font-semibold text-[#1A1A18]">Export Data</h2>
+          </div>
+          <p className="text-sm text-[#6B6B65] mb-4">
+            {isAdmin
+              ? 'Download semua data leads dan tracker dalam format Excel.'
+              : 'Download data leads dan tracker milik Anda dalam format Excel.'}
+          </p>
+          <div className="flex justify-end">
+            <button
+              onClick={handleExport}
+              disabled={isExporting}
+              className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] disabled:opacity-50 transition-colors flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              {isExporting ? 'Menyiapkan file...' : 'Export Excel'}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
