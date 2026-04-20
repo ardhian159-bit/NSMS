@@ -9,7 +9,7 @@ import { X } from 'lucide-react'
 interface ProvinsiData {
   totalNetto: number
   count: number
-  leads: { ownerName: string; namaPaket: string; status: string; netto: number }[]
+  leads: { ownerName: string; namaPaket: string; kabKota?: string; nilaiAnggaran?: number; status: string; netto: number }[]
 }
 
 interface MapClientProps {
@@ -83,10 +83,14 @@ export default function MapClient({ provinsiData, profile }: MapClientProps) {
                   {selectedData.leads.map((lead, i) => (
                     <div key={i} className="p-3 bg-[#FAFAF8] rounded-lg border border-[#EBEBE7]">
                       <p className="text-xs font-medium text-[#1A1A18] leading-snug">{lead.namaPaket || '-'}</p>
+                      <p className="text-xs text-[#A0A09A]">{lead.kabKota || '-'}</p>
                       <p className="text-[10px] text-[#A0A09A] mt-0.5">{lead.ownerName}</p>
                       <div className="flex items-center justify-between mt-1.5">
                         <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F5F5F2] text-[#6B6B65]">{lead.status}</span>
-                        <span className="text-xs font-semibold text-[#1A1A18]">{formatRupiahShort(lead.netto)}</span>
+                        <div className="text-right">
+                          <span className="text-xs font-semibold text-[#1A1A18]">{formatRupiahShort(lead.netto)}</span>
+                          <p className="text-[10px] text-[#A0A09A]">Brutto: {formatRupiahShort(lead.nilaiAnggaran || 0)}</p>
+                        </div>
                       </div>
                     </div>
                   ))}

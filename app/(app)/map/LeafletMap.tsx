@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -16,22 +16,44 @@ export default function LeafletMap({ provinsiData, maxNetto, selectedProvinsi, o
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
   const geoLayerRef = useRef<L.GeoJSON | null>(null)
+  const [mapReady, setMapReady] = useState(false)
 
+  // Effect 1: Map initialization only
   useEffect(() => {
-    if (!containerRef.current) return
-    if (mapRef.current) {
-      mapRef.current.remove()
-      mapRef.current = null
-    }
+    if (!containerRef.current || mapRef.current) return
 
     const map = L.map(containerRef.current, {
       center: [-2, 118],
       zoom: 5,
+      minZoom: 4,
+      maxBoundsViscosity: 1.0,
       zoomControl: true,
       attributionControl: false,
     })
 
     mapRef.current = map
+    setMapReady(true)
+
+    return () => {
+      if (mapRef.current) {
+        mapRef.current.remove()
+        mapRef.current = null
+      }
+      setMapReady(false)
+    }
+  }, [])
+
+  // Effect 2: GeoJSON layer — runs after map is ready
+  useEffect(() => {
+    if (!mapReady || !mapRef.current) return
+
+    const map = mapRef.current
+
+    // Remove previous layer if any
+    if (geoLayerRef.current) {
+      geoLayerRef.current.remove()
+      geoLayerRef.current = null
+    }
 
     fetch('/indonesia-provinces.geojson')
       .then((res) => res.json())
@@ -60,15 +82,11 @@ export default function LeafletMap({ provinsiData, maxNetto, selectedProvinsi, o
 
         geoLayerRef.current = layer
         map.fitBounds(layer.getBounds(), { padding: [20, 20] })
+        const bounds = map.getBounds().pad(0.2)
+        map.setMaxBounds(bounds)
+        map.setMinZoom(4)
       })
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove()
-        mapRef.current = null
-      }
-    }
-  }, [])
+  }, [mapReady, provinsiData])
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 }

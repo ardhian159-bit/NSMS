@@ -18,13 +18,13 @@ export default async function MapPage() {
   // Ambil agregasi leads per provinsi
   const { data: leadsRaw } = await supabase
     .from('leads')
-    .select('provinsi, forecast_netto, owner_name, nama_paket, status')
+    .select('provinsi, forecast_netto, owner_name, nama_paket, status, kab_kota, nilai_anggaran')
 
   // Agregasi per provinsi
   const provinsiMap: Record<string, {
     totalNetto: number
     count: number
-    leads: { ownerName: string; namaPaket: string; status: string; netto: number }[]
+    leads: { ownerName: string; namaPaket: string; kabKota?: string; nilaiAnggaran?: number; status: string; netto: number }[]
   }> = {}
 
   leadsRaw?.forEach((lead) => {
@@ -37,6 +37,8 @@ export default async function MapPage() {
     provinsiMap[prov].leads.push({
       ownerName: lead.owner_name,
       namaPaket: lead.nama_paket,
+      kabKota: lead.kab_kota,
+      nilaiAnggaran: lead.nilai_anggaran || 0,
       status: lead.status,
       netto: lead.forecast_netto || 0,
     })

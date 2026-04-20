@@ -153,19 +153,15 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
         </div>
       )}
 
-      {/* Charts Row 1: Funnel + Quarter */}
+      {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ChartFunnel data={funnelChart} />
         <ChartQuarter data={quarterChart} />
       </div>
-
-      {/* Charts Row 2: Top PIC + Sumber Dana */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ChartTopPic data={picChart} />
         <ChartSumberDana data={sumberDanaChart} />
       </div>
-
-      {/* Charts Row 3: Principal */}
       <ChartPrincipal data={principalChart} />
 
       {/* Filter Bar */}
