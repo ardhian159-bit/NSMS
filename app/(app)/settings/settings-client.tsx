@@ -12,6 +12,7 @@ interface SettingsClientProps {
 }
 
 export default function SettingsClient({ profile, email }: SettingsClientProps) {
+  const router = useRouter()
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -208,7 +209,7 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
           <button
             onClick={async () => {
               await supabase.auth.signOut()
-              router.push('/login')
+              router.push('/')
             }}
             className="px-5 py-2 rounded-lg text-sm font-semibold text-red-600 bg-red-50 border border-red-200 hover:bg-red-100 transition-colors flex items-center gap-2"
           >
