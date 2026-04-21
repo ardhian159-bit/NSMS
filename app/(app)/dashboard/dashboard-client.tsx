@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useMemo, useCallback } from 'react'
-import type { Lead, TrackerEntry, FilterState, SortState } from '@/lib/types'
+import type { Lead, TrackerEntry, FilterState, SortState, Profile } from '@/lib/types'
 import { DEFAULT_FILTER_STATE, DEFAULT_PER_PAGE } from '@/lib/constants'
 import { applyFilters, computeKPIs, getUniqueFilterOptions } from '@/lib/dashboard/filters'
 import { sortLeads, paginateLeads } from '@/lib/dashboard/table'
@@ -27,13 +27,15 @@ import ChartQuarter from '@/components/dashboard/charts/ChartQuarter'
 import ChartTopPic from '@/components/dashboard/charts/ChartTopPic'
 import ChartSumberDana from '@/components/dashboard/charts/ChartSumberDana'
 import ChartPrincipal from '@/components/dashboard/charts/ChartPrincipal'
+import ChartJenisProduk from '@/components/dashboard/charts/ChartJenisProduk'
 
 interface DashboardClientProps {
   leads: Lead[]
   trackers: TrackerEntry[]
+  profile: Profile
 }
 
-export default function DashboardClient({ leads, trackers }: DashboardClientProps) {
+export default function DashboardClient({ leads, trackers, profile }: DashboardClientProps) {
   // --- State ---
   const [filters, setFilters] = useState<FilterState>({ ...DEFAULT_FILTER_STATE })
   const [sort, setSort] = useState<SortState>({ column: 'forecastNetto', ascending: false })
@@ -71,6 +73,20 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
   const picChart = useMemo(() => buildPicChartData(filteredData), [filteredData])
   const sumberDanaChart = useMemo(() => buildSumberDanaChartData(filteredData), [filteredData])
   const principalChart = useMemo(() => buildPrincipalChartData(filteredData), [filteredData])
+
+  const jenisProdukChartData = useMemo(() => {
+    const map: Record<string, { netto: number; count: number }> = {}
+    filteredData.forEach(l => {
+      const jp = l.jenisProduk
+      if (!jp) return
+      if (!map[jp]) map[jp] = { netto: 0, count: 0 }
+      map[jp].netto += l.forecastNetto || 0
+      map[jp].count += 1
+    })
+    return Object.entries(map)
+      .map(([name, val]) => ({ name, netto: val.netto, count: val.count }))
+      .sort((a, b) => b.netto - a.netto)
+  }, [filteredData])
 
   // Detail drawer
   const selectedLead = useMemo(
@@ -116,6 +132,7 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
       {/* KPI Cards */}
       <KpiCards kpis={kpis} />
 
+
       {/* Top 5 Closing */}
       {topClosing.length > 0 && (
         <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
@@ -159,7 +176,10 @@ export default function DashboardClient({ leads, trackers }: DashboardClientProp
         <ChartQuarter data={quarterChart} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartTopPic data={picChart} />
+        {profile.role === 'sales' 
+          ? <ChartJenisProduk data={jenisProdukChartData} />
+          : <ChartTopPic data={picChart} />
+        }
         <ChartSumberDana data={sumberDanaChart} />
       </div>
       <ChartPrincipal data={principalChart} />
