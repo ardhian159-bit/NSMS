@@ -217,6 +217,7 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
         trackerHistory={selectedTrackerHistory}
         open={!!selectedFunnelId}
         onClose={() => setSelectedFunnelId(null)}
+        profile={profile}
       />
     </div>
   )

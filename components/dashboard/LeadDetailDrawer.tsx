@@ -1,7 +1,9 @@
 'use client'
 
+import { useState } from 'react'
 import { X } from 'lucide-react'
-import type { Lead, TrackerEntry } from '@/lib/types'
+import type { Lead, TrackerEntry, Profile } from '@/lib/types'
+import { supabase } from '@/lib/supabase'
 import { formatRupiahShort, formatRupiahLong } from '@/lib/dashboard/formatters'
 import Badge from './Badge'
 
@@ -10,11 +12,42 @@ interface LeadDetailDrawerProps {
   trackerHistory: TrackerEntry[]
   open: boolean
   onClose: () => void
+  profile: Profile
 }
 
 export default function LeadDetailDrawer({
-  lead, trackerHistory, open, onClose,
+  lead, trackerHistory, open, onClose, profile,
 }: LeadDetailDrawerProps) {
+  const [notes, setNotes] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+
+  async function handleSubmitNotes() {
+    if (!notes.trim() || !lead) return
+    setSubmitting(true)
+
+    // Ambil entry tracker terbaru untuk funnel_id ini
+    const { data: latest } = await supabase
+      .from('tracker')
+      .select('id')
+      .eq('funnel_id', lead.funnelId)
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (latest) {
+      await supabase
+        .from('tracker')
+        .update({ admin_notes: notes.trim() })
+        .eq('id', latest.id)
+    }
+
+    setNotes('')
+    setSubmitSuccess(true)
+    setTimeout(() => setSubmitSuccess(false), 3000)
+    setSubmitting(false)
+  }
+
   if (!lead || !open) return null
 
   return (
@@ -69,6 +102,34 @@ export default function LeadDetailDrawer({
             <div>
               <p className="text-[10px] text-[#A0A09A] uppercase tracking-wider mb-1">Keterangan</p>
               <p className="text-sm text-[#6B6B65]">{lead.keterangan}</p>
+            </div>
+          )}
+
+          {/* Tulis Notes */}
+          {(profile.role === 'superadmin' || profile.role === 'admin') && (
+            <div>
+              <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">Tulis Notes</h3>
+              <div className="space-y-2">
+                <textarea
+                  value={notes}
+                  onChange={(e) => setNotes(e.target.value)}
+                  placeholder="Tulis catatan untuk lead ini..."
+                  rows={3}
+                  className="w-full text-sm rounded-lg border border-[#EBEBE7] px-3 py-2 text-[#1A1A18] focus:border-[#064E3B] focus:ring-1 focus:ring-[#064E3B] outline-none resize-none transition-colors"
+                />
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={handleSubmitNotes}
+                    disabled={submitting || !notes.trim()}
+                    className="bg-[#064E3B] text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-[#064E3B]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Kirim Notes
+                  </button>
+                  {submitSuccess && (
+                    <span className="text-xs text-green-600 font-medium">Notes berhasil dikirim ✓</span>
+                  )}
+                </div>
+              </div>
             </div>
           )}
 
