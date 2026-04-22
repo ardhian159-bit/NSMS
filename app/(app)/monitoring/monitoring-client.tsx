@@ -44,6 +44,11 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
   const [sortCol, setSortCol] = useState<keyof TrackerEntry>('createdAt')
   const [sortAsc, setSortAsc] = useState(false)
 
+  const [page, setPage] = useState(0)
+  const [pageSize, setPageSize] = useState(25)
+
+  useEffect(() => { setPage(0) }, [search, filterPic, filterWeek, filterStatus, filterQuarter])
+
   const [selectedEntry, setSelectedEntry] = useState<TrackerEntry | null>(null)
   const [editingNotes, setEditingNotes] = useState(false)
   const [draftNotes, setDraftNotes] = useState('')
@@ -133,6 +138,9 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
 
     return data
   }, [localTrackers, search, filterPic, filterWeek, filterStatus, filterQuarter, sortCol, sortAsc])
+
+  const totalPages = Math.ceil(filtered.length / pageSize)
+  const paginated = filtered.slice(page * pageSize, (page + 1) * pageSize)
 
   // Sort handler
   const handleSort = (col: keyof TrackerEntry) => {
@@ -301,7 +309,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                   </td>
                 </tr>
               ) : (
-                filtered.map((t) => (
+                paginated.map((t) => (
                   <tr key={t.id} className="hover:bg-[#FAFAF8] transition-colors group cursor-pointer" onClick={() => setSelectedEntry(t)}>
                     <td className="px-3 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-[#1A1A18] whitespace-nowrap">
                       {t.week}
@@ -512,10 +520,49 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
         )}
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8]">
+        <div className="px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8] flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-[#A0A09A]">
-            Menampilkan {filtered.length} dari {localTrackers.length} entri
+            Menampilkan {filtered.length === 0 ? 0 : page * pageSize + 1}–{Math.min((page + 1) * pageSize, filtered.length)} dari {filtered.length} entri
           </p>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-1.5">
+              <span className="text-xs text-[#A0A09A]">Per halaman</span>
+              <select
+                value={pageSize}
+                onChange={(e) => { setPageSize(Number(e.target.value)); setPage(0) }}
+                className="text-xs border border-[#EBEBE7] rounded-md px-2 py-1 bg-white text-[#1A1A18] focus:outline-none"
+              >
+                {[10, 25, 50, 100].map((n) => (
+                  <option key={n} value={n}>{n}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setPage(0)}
+                disabled={page === 0}
+                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >«</button>
+              <button
+                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                disabled={page === 0}
+                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >‹</button>
+              <span className="px-3 py-1 text-xs text-[#1A1A18]">
+                {page + 1} / {Math.max(1, totalPages)}
+              </span>
+              <button
+                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                disabled={page >= totalPages - 1}
+                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >›</button>
+              <button
+                onClick={() => setPage(totalPages - 1)}
+                disabled={page >= totalPages - 1}
+                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              >»</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
