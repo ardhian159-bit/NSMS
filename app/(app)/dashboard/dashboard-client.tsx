@@ -133,11 +133,11 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
       <KpiCards kpis={kpis} />
 
 
-      {/* Top 5 Closing */}
+      {/* Top 10 Closing */}
       {topClosing.length > 0 && (
         <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
           <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">🏆 Top 10 Closing</h3>
-          <div className="overflow-x-auto overflow-y-auto max-h-[260px] [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#EBEBE7] [&::-webkit-scrollbar-thumb]:rounded-full">
+          <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead className="sticky top-0 bg-white z-10">
                 <tr className="text-xs text-[#A0A09A] uppercase border-b border-[#EBEBE7]">
@@ -164,6 +164,18 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
                     </td>
                   </tr>
                 ))}
+                {Array.from({ length: Math.max(0, 10 - topClosing.length) }).map((_, idx) => (
+                  <tr key={`empty-${idx}`} className="bg-neutral-50/40">
+                    <td className="px-3 py-2">
+                      <span className="inline-flex w-5 h-5 bg-neutral-100 text-neutral-400 rounded-full items-center justify-center text-xs font-medium">
+                        {topClosing.length + idx + 1}
+                      </span>
+                    </td>
+                    <td colSpan={4} className="px-3 py-2 text-[#A0A09A] italic text-sm">
+                      Menunggu Closing
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -176,7 +188,7 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
         <ChartQuarter data={quarterChart} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {profile.role === 'sales' 
+        {profile.role === 'sales'
           ? <ChartJenisProduk data={jenisProdukChartData} />
           : <ChartTopPic data={picChart} />
         }
