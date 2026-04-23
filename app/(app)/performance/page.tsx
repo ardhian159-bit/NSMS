@@ -28,7 +28,8 @@ export default async function PerformancePage() {
   // Fetch leads with netto > 0
   const { data: leads } = await supabase
     .from('leads')
-    .select('owner_name, forecast_netto')
+    .select('owner_name, forecast_netto, quarter, tk')
+    .eq('tk', 100)
     .gt('forecast_netto', 0)
 
   return <PerformanceClient initialLeads={leads || []} />
