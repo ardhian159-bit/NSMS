@@ -228,6 +228,8 @@ export default function InputLeadForm({
           keterangan: form.keterangan,
           owner_name: form.ownerName,
           input_week_label: weekLabel,
+          input_week: parseInt(weekLabel.replace('W', '').split('-')[0]),
+          input_year: now.getFullYear(),
           input_date: now.toISOString().split('T')[0],
         })
 

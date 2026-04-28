@@ -20,16 +20,11 @@ export default async function DashboardPage() {
 
   const profile = mapProfileRow(profileRow as ProfileRow)
 
-  // Ganti fetch leads di page.tsx dengan ini:
-  const { data: leadRows, error: leadsErr } = await supabase
-    .from('leads')
-    .select('*')
-    .order('created_at', { ascending: false })
-  // Fetch trackers
-  const { data: trackerRows, error: trackersErr } = await supabase
-    .from('tracker')
-    .select('*')
-    .order('created_at', { ascending: false })
+  // Fetch leads + trackers in parallel
+  const [{ data: leadRows, error: leadsErr }, { data: trackerRows, error: trackersErr }] = await Promise.all([
+    supabase.from('leads').select('*').order('created_at', { ascending: false }),
+    supabase.from('tracker').select('*').order('created_at', { ascending: false }),
+  ])
 
   if (trackersErr) {
     console.error('Failed to fetch trackers:', trackersErr.message)

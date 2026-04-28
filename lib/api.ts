@@ -59,7 +59,11 @@ export async function fetchLeadByFunnelId(funnelId: string): Promise<Lead | null
 /** Fetch all tracker entries, optionally filtered by funnel_id */
 export async function fetchTrackers(funnelId?: string): Promise<TrackerEntry[]> {
   const supabase = await createClient()
-  let query = supabase.from('tracker').select('*').order('created_at', { ascending: false })
+  let query = supabase
+    .from('tracker')
+    .select('id, funnel_id, pic, nama_paket, status_baru, forecast_netto, notes, week, admin_notes, created_at, updated_at')
+    .ilike('week', '%-2026')
+    .order('created_at', { ascending: false })
 
   if (funnelId) {
     query = query.eq('funnel_id', funnelId)
