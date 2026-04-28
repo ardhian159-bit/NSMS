@@ -252,3 +252,33 @@ export async function unlockLead(id: number): Promise<void> {
     .eq('id', id)
   if (error) throw new Error(`Failed to unlock lead: ${error.message}`)
 }
+
+// =============================================================================
+// COMPANY TARGETS
+// =============================================================================
+
+export interface CompanyTarget {
+  id: number
+  year: number
+  quarter: string
+  targetBruto: number
+  targetNetto: number
+}
+
+export async function fetchCompanyTargets(year?: number): Promise<CompanyTarget[]> {
+  const supabase = await createClient()
+  let query = supabase
+    .from('company_targets')
+    .select('*')
+    .order('quarter', { ascending: true })
+  if (year) query = query.eq('year', year)
+  const { data, error } = await query
+  if (error) throw new Error(`Failed to fetch company targets: ${error.message}`)
+  return (data ?? []).map((r: any) => ({
+    id: r.id,
+    year: r.year,
+    quarter: r.quarter,
+    targetBruto: r.target_bruto ?? 0,
+    targetNetto: r.target_netto ?? 0,
+  }))
+}

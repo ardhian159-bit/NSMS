@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Profile, Lead } from '@/lib/types'
+import type { CompanyTarget } from '@/lib/api'
 import Badge from '@/components/dashboard/Badge'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
 import { Pencil, Check, X, Unlock } from 'lucide-react'
@@ -19,14 +20,16 @@ interface ControlClientProps {
   profiles: Profile[]
   settingsRaw: SettingItem[]
   lockedLeads: Lead[]
+  companyTargets: CompanyTarget[]
 }
 
-type Tab = 'users' | 'settings' | 'unlock'
+type Tab = 'users' | 'settings' | 'unlock' | 'targets'
 
 const TABS: { key: Tab; label: string }[] = [
   { key: 'users', label: 'Users' },
   { key: 'settings', label: 'Dropdown Settings' },
   { key: 'unlock', label: 'Unlock Lead' },
+  { key: 'targets', label: 'Quarter Target' },
 ]
 
 const ROLE_OPTIONS = ['superadmin', 'admin', 'sales', 'guest', 'mp', 'sp', 'am', 'dirut']
@@ -42,6 +45,7 @@ export default function ControlClient({
   profiles,
   settingsRaw,
   lockedLeads,
+  companyTargets,
 }: ControlClientProps) {
   const [activeTab, setActiveTab] = useState<Tab>('users')
 
@@ -169,6 +173,33 @@ export default function ControlClient({
       .eq('id', lead.id)
     setLocalLocked((prev) => prev.filter((l) => l.id !== lead.id))
     setUnlocking(null)
+  }
+
+  // === TAB 4: Quarter Target ===
+  const currentYear = new Date().getFullYear()
+  const [localTargets, setLocalTargets] = useState(companyTargets)
+  const [editingTarget, setEditingTarget] = useState<string | null>(null)
+  const [editBruto, setEditBruto] = useState('')
+  const [editNetto, setEditNetto] = useState('')
+  const [savingTarget, setSavingTarget] = useState(false)
+
+  const handleSaveTarget = async (id: number) => {
+    setSavingTarget(true)
+    const bruto = parseFloat(editBruto.replace(/\./g, '').replace(',', '.'))
+    const netto = parseFloat(editNetto.replace(/\./g, '').replace(',', '.'))
+    await supabase
+      .from('company_targets')
+      .update({
+        target_bruto: bruto,
+        target_netto: netto,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', id)
+    setLocalTargets((prev) =>
+      prev.map((t) => t.id === id ? { ...t, targetBruto: bruto, targetNetto: netto } : t)
+    )
+    setEditingTarget(null)
+    setSavingTarget(false)
   }
 
   return (
@@ -446,6 +477,106 @@ export default function ControlClient({
               </p>
             </div>
           )}
+        </div>
+      )}
+
+      {/* ===================== TAB 4: QUARTER TARGET ===================== */}
+      {activeTab === 'targets' && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-[#6B6B65]">Target perusahaan tahun {currentYear}</p>
+          </div>
+          <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+                <tr>
+                  <th className="px-4 py-3 font-medium">Quarter</th>
+                  <th className="px-4 py-3 font-medium text-right">Target Bruto</th>
+                  <th className="px-4 py-3 font-medium text-right">Target Netto</th>
+                  <th className="px-4 py-3 font-medium text-center w-28">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[#EBEBE7]">
+                {localTargets.map((t) => (
+                  <tr key={t.id} className="hover:bg-[#FAFAF8] transition-colors">
+                    <td className="px-4 py-3 font-semibold text-[#1A1A18]">{t.quarter}</td>
+                    {editingTarget === t.quarter ? (
+                      <>
+                        <td className="px-4 py-3">
+                          <input
+                            type="number"
+                            value={editBruto}
+                            onChange={(e) => setEditBruto(e.target.value)}
+                            className="form-input w-full text-right"
+                            placeholder="Target Bruto"
+                          />
+                        </td>
+                        <td className="px-4 py-3">
+                          <input
+                            type="number"
+                            value={editNetto}
+                            onChange={(e) => setEditNetto(e.target.value)}
+                            className="form-input w-full text-right"
+                            placeholder="Target Netto"
+                          />
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => handleSaveTarget(t.id)}
+                              disabled={savingTarget}
+                              className="p-1.5 rounded-md text-green-700 bg-green-50 hover:bg-green-100 border border-green-200 transition-colors disabled:opacity-50"
+                            >
+                              <Check className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => setEditingTarget(null)}
+                              className="p-1.5 rounded-md text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+                            >
+                              <X className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </>
+                    ) : (
+                      <>
+                        <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] text-[#1A1A18]">
+                          {formatRupiahShort(t.targetBruto)}
+                        </td>
+                        <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] text-[#064E3B] font-semibold">
+                          {formatRupiahShort(t.targetNetto)}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => {
+                              setEditingTarget(t.quarter)
+                              setEditBruto(t.targetBruto.toString())
+                              setEditNetto(t.targetNetto.toString())
+                            }}
+                            className="p-1.5 rounded-md text-[#6B6B65] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                          >
+                            <Pencil className="w-3.5 h-3.5" />
+                          </button>
+                        </td>
+                      </>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot className="border-t border-[#EBEBE7] bg-[#FAFAF8]">
+                <tr>
+                  <td className="px-4 py-3 text-xs font-semibold text-[#A0A09A] uppercase">Total</td>
+                  <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] font-semibold text-[#1A1A18]">
+                    {formatRupiahShort(localTargets.reduce((s, t) => s + t.targetBruto, 0))}
+                  </td>
+                  <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] font-semibold text-[#064E3B]">
+                    {formatRupiahShort(localTargets.reduce((s, t) => s + t.targetNetto, 0))}
+                  </td>
+                  <td />
+                </tr>
+              </tfoot>
+            </table>
+          </div>
         </div>
       )}
 

@@ -1,4 +1,4 @@
-import { fetchCurrentProfile, fetchProfiles, fetchSettingsRaw, fetchLockedLeads } from '@/lib/api'
+import { fetchCurrentProfile, fetchProfiles, fetchSettingsRaw, fetchLockedLeads, fetchCompanyTargets } from '@/lib/api'
 import ControlClient from './control-client'
 import { redirect } from 'next/navigation'
 
@@ -7,10 +7,11 @@ export default async function ControlPage() {
   if (!profile) redirect('/login')
   if (profile.role !== 'superadmin') redirect('/dashboard')
 
-  const [profiles, settingsRaw, lockedLeads] = await Promise.all([
+  const [profiles, settingsRaw, lockedLeads, companyTargets] = await Promise.all([
     fetchProfiles(),
     fetchSettingsRaw(),
     fetchLockedLeads(),
+    fetchCompanyTargets(new Date().getFullYear()),
   ])
 
   return (
@@ -19,6 +20,7 @@ export default async function ControlPage() {
       profiles={profiles}
       settingsRaw={settingsRaw}
       lockedLeads={lockedLeads}
+      companyTargets={companyTargets}
     />
   )
 }
