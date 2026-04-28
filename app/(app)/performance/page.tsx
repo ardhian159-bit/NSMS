@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase-server'
 import { mapProfileRow } from '@/lib/types'
 import type { ProfileRow } from '@/lib/types'
+import { fetchCompanyTargets } from '@/lib/api'
 import PerformanceClient from './performance-client'
 
 export default async function PerformancePage() {
@@ -26,11 +27,14 @@ export default async function PerformancePage() {
   }
 
   // Fetch leads with netto > 0
-  const { data: leads } = await supabase
-    .from('leads')
-    .select('owner_name, forecast_netto, quarter, tk')
-    .eq('tk', 100)
-    .gt('forecast_netto', 0)
+  const [{ data: leads }, companyTargets] = await Promise.all([
+    supabase
+      .from('leads')
+      .select('owner_name, forecast_netto, quarter, tk')
+      .eq('tk', 100)
+      .gt('forecast_netto', 0),
+    fetchCompanyTargets(new Date().getFullYear()),
+  ])
 
-  return <PerformanceClient initialLeads={leads || []} />
+  return <PerformanceClient initialLeads={leads || []} companyTargets={companyTargets} />
 }

@@ -13,9 +13,11 @@ import {
 } from 'recharts'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
 import type { Lead } from '@/lib/types'
+import type { CompanyTarget } from '@/lib/api'
 
 interface PerformanceClientProps {
   initialLeads: { owner_name: string; forecast_netto: number; quarter: string; tk: number }[]
+  companyTargets: CompanyTarget[]
 }
 
 const COLORS = ['#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
@@ -23,7 +25,7 @@ const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4']
 
 
 
-export default function PerformanceClient({ initialLeads }: PerformanceClientProps) {
+export default function PerformanceClient({ initialLeads, companyTargets }: PerformanceClientProps) {
   // Aggregate data per PIC
   const picAgg = useMemo(() => {
     const map: Record<string, number> = {}
@@ -43,6 +45,7 @@ export default function PerformanceClient({ initialLeads }: PerformanceClientPro
   }, [picAgg])
 
   const [selectedPics, setSelectedPics] = useState<string[]>(initialSelection)
+  const [metricMode, setMetricMode] = useState<'netto' | 'bruto'>('netto')
 
   const togglePic = (pic: string) => {
     setSelectedPics(prev => {
@@ -75,6 +78,53 @@ export default function PerformanceClient({ initialLeads }: PerformanceClientPro
     )
   }, [chartData, selectedPics])
 
+  const closingPerQuarter = useMemo(() => {
+    return QUARTERS.map(q => ({
+      quarter: q,
+      closing: initialLeads
+        .filter(l => l.quarter === q)
+        .reduce((sum, l) => sum + (l.forecast_netto || 0), 0),
+    }))
+  }, [initialLeads])
+
+  const achievementData = useMemo(() => {
+    const currentMonth = new Date().getMonth() + 1
+    const currentQ = Math.ceil(currentMonth / 3)
+    const totalTarget = companyTargets.reduce((s, t) =>
+      s + (metricMode === 'netto' ? t.targetNetto : t.targetBruto), 0)
+    const totalClosing = closingPerQuarter.reduce((s, q) => s + q.closing, 0)
+    const remainingQ = 4 - currentQ
+    const forecastNextQ = remainingQ > 0
+      ? (totalTarget - totalClosing) / remainingQ
+      : 0
+
+    return {
+      quarters: QUARTERS.map((q, i) => {
+        const target = companyTargets.find(t => t.quarter === q)
+        const targetVal = target
+          ? (metricMode === 'netto' ? target.targetNetto : target.targetBruto)
+          : 0
+        const closing = closingPerQuarter.find(c => c.quarter === q)?.closing ?? 0
+        const gap = targetVal - closing
+        const ach = targetVal > 0 ? (closing / targetVal) * 100 : 0
+        const isPast = i + 1 < currentQ
+        const isCurrent = i + 1 === currentQ
+        return { quarter: q, targetVal, closing, gap, ach, isPast, isCurrent }
+      }),
+      totalTarget,
+      totalClosing,
+      totalAch: totalTarget > 0 ? (totalClosing / totalTarget) * 100 : 0,
+      forecastNextQ,
+      currentQ,
+    }
+  }, [companyTargets, closingPerQuarter, metricMode])
+
+  const achColor = (pct: number) => {
+    if (pct >= 70) return { bar: '#10B981', text: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' }
+    if (pct >= 30) return { bar: '#F59E0B', text: 'text-amber-700', bg: 'bg-amber-50', border: 'border-amber-200' }
+    return { bar: '#EF4444', text: 'text-red-600', bg: 'bg-red-50', border: 'border-red-200' }
+  }
+
   function formatDiff(curr: number, next: number) {
     const diff = next - curr
     if (curr === 0 && next === 0) return null
@@ -91,6 +141,139 @@ export default function PerformanceClient({ initialLeads }: PerformanceClientPro
       <div>
         <h1 className="text-xl font-semibold text-[#1A1A18]">Performance</h1>
         <p className="text-sm text-[#A0A09A] mt-0.5">Closing per quarter per PIC</p>
+      </div>
+
+      {/* Target vs Achievement */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold text-[#1A1A18]">
+            Target vs Achievement {new Date().getFullYear()}
+          </h2>
+          <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5">
+            {(['netto', 'bruto'] as const).map((m) => (
+              <button
+                key={m}
+                onClick={() => setMetricMode(m)}
+                className={`text-xs px-3 py-1 rounded-full transition-all duration-200 font-medium ${
+                  metricMode === m
+                    ? 'bg-white text-[#1A1A18] shadow-sm'
+                    : 'text-[#6B6B65] hover:text-[#1A1A18]'
+                }`}
+              >
+                {m === 'netto' ? 'Netto' : 'Bruto'}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 4 Quarter Cards */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {achievementData.quarters.map(({ quarter, targetVal, closing, gap, ach, isPast, isCurrent }) => {
+            const color = achColor(ach)
+            const clampedAch = Math.min(ach, 100)
+            return (
+              <div
+                key={quarter}
+                className={`bg-white rounded-lg border p-4 space-y-3 transition-all ${
+                  isCurrent
+                    ? 'border-emerald-300 shadow-sm shadow-emerald-50'
+                    : 'border-[#EBEBE7]'
+                } ${!isPast && !isCurrent ? 'opacity-60' : ''}`}
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-sm font-semibold text-[#1A1A18]">{quarter}</span>
+                  {isCurrent && (
+                    <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
+                      Aktif
+                    </span>
+                  )}
+                  {isPast && (
+                    <span className="text-[10px] font-medium text-[#A0A09A] bg-[#F5F5F2] border border-[#EBEBE7] px-2 py-0.5 rounded-full">
+                      Selesai
+                    </span>
+                  )}
+                </div>
+
+                {/* Progress Bar */}
+                <div>
+                  <div className="flex items-end justify-between mb-1">
+                    <span className={`text-2xl font-bold ${color.text}`}>
+                      {ach.toFixed(1)}%
+                    </span>
+                  </div>
+                  <div className="w-full h-1.5 bg-[#F5F5F2] rounded-full overflow-hidden">
+                    <div
+                      className="h-full rounded-full transition-all duration-500"
+                      style={{ width: `${clampedAch}%`, backgroundColor: color.bar }}
+                    />
+                  </div>
+                </div>
+
+                {/* Stats */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Closing</span>
+                    <span className="text-xs font-semibold text-[#1A1A18] font-[family-name:var(--font-dm-mono)]">
+                      {closing > 0 ? formatRupiahShort(closing) : '—'}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Target</span>
+                    <span className="text-xs text-[#6B6B65] font-[family-name:var(--font-dm-mono)]">
+                      {formatRupiahShort(targetVal)}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Gap</span>
+                    <span className="text-xs text-red-500 font-[family-name:var(--font-dm-mono)]">
+                      {gap > 0 ? formatRupiahShort(gap) : '✓'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        {/* Summary Card */}
+        <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
+          <div className="flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex-1 space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold text-[#1A1A18]">Total Achievement</span>
+                <span className={`text-sm font-bold ${achColor(achievementData.totalAch).text}`}>
+                  {achievementData.totalAch.toFixed(1)}%
+                </span>
+              </div>
+              <div className="w-full h-2 bg-[#F5F5F2] rounded-full overflow-hidden">
+                <div
+                  className="h-full rounded-full transition-all duration-500"
+                  style={{
+                    width: `${Math.min(achievementData.totalAch, 100)}%`,
+                    backgroundColor: achColor(achievementData.totalAch).bar
+                  }}
+                />
+              </div>
+              <div className="flex justify-between text-[10px] text-[#A0A09A] font-[family-name:var(--font-dm-mono)]">
+                <span>Closing: {formatRupiahShort(achievementData.totalClosing)}</span>
+                <span>Target: {formatRupiahShort(achievementData.totalTarget)}</span>
+              </div>
+            </div>
+            {achievementData.forecastNextQ > 0 && (
+              <div className="md:border-l md:border-[#EBEBE7] md:pl-4">
+                <p className="text-[10px] text-[#A0A09A] uppercase tracking-wider mb-1">
+                  Beban per Q sisa
+                </p>
+                <p className="text-lg font-bold text-[#1A1A18] font-[family-name:var(--font-dm-mono)]">
+                  {formatRupiahShort(achievementData.forecastNextQ)}
+                </p>
+                <p className="text-[10px] text-[#A0A09A]">
+                  dibagi {4 - achievementData.currentQ} quarter tersisa
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
