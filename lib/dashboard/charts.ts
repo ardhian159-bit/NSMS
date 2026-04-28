@@ -14,6 +14,7 @@ export interface FunnelChartItem {
   tk: number
   count: number
   netto: number
+  bruto: number
 }
 
 export interface QuarterChartItem {
@@ -25,6 +26,7 @@ export interface QuarterChartItem {
 export interface PicChartItem {
   name: string
   netto: number
+  bruto: number
   count: number
 }
 
@@ -38,6 +40,7 @@ export interface PrincipalChartItem {
   name: string
   count: number
   netto: number
+  bruto: number
 }
 
 // --- Builder Functions ---
@@ -55,6 +58,7 @@ export function buildFunnelChartData(data: Lead[]): FunnelChartItem[] {
       tk,
       count: items.length,
       netto: items.reduce((sum, d) => sum + d.forecastNetto, 0),
+      bruto: items.reduce((sum, d) => sum + d.nilaiAnggaran, 0),
     }
   })
 }
@@ -79,17 +83,18 @@ export function buildQuarterChartData(data: Lead[]): QuarterChartItem[] {
  * Source: dashboard.html line 1160-1166
  */
 export function buildPicChartData(data: Lead[]): PicChartItem[] {
-  const picMap: Record<string, { netto: number; count: number }> = {}
+  const picMap: Record<string, { netto: number; bruto: number; count: number }> = {}
 
   data.forEach((d) => {
     const pic = d.ownerName || 'Uncategorized'
-    if (!picMap[pic]) picMap[pic] = { netto: 0, count: 0 }
+    if (!picMap[pic]) picMap[pic] = { netto: 0, bruto: 0, count: 0 }
     picMap[pic].netto += d.forecastNetto
+    picMap[pic].bruto += d.nilaiAnggaran
     picMap[pic].count += 1
   })
 
   return Object.entries(picMap)
-    .map(([name, { netto, count }]) => ({ name, netto, count }))
+    .map(([name, { netto, bruto, count }]) => ({ name, netto, bruto, count }))
     .sort((a, b) => b.netto - a.netto)
 }
 
@@ -124,16 +129,17 @@ export function buildSumberDanaChartData(data: Lead[]): SumberDanaChartItem[] {
  * Source: dashboard.html line 1290-1301
  */
 export function buildPrincipalChartData(data: Lead[]): PrincipalChartItem[] {
-  const map: Record<string, { count: number; netto: number }> = {}
+  const map: Record<string, { count: number; netto: number; bruto: number }> = {}
 
   data.forEach((d) => {
     const p = (d.principal || 'Uncategorized').toUpperCase()
-    if (!map[p]) map[p] = { count: 0, netto: 0 }
+    if (!map[p]) map[p] = { count: 0, netto: 0, bruto: 0 }
     map[p].count += 1
     map[p].netto += d.forecastNetto
+    map[p].bruto += d.nilaiAnggaran
   })
 
   return Object.entries(map)
-    .map(([name, { count, netto }]) => ({ name, count, netto }))
+    .map(([name, { count, netto, bruto }]) => ({ name, count, netto, bruto }))
     .sort((a, b) => b.netto - a.netto)
 }

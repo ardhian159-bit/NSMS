@@ -41,6 +41,7 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
   const [sort, setSort] = useState<SortState>({ column: 'forecastNetto', ascending: false })
   const [page, setPage] = useState(1)
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null)
+  const [metricMode, setMetricMode] = useState<'netto' | 'bruto'>('netto')
 
   // --- Derived data (pure functions) ---
   const filterOptions = useMemo(() => getUniqueFilterOptions(leads), [leads])
@@ -132,6 +133,22 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
       {/* KPI Cards */}
       <KpiCards kpis={kpis} />
 
+      {/* Bruto / Netto Toggle */}
+      <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5 w-fit">
+        {(['netto', 'bruto'] as const).map((m) => (
+          <button
+            key={m}
+            onClick={() => setMetricMode(m)}
+            className={`text-xs px-4 py-1.5 rounded-full transition-all duration-200 font-medium ${
+              metricMode === m
+                ? 'bg-white text-[#1A1A18] shadow-sm'
+                : 'text-[#6B6B65] hover:text-[#1A1A18]'
+            }`}
+          >
+            {m === 'netto' ? 'Forecast Netto' : 'Bruto'}
+          </button>
+        ))}
+      </div>
 
       {/* Top 10 Closing */}
       {topClosing.length > 0 && (
@@ -145,7 +162,9 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
                   <th className="text-left px-3 py-2 font-medium">PIC</th>
                   <th className="text-left px-3 py-2 font-medium">Nama Paket</th>
                   <th className="text-left px-3 py-2 font-medium">Wilayah</th>
-                  <th className="text-right px-3 py-2 font-medium">Forecast Netto</th>
+                  <th className="text-right px-3 py-2 font-medium">
+                    {metricMode === 'netto' ? 'Forecast Netto' : 'Bruto'}
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBEBE7]">
@@ -160,7 +179,7 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
                     <td className="px-3 py-2 text-[#6B6B65] max-w-[200px] truncate">{c.namaPaket}</td>
                     <td className="px-3 py-2 text-[#6B6B65]">{c.wilayah}</td>
                     <td className="px-3 py-2 text-right font-semibold text-green-700">
-                      {formatRupiahShort(c.forecastNetto)}
+                      {formatRupiahShort(metricMode === 'netto' ? c.forecastNetto : c.nilaiAnggaran)}
                     </td>
                   </tr>
                 ))}
@@ -184,17 +203,17 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartFunnel data={funnelChart} />
+        <ChartFunnel data={funnelChart} metricMode={metricMode} />
         <ChartQuarter data={quarterChart} />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {profile.role === 'sales'
           ? <ChartJenisProduk data={jenisProdukChartData} />
-          : <ChartTopPic data={picChart} />
+          : <ChartTopPic data={picChart} metricMode={metricMode} />
         }
         <ChartSumberDana data={sumberDanaChart} />
       </div>
-      <ChartPrincipal data={principalChart} />
+      <ChartPrincipal data={principalChart} metricMode={metricMode} />
 
       {/* Filter Bar */}
       <FilterBar

@@ -17,9 +17,10 @@ const COLORS: Record<number, string> = {
 
 interface ChartFunnelProps {
   data: FunnelChartItem[]
+  metricMode: 'netto' | 'bruto'
 }
 
-export default function ChartFunnel({ data }: ChartFunnelProps) {
+export default function ChartFunnel({ data, metricMode }: ChartFunnelProps) {
   const [isMobile, setIsMobile] = useState(false)
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < 768)
@@ -31,14 +32,15 @@ export default function ChartFunnel({ data }: ChartFunnelProps) {
 
   const chartData = data.map((d) => ({
     ...d,
-    displayLabel: `${d.count} Paket (${formatMilyar(d.netto)})`,
+    displayLabel: `${d.count} Paket (${formatMilyar(metricMode === 'netto' ? d.netto : d.bruto)})`,
+    value: metricMode === 'netto' ? d.netto : d.bruto,
   }))
 
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-[#1A1A18]">Sales Funnel</h3>
-        <p className="text-xs text-[#A0A09A] mt-0.5">Nilai dalam Forecast Netto</p>
+        <p className="text-xs text-[#A0A09A] mt-0.5">Nilai dalam {metricMode === 'netto' ? 'Forecast Netto' : 'Bruto'}</p>
       </div>
       <div>
         <ResponsiveContainer width="100%" height={280} minWidth={0}>
@@ -52,7 +54,7 @@ export default function ChartFunnel({ data }: ChartFunnelProps) {
               axisLine={false}
               tickLine={false}
             />
-            <Bar dataKey="count" radius={[0, 4, 4, 0]} barSize={20}>
+            <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={20}>
               {chartData.map((entry, i) => (
                 <Cell key={i} fill={COLORS[entry.tk] ?? '#a3a3a3'} />
               ))}

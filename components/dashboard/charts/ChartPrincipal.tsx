@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useState, useEffect } from 'react'
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, LabelList } from 'recharts'
@@ -7,9 +7,10 @@ import { formatMilyar } from '@/lib/dashboard/formatters'
 
 interface ChartPrincipalProps {
   data: PrincipalChartItem[]
+  metricMode: 'netto' | 'bruto'
 }
 
-export default function ChartPrincipal({ data }: ChartPrincipalProps) {
+export default function ChartPrincipal({ data, metricMode }: ChartPrincipalProps) {
   const [isMobile, setIsMobile] = useState(false)
 
   useEffect(() => {
@@ -23,14 +24,15 @@ export default function ChartPrincipal({ data }: ChartPrincipalProps) {
 
   const chartData = data.map((d) => ({
     ...d,
-    displayLabel: `${d.count} Paket — ${formatMilyar(d.netto)}`,
+    value: metricMode === 'netto' ? d.netto : d.bruto,
+    displayLabel: `${d.count} Paket — ${formatMilyar(metricMode === 'netto' ? d.netto : d.bruto)}`,
   }))
 
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
       <div className="mb-4">
         <h3 className="text-sm font-semibold text-[#1A1A18]">Principal</h3>
-        <p className="text-xs text-[#A0A09A] mt-0.5">Forecast Netto</p>
+        <p className="text-xs text-[#A0A09A] mt-0.5">{metricMode === 'netto' ? 'Forecast Netto' : 'Bruto'}</p>
       </div>
       <div>
         <ResponsiveContainer width="100%" height={Math.max(200, data.length * 36)} minWidth={0}>
@@ -51,7 +53,7 @@ export default function ChartPrincipal({ data }: ChartPrincipalProps) {
               axisLine={false}
               tickLine={false}
             />
-            <Bar dataKey="netto" fill="#10b981" radius={[0, 4, 4, 0]} barSize={18}>
+            <Bar dataKey="value" fill="#10b981" radius={[0, 4, 4, 0]} barSize={18}>
               <LabelList
                 dataKey="displayLabel"
                 position="right"

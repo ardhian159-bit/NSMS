@@ -7,11 +7,12 @@ import { formatMilyar } from '@/lib/dashboard/formatters'
 
 interface ChartTopPicProps {
   data: PicChartItem[]
+  metricMode: 'netto' | 'bruto'
 }
 
 type Mode = 'top' | 'boost'
 
-export default function ChartTopPic({ data }: ChartTopPicProps) {
+export default function ChartTopPic({ data, metricMode }: ChartTopPicProps) {
   const [mode, setMode] = useState<Mode>('top')
 
   if (data.length === 0) return null
@@ -19,10 +20,13 @@ export default function ChartTopPic({ data }: ChartTopPicProps) {
   // data comes in sorted descending (highest first)
   // Top 10: take first 10
   // Perlu Boost: take last 10, sort ascending so lowest is leftmost
+  const sorted = [...data].sort((a, b) =>
+    metricMode === 'netto' ? b.netto - a.netto : b.bruto - a.bruto
+  )
   const chartData =
     mode === 'top'
-      ? data.slice(0, 10)
-      : [...data].slice(-10).reverse()
+      ? sorted.slice(0, 10)
+      : [...sorted].reverse().slice(0, 10)
 
   const barColor = mode === 'top' ? '#3b82f6' : '#f59e0b'
 
@@ -34,7 +38,7 @@ export default function ChartTopPic({ data }: ChartTopPicProps) {
           <h3 className="text-sm font-semibold text-[#1A1A18]">
             {mode === 'top' ? 'Top 10 PIC' : 'Perlu Boost'}
           </h3>
-          <p className="text-xs text-[#A0A09A] mt-0.5">Forecast Netto</p>
+          <p className="text-xs text-[#A0A09A] mt-0.5">{metricMode === 'netto' ? 'Forecast Netto' : 'Bruto'}</p>
         </div>
         <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5">
           <button
@@ -80,9 +84,9 @@ export default function ChartTopPic({ data }: ChartTopPicProps) {
               axisLine={false}
               tickLine={false}
             />
-            <Bar dataKey="netto" fill={barColor} radius={[4, 4, 0, 0]} barSize={28}>
+            <Bar dataKey={metricMode} fill={barColor} radius={[4, 4, 0, 0]} barSize={28}>
               <LabelList
-                dataKey="netto"
+                dataKey={metricMode}
                 position="top"
                 formatter={(v) => formatMilyar(Number(v))}
                 style={{ fontSize: 9, fill: '#6B6B65' }}
