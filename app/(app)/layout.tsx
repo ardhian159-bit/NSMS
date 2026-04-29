@@ -4,6 +4,7 @@ import { mapProfileRow } from '@/lib/types'
 import type { ProfileRow } from '@/lib/types'
 import Sidebar from '@/components/layout/Sidebar'
 import MobileSidebarDrawer from '@/components/layout/MobileSidebarDrawer'
+import OnboardingOverlay from '@/components/shared/OnboardingOverlay'
 
 export default async function AppLayout({
   children,
@@ -32,6 +33,7 @@ export default async function AppLayout({
       <main className="flex-1 min-w-0 min-h-screen pt-14 md:pt-0 transition-all duration-200 md:ml-[var(--sidebar-width,220px)]">
         {children}
       </main>
+      <OnboardingOverlay />
       <footer className="text-center text-xs text-[#A0A09A] py-4 mt-4">
         made with 🔥 by Adrian
       </footer>

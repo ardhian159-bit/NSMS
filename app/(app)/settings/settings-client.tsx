@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Profile } from '@/lib/types'
-import { KeyRound, User, Download, LogOut } from 'lucide-react'
+import { KeyRound, User, Download, LogOut, BookOpen } from 'lucide-react'
 
 interface SettingsClientProps {
   profile: Profile
@@ -197,6 +197,24 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
           </div>
         </div>
       )}
+
+      {/* Panduan */}
+      <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
+        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#EBEBE7]">
+          <BookOpen className="w-4 h-4 text-[#6B6B65]" />
+          <h2 className="text-sm font-semibold text-[#1A1A18]">Panduan</h2>
+        </div>
+        <p className="text-sm text-[#6B6B65] mb-4">Buka kembali panduan penggunaan NSMS.</p>
+        <div className="flex justify-end">
+          <button
+            onClick={() => window.dispatchEvent(new Event('nsms-show-onboarding'))}
+            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] transition-colors flex items-center gap-2"
+          >
+            <BookOpen className="w-4 h-4" />
+            Buka Panduan
+          </button>
+        </div>
+      </div>
 
       {/* Logout */}
       <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">

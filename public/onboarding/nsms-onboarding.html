@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NSMS · Onboarding Sales</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F5F2;
+    --paper-2: #FAFAF8;
+    --surface: #ffffff;
+    --line: #EBEBE7;
+    --fg-1: #1A1A18;
+    --fg-2: #6B6B65;
+    --fg-3: #A0A09A;
+    --on-dark: #ffffff;
+    --emerald-100: #D1FAE5;
+    --emerald-300: #6EE7B7;
+    --emerald-800: #065F46;
+    --emerald-900: #064E3B;
+    --warn-bg: #FEF3C7;
+    --warn-fg: #92400E;
+    --font-sans: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono: 'DM Mono', 'Fira Mono', monospace;
+    --radius-sm: 4px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-2xl: 20px;
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+    --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --dur-fast: 150ms;
+    --dur-normal: 250ms;
+    --dur-slow: 400ms;
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --tk-0-bg: #FEE2E2; --tk-0-fg: #991B1B;
+    --tk-5-bg: #F3F4F6; --tk-5-fg: #374151;
+    --tk-10-bg: #DBEAFE; --tk-10-fg: #1E40AF;
+    --tk-25-bg: #EDE9FE; --tk-25-fg: #5B21B6;
+    --tk-50-bg: #FEF3C7; --tk-50-fg: #92400E;
+    --tk-75-bg: #DCFCE7; --tk-75-fg: #166534;
+    --tk-100-bg: #D1FAE5; --tk-100-fg: #064E3B;
+  }
+</style>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    height: 100%;
+    background: var(--paper);
+    color: var(--fg-1);
+    font-family: var(--font-sans);
+    overscroll-behavior: none;
+  }
+
+  /* ---------- Stage ---------- */
+  .stage {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+  }
+
+  .card {
+    width: min(960px, 100%);
+    height: min(640px, calc(100vh - 48px));
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 24px;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper-2);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .brand-mark {
+    width: 28px; height: 28px;
+    border-radius: 7px;
+    background: var(--emerald-900);
+    color: var(--emerald-100);
+    display: grid;
+    place-items: center;
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+  }
+  .brand-text {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--emerald-900);
+  }
+  .brand-divider {
+    width: 1px;
+    height: 14px;
+    background: var(--line);
+  }
+  .brand-sub {
+    font-size: 12px;
+    color: var(--fg-2);
+  }
+  .skip-btn {
+    appearance: none;
+    background: transparent;
+    border: none;
+    color: var(--fg-2);
+    font-family: var(--font-sans);
+    font-size: 13px;
+    cursor: pointer;
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+    transition: background var(--dur-fast), color var(--dur-fast);
+  }
+  .skip-btn:hover { background: var(--paper); color: var(--fg-1); }
+
+  /* ---------- Content viewport ---------- */
+  .viewport {
+    position: relative;
+    overflow: hidden;
+  }
+  .track {
+    height: 100%;
+    display: flex;
+    transform: translateX(0);
+    transition: transform var(--dur-slow) var(--ease-out-expo);
+    will-change: transform;
+  }
+  .slide {
+    flex: 0 0 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .slide-text {
+    padding: 56px 56px 56px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+    min-width: 0;
+  }
+  .slide-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--emerald-800);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .slide-eyebrow .step-num {
+    font-family: var(--font-mono);
+    font-weight: 500;
+    color: var(--fg-3);
+    letter-spacing: 0.12em;
+  }
+  .slide-title {
+    font-size: 34px;
+    line-height: 1.1;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin: 0;
+    color: var(--fg-1);
+    text-wrap: pretty;
+  }
+  .slide-sub {
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--fg-2);
+    margin: 0;
+    text-wrap: pretty;
+  }
+  .slide-bullets {
+    list-style: none;
+    margin: 4px 0 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .slide-bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 13.5px;
+    color: var(--fg-2);
+    line-height: 1.55;
+  }
+  .slide-bullets li .dot {
+    flex: 0 0 auto;
+    width: 5px; height: 5px; border-radius: 50%;
+    margin-top: 8px;
+    background: var(--emerald-800);
+  }
+  .slide-bullets li code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--fg-1);
+    padding: 1px 6px;
+    border-radius: 4px;
+  }
+
+  /* ---------- Right-side illustration panel ---------- */
+  .slide-art {
+    background: var(--paper-2);
+    border-left: 1px solid var(--line);
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+  }
+  .slide-art::before {
+    /* subtle grid texture */
+    content: "";
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size: 32px 32px;
+    background-position: -1px -1px;
+    opacity: 0.5;
+    mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  }
+  .art-frame {
+    position: relative;
+    width: 88%;
+    max-width: 360px;
+  }
+
+  /* ---------- Bottom bar ---------- */
+  .bottombar {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 24px;
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+  .progress-text {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--fg-3);
+    letter-spacing: 0.08em;
+  }
+  .dots {
+    display: flex;
+    gap: 8px;
+    justify-self: center;
+  }
+  .dot-btn {
+    appearance: none;
+    border: none;
+    background: transparent;
+    padding: 6px 4px;
+    cursor: pointer;
+    display: grid;
+    place-items: center;
+  }
+  .dot-btn .pip {
+    display: block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--line);
+    transition: width var(--dur-normal) var(--ease-out-expo), background var(--dur-normal);
+  }
+  .dot-btn[aria-current="true"] .pip {
+    width: 24px;
+    border-radius: 999px;
+    background: var(--emerald-900);
+  }
+  .nav {
+    display: flex;
+    gap: 8px;
+    justify-self: end;
+  }
+  .btn {
+    appearance: none;
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--line);
+    background: var(--surface);
+    color: var(--fg-1);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background var(--dur-fast), border-color var(--dur-fast), color var(--dur-fast), transform var(--dur-fast);
+  }
+  .btn:hover { background: var(--paper); }
+  .btn:active { transform: translateY(1px); }
+  .btn[disabled] { opacity: 0.4; cursor: not-allowed; }
+  .btn--primary {
+    background: var(--fg-1);
+    border-color: var(--fg-1);
+    color: var(--on-dark);
+  }
+  .btn--primary:hover { background: #000; border-color: #000; }
+  .btn--brand {
+    background: var(--emerald-900);
+    border-color: var(--emerald-900);
+    color: var(--emerald-100);
+  }
+  .btn--brand:hover { background: #053f30; }
+
+  /* ---------- Slide 1 art: welcome stack ---------- */
+  .welcome-stack { position: relative; height: 280px; }
+  .welcome-card {
+    position: absolute;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    padding: 14px 16px;
+  }
+  .welcome-card-1 {
+    left: 0; top: 30px;
+    width: 220px;
+    transform: rotate(-4deg);
+  }
+  .welcome-card-2 {
+    right: 0; top: 0;
+    width: 240px;
+    transform: rotate(3deg);
+  }
+  .welcome-card-3 {
+    left: 50%; bottom: 0;
+    width: 220px;
+    transform: translateX(-50%) rotate(-1deg);
+    background: var(--emerald-900);
+    color: var(--emerald-100);
+    border-color: var(--emerald-900);
+  }
+  .welcome-card .row { display: flex; align-items: center; justify-content: space-between; }
+  .welcome-card .funnel-id {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.08em;
+  }
+  .welcome-card-3 .funnel-id { color: var(--emerald-300); }
+  .welcome-card .title-line {
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 6px;
+    line-height: 1.3;
+  }
+  .welcome-card .meta-line {
+    font-size: 11px;
+    color: var(--fg-2);
+    margin-top: 4px;
+  }
+  .welcome-card-3 .meta-line { color: var(--emerald-300); }
+
+  /* ---------- Slide 2 art: pipeline list ---------- */
+  .pipeline-mock {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+  }
+  .pipeline-tabs {
+    display: flex;
+    border-bottom: 1px solid var(--line);
+    padding: 0 14px;
+    gap: 18px;
+  }
+  .pipeline-tab {
+    padding: 12px 0;
+    font-size: 12px;
+    color: var(--fg-2);
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+  }
+  .pipeline-tab.is-active {
+    color: var(--fg-1);
+    font-weight: 600;
+    border-bottom-color: var(--fg-1);
+  }
+  .pipeline-row {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--line);
+  }
+  .pipeline-row:first-of-type { border-top: none; }
+  .pipeline-row .funnel-id {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+  }
+  .pipeline-row .nm {
+    font-size: 12px;
+    color: var(--fg-1);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .tk-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 1px solid transparent;
+    font-family: var(--font-sans);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+  .tk-100 { background: var(--tk-100-bg); color: var(--tk-100-fg); border-color: rgba(21,128,61,0.15); }
+  .tk-75  { background: var(--tk-75-bg);  color: var(--tk-75-fg);  border-color: rgba(220,38,38,0.15); }
+  .tk-50  { background: var(--tk-50-bg);  color: var(--tk-50-fg);  border-color: rgba(234,88,12,0.15); }
+  .tk-25  { background: var(--tk-25-bg);  color: var(--tk-25-fg);  border-color: rgba(37,99,235,0.15); }
+  .tk-10  { background: var(--tk-10-bg);  color: var(--tk-10-fg);  border-color: rgba(147,51,234,0.15); }
+  .tk-5   { background: var(--tk-5-bg);   color: var(--tk-5-fg);   border-color: rgba(82,82,82,0.15); }
+  .tk-0   { background: var(--tk-0-bg);   color: var(--tk-0-fg);   border-color: rgba(163,163,163,0.2); text-decoration: line-through; }
+
+  /* ---------- Slide 3 art: input form ---------- */
+  .form-mock {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    width: 100%;
+  }
+  .form-mock .form-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--fg-1);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .form-mock .form-title .auto-id {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+    background: var(--paper);
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px dashed var(--line);
+  }
+  .form-row { margin-bottom: 12px; }
+  .form-row .lbl {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    color: var(--fg-3);
+    margin-bottom: 5px;
+  }
+  .form-row .lbl .req { color: #dc2626; }
+  .form-row .input {
+    height: 32px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 0 10px;
+    font-size: 12px;
+    color: var(--fg-1);
+    display: flex;
+    align-items: center;
+  }
+  .form-row.is-focused .input {
+    background: var(--surface);
+    border-color: var(--emerald-900);
+    box-shadow: 0 0 0 3px rgba(6,78,59,0.08);
+  }
+  .form-row .input.placeholder { color: var(--fg-3); }
+  .form-row-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  /* ---------- Slide 4 art: weekly update ---------- */
+  .weekly-mock {
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    background: var(--surface);
+    width: 100%;
+  }
+  .weekly-list {
+    background: var(--paper-2);
+    border-right: 1px solid var(--line);
+    padding: 8px 0;
+  }
+  .weekly-list .item {
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--fg-2);
+    border-left: 2px solid transparent;
+    line-height: 1.3;
+  }
+  .weekly-list .item.is-active {
+    background: var(--surface);
+    color: var(--fg-1);
+    border-left-color: var(--emerald-900);
+    font-weight: 500;
+  }
+  .weekly-list .item .fid {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 9px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+    margin-bottom: 2px;
+  }
+  .weekly-detail { padding: 14px 16px; }
+  .weekly-detail .week-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--fg-1);
+    letter-spacing: 0.04em;
+  }
+  .weekly-detail .week-pill::before {
+    content: ""; width: 5px; height: 5px; border-radius: 50%;
+    background: var(--emerald-800);
+  }
+  .weekly-detail .status-row {
+    margin-top: 12px;
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .weekly-detail .note {
+    margin-top: 12px;
+    height: 56px;
+    background: var(--paper-2);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm);
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--fg-2);
+    line-height: 1.45;
+  }
+  .weekly-detail .save {
+    margin-top: 10px;
+    text-align: right;
+  }
+  .weekly-detail .save .btn-mini {
+    background: var(--fg-1);
+    color: var(--on-dark);
+    font-size: 11px;
+    padding: 6px 10px;
+    border-radius: var(--radius-sm);
+    display: inline-block;
+  }
+
+  /* ---------- Slide 5 art: locked card ---------- */
+  .locked-mock {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .lead-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    padding: 14px 16px;
+    position: relative;
+  }
+  .lead-card.is-locked {
+    background: repeating-linear-gradient(
+      135deg,
+      var(--surface) 0,
+      var(--surface) 10px,
+      var(--paper-2) 10px,
+      var(--paper-2) 20px
+    );
+    border-color: var(--warn-bg);
+  }
+  .lead-card .top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .lead-card .fid {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--fg-3);
+    letter-spacing: 0.06em;
+  }
+  .lead-card .nm {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--fg-1);
+  }
+  .lead-card .meta {
+    font-size: 11px;
+    color: var(--fg-2);
+    margin-top: 4px;
+  }
+  .lock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: var(--warn-bg);
+    color: var(--warn-fg);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+    letter-spacing: 0.04em;
+  }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 720px) {
+    .stage { padding: 0; }
+    .card {
+      width: 100%;
+      height: 100vh;
+      border-radius: 0;
+      border-left: none;
+      border-right: none;
+    }
+    .slide { grid-template-columns: 1fr; grid-template-rows: 220px 1fr; }
+    .slide-art { border-left: none; border-bottom: 1px solid var(--line); }
+    .slide-text { padding: 28px 24px; }
+    .slide-title { font-size: 26px; }
+    .bottombar { grid-template-columns: 1fr; gap: 12px; padding: 14px 16px; }
+    .progress-text { display: none; }
+    .nav { justify-self: stretch; }
+    .nav .btn { flex: 1; justify-content: center; }
+    .welcome-stack { height: 200px; }
+    .welcome-card-1, .welcome-card-2, .welcome-card-3 { width: 65%; }
+  }
+  @media (max-width: 720px) and (max-height: 720px) {
+    .slide { grid-template-rows: 0px 1fr; }
+    .slide-art { display: none; }
+  }
+</style>
+</head>
+<body>
+  <div class="stage">
+    <div class="card" role="region" aria-roledescription="onboarding" aria-label="NSMS sales onboarding">
+      <!-- top bar -->
+      <div class="topbar">
+        <div class="brand">
+          <div class="brand-mark">N</div>
+          <div class="brand-text">N S M S</div>
+          <div class="brand-divider"></div>
+          <div class="brand-sub">Onboarding · Sales</div>
+        </div>
+        <button class="skip-btn" id="skipBtn" type="button">Lewati →</button>
+      </div>
+
+      <!-- viewport -->
+      <div class="viewport" id="viewport">
+        <div class="track" id="track">
+
+          <!-- ============ SLIDE 1 — Welcome ============ -->
+          <section class="slide" data-slide="1">
+            <div class="slide-text">
+              <div class="slide-eyebrow"><span>Mulai Cepat</span><span class="step-num">01 / 05</span></div>
+              <h2 class="slide-title">Selamat Datang di NSMS</h2>
+              <p class="slide-sub">Sistem manajemen pipeline penjualan untuk tim KLDI · PT Intan Pariwara. Tutorial singkat ini cuma butuh ~2 menit.</p>
+              <div style="display:flex; gap:10px; margin-top:8px;">
+                <button class="btn btn--brand" data-go="next">Mulai
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="slide-art">
+              <div class="art-frame">
+                <div class="welcome-stack">
+                  <div class="welcome-card welcome-card-1">
+                    <div class="row"><span class="funnel-id">BST-0001</span><span class="tk-badge tk-50">50%</span></div>
+                    <div class="title-line">Buku Teks SD Klaten</div>
+                    <div class="meta-line">Rp 405 jt</div>
+                  </div>
+                  <div class="welcome-card welcome-card-2">
+                    <div class="row"><span class="funnel-id">BST-0014</span><span class="tk-badge tk-75">75%</span></div>
+                    <div class="title-line">Smartbook SMP Sleman</div>
+                    <div class="meta-line">Rp 220 jt</div>
+                  </div>
+                  <div class="welcome-card welcome-card-3">
+                    <div class="row"><span class="funnel-id">BST-0023</span><span style="background:var(--emerald-100);color:var(--emerald-900);font-size:10px;font-weight:600;padding:2px 8px;border-radius:999px;">100%</span></div>
+                    <div class="title-line">Paket Buku PAUD Solo</div>
+                    <div class="meta-line">Rp 540 jt · Closing</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ SLIDE 2 — Pipeline ============ -->
+          <section class="slide" data-slide="2">
+            <div class="slide-text">
+              <div class="slide-eyebrow"><span>Halaman Pipeline</span><span class="step-num">02 / 05</span></div>
+              <h2 class="slide-title">Pipeline Anda</h2>
+              <p class="slide-sub">Di halaman <strong style="color:var(--fg-1);font-weight:600">Pipeline</strong>, Anda lihat semua leads milik Anda. Ada dua tab utama:</p>
+              <ul class="slide-bullets">
+                <li><span class="dot"></span><div><strong style="color:var(--fg-1);font-weight:600">Update Funnel</strong> — update status mingguan tiap lead.</div></li>
+                <li><span class="dot"></span><div><strong style="color:var(--fg-1);font-weight:600">Input Lead</strong> — tambah proyek baru ke pipeline.</div></li>
+                <li><span class="dot"></span><div>Filter cepat: principal, wilayah, atau status TK.</div></li>
+              </ul>
+            </div>
+            <div class="slide-art">
+              <div class="art-frame">
+                <div class="pipeline-mock">
+                  <div class="pipeline-tabs">
+                    <div class="pipeline-tab is-active">Update Funnel</div>
+                    <div class="pipeline-tab">Input Lead</div>
+                  </div>
+                  <div class="pipeline-row">
+                    <div class="funnel-id">BST-0001</div>
+                    <div class="nm">Buku Teks SD Klaten</div>
+                    <span class="tk-badge tk-50">50%</span>
+                  </div>
+                  <div class="pipeline-row">
+                    <div class="funnel-id">BST-0002</div>
+                    <div class="nm">Interaktif SMP Sleman</div>
+                    <span class="tk-badge tk-75">75%</span>
+                  </div>
+                  <div class="pipeline-row">
+                    <div class="funnel-id">BST-0003</div>
+                    <div class="nm">Smartbook SD Solo</div>
+                    <span class="tk-badge tk-100">100%</span>
+                  </div>
+                  <div class="pipeline-row">
+                    <div class="funnel-id">BST-0019</div>
+                    <div class="nm">Buku PAUD Magelang</div>
+                    <span class="tk-badge tk-25">25%</span>
+                  </div>
+                  <div class="pipeline-row">
+                    <div class="funnel-id">BST-0020</div>
+                    <div class="nm">Alat Praktik SMK Kulon Progo</div>
+                    <span class="tk-badge tk-5">5%</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ SLIDE 3 — Input Lead ============ -->
+          <section class="slide" data-slide="3">
+            <div class="slide-text">
+              <div class="slide-eyebrow"><span>Tambah Proyek</span><span class="step-num">03 / 05</span></div>
+              <h2 class="slide-title">Input Lead Baru</h2>
+              <p class="slide-sub">Isi form dengan data proyek: nama paket, instansi, nilai anggaran, dan status awal. Pastikan semua field wajib (<span style="color:#dc2626;font-weight:600">*</span>) terisi.</p>
+              <ul class="slide-bullets">
+                <li><span class="dot"></span><div><strong style="color:var(--fg-1);font-weight:600">Funnel ID</strong> dibuat otomatis (mis. <code>BST-0024</code>) — tidak perlu diketik.</div></li>
+                <li><span class="dot"></span><div>Nilai anggaran format rupiah, akan diformat otomatis saat disimpan.</div></li>
+                <li><span class="dot"></span><div>Status awal biasanya <strong style="color:var(--fg-1);font-weight:600">5%</strong> (Info Awal) atau <strong style="color:var(--fg-1);font-weight:600">10%</strong> (Info Kebutuhan).</div></li>
+              </ul>
+            </div>
+            <div class="slide-art">
+              <div class="art-frame">
+                <div class="form-mock">
+                  <div class="form-title">
+                    <span>Input Lead Baru</span>
+                    <span class="auto-id">auto · BST-0024</span>
+                  </div>
+                  <div class="form-row is-focused">
+                    <span class="lbl">Nama Paket <span class="req">*</span></span>
+                    <div class="input">Paket Buku Teks SD Kab Banjarnegara</div>
+                  </div>
+                  <div class="form-row-grid">
+                    <div class="form-row">
+                      <span class="lbl">Instansi <span class="req">*</span></span>
+                      <div class="input">Disdik Banjarnegara</div>
+                    </div>
+                    <div class="form-row">
+                      <span class="lbl">Wilayah <span class="req">*</span></span>
+                      <div class="input">Jawa Tengah</div>
+                    </div>
+                  </div>
+                  <div class="form-row-grid">
+                    <div class="form-row">
+                      <span class="lbl">Nilai Anggaran <span class="req">*</span></span>
+                      <div class="input">Rp 285.000.000</div>
+                    </div>
+                    <div class="form-row">
+                      <span class="lbl">Status Awal <span class="req">*</span></span>
+                      <div class="input"><span class="tk-badge tk-5" style="font-size:9px;">5%</span> &nbsp;Info Awal</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ SLIDE 4 — Weekly Update ============ -->
+          <section class="slide" data-slide="4">
+            <div class="slide-text">
+              <div class="slide-eyebrow"><span>Rutinitas Mingguan</span><span class="step-num">04 / 05</span></div>
+              <h2 class="slide-title">Update Mingguan</h2>
+              <p class="slide-sub">Setiap minggu, pilih lead dari daftar kiri, pilih status terbaru, isi catatan perkembangan, lalu klik <strong style="color:var(--fg-1);font-weight:600">Simpan Update</strong>. Week label (mis. <code style="font-family:var(--font-mono);font-size:12px;background:var(--paper);border:1px solid var(--line);padding:1px 6px;border-radius:4px;">W17-2026</code>) terisi otomatis.</p>
+              <ul class="slide-bullets">
+                <li><span class="dot"></span><div>Ingat: status hanya bisa <em>naik</em> atau <em>tetap</em>. Naik dari 50% ke 75%, bukan turun.</div></li>
+                <li><span class="dot"></span><div>Catatan = info konkret (siapa ditemui, hasil presentasi, ekspektasi PO).</div></li>
+              </ul>
+            </div>
+            <div class="slide-art">
+              <div class="art-frame">
+                <div class="weekly-mock">
+                  <div class="weekly-list">
+                    <div class="item is-active"><span class="fid">BST-0001</span>SD Klaten</div>
+                    <div class="item"><span class="fid">BST-0002</span>SMP Sleman</div>
+                    <div class="item"><span class="fid">BST-0003</span>SD Solo</div>
+                    <div class="item"><span class="fid">BST-0019</span>PAUD Magelang</div>
+                  </div>
+                  <div class="weekly-detail">
+                    <div class="week-pill">W17 · 2026</div>
+                    <div class="status-row">
+                      <span class="tk-badge tk-25">25%</span>
+                      <span class="tk-badge tk-50" style="outline:2px solid var(--fg-1);outline-offset:1px;">50%</span>
+                      <span class="tk-badge tk-75">75%</span>
+                      <span class="tk-badge tk-100">100%</span>
+                    </div>
+                    <div class="note">Negosiasi harga dgn Pak Bagas Disdik. PO ditargetkan masuk minggu depan…</div>
+                    <div class="save"><span class="btn-mini">Simpan Update</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ============ SLIDE 5 — Locked Leads ============ -->
+          <section class="slide" data-slide="5">
+            <div class="slide-text">
+              <div class="slide-eyebrow"><span>Aturan Penting</span><span class="step-num">05 / 05</span></div>
+              <h2 class="slide-title">Lead Terkunci 🔒</h2>
+              <p class="slide-sub">Lead dengan status <strong style="color:var(--fg-1);font-weight:600">Closing (100%)</strong> atau <strong style="color:var(--fg-1);font-weight:600">Gagal (0%)</strong> tidak bisa diedit lagi — dianggap final. Hubungi admin jika perlu membuka kembali.</p>
+              <ul class="slide-bullets">
+                <li><span class="dot"></span><div>Closing = PO sudah masuk → langsung jadi target tercapai.</div></li>
+                <li><span class="dot"></span><div>Gagal = batal/kalah tender → tidak masuk forecast netto.</div></li>
+              </ul>
+              <div style="display:flex; gap:10px; margin-top:14px;">
+                <button class="btn btn--brand" id="finishBtn" type="button">
+                  Mulai Gunakan NSMS
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+                </button>
+              </div>
+            </div>
+            <div class="slide-art">
+              <div class="art-frame">
+                <div class="locked-mock">
+                  <div class="lead-card is-locked">
+                    <div class="top">
+                      <span class="fid">BST-0023</span>
+                      <span class="lock-badge">
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        Terkunci
+                      </span>
+                    </div>
+                    <div class="nm">Paket Buku PAUD Solo</div>
+                    <div class="meta">Rp 540 jt · <span style="color:var(--tk-100-fg);font-weight:600">Closing 100%</span></div>
+                  </div>
+                  <div class="lead-card is-locked">
+                    <div class="top">
+                      <span class="fid">BST-0017</span>
+                      <span class="lock-badge">
+                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                        Terkunci
+                      </span>
+                    </div>
+                    <div class="nm" style="text-decoration:line-through;color:var(--fg-3);">Alat Praktik SMK Bantul</div>
+                    <div class="meta">Rp 180 jt · <span style="color:var(--fg-3);font-weight:600">Gagal 0%</span></div>
+                  </div>
+                  <div class="lead-card">
+                    <div class="top">
+                      <span class="fid">BST-0001</span>
+                      <span class="tk-badge tk-50">50%</span>
+                    </div>
+                    <div class="nm">Buku Teks SD Klaten</div>
+                    <div class="meta">Rp 405 jt · masih bisa diedit</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- bottom bar -->
+      <div class="bottombar">
+        <div class="progress-text" id="progressText">Langkah 1 dari 5</div>
+        <div class="dots" role="tablist" aria-label="Progress slide">
+          <button class="dot-btn" type="button" data-i="0" aria-current="true" aria-label="Slide 1"><span class="pip"></span></button>
+          <button class="dot-btn" type="button" data-i="1" aria-label="Slide 2"><span class="pip"></span></button>
+          <button class="dot-btn" type="button" data-i="2" aria-label="Slide 3"><span class="pip"></span></button>
+          <button class="dot-btn" type="button" data-i="3" aria-label="Slide 4"><span class="pip"></span></button>
+          <button class="dot-btn" type="button" data-i="4" aria-label="Slide 5"><span class="pip"></span></button>
+        </div>
+        <div class="nav">
+          <button class="btn" id="prevBtn" type="button" disabled>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+            Sebelumnya
+          </button>
+          <button class="btn btn--primary" id="nextBtn" type="button">
+            Selanjutnya
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- toast (visual confirmation when onboarding-complete fires) -->
+    <div id="toast" aria-live="polite" style="
+      position: fixed; left: 50%; bottom: 32px; transform: translateX(-50%) translateY(20px);
+      background: var(--fg-1); color: var(--on-dark);
+      padding: 12px 18px; border-radius: 999px;
+      font-size: 13px; opacity: 0; pointer-events: none;
+      transition: opacity var(--dur-normal), transform var(--dur-normal) var(--ease-out-expo);
+      z-index: 1000; display: flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow-lg);
+    ">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+      <span id="toastText">Onboarding selesai</span>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      const TOTAL = 5;
+      let idx = 0;
+
+      const track = document.getElementById('track');
+      const dots = Array.from(document.querySelectorAll('.dot-btn'));
+      const prevBtn = document.getElementById('prevBtn');
+      const nextBtn = document.getElementById('nextBtn');
+      const skipBtn = document.getElementById('skipBtn');
+      const finishBtn = document.getElementById('finishBtn');
+      const progressText = document.getElementById('progressText');
+      const toast = document.getElementById('toast');
+      const toastText = document.getElementById('toastText');
+
+      function render() {
+        track.style.transform = `translateX(-${idx * 100}%)`;
+        dots.forEach((d, i) => d.setAttribute('aria-current', i === idx ? 'true' : 'false'));
+        prevBtn.disabled = idx === 0;
+        progressText.textContent = `Langkah ${idx + 1} dari ${TOTAL}`;
+
+        // morph next button on last slide
+        if (idx === TOTAL - 1) {
+          nextBtn.innerHTML = `Mulai Gunakan NSMS
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>`;
+          nextBtn.classList.add('btn--brand');
+          nextBtn.classList.remove('btn--primary');
+          nextBtn.dataset.role = 'finish';
+        } else {
+          nextBtn.innerHTML = `Selanjutnya
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
+          nextBtn.classList.add('btn--primary');
+          nextBtn.classList.remove('btn--brand');
+          nextBtn.dataset.role = 'next';
+        }
+      }
+
+      function go(to) {
+        idx = Math.max(0, Math.min(TOTAL - 1, to));
+        render();
+      }
+
+      function complete(reason) {
+        toastText.textContent = reason === 'skip' ? 'Tutorial dilewati' : 'Selamat! Mulai gunakan NSMS';
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateX(-50%) translateY(20px)';
+        }, 2400);
+        window.dispatchEvent(new CustomEvent('onboarding-complete', { detail: { reason } }));
+      }
+
+      // controls
+      prevBtn.addEventListener('click', () => go(idx - 1));
+      nextBtn.addEventListener('click', () => {
+        if (nextBtn.dataset.role === 'finish') complete('finish');
+        else go(idx + 1);
+      });
+      skipBtn.addEventListener('click', () => complete('skip'));
+      finishBtn.addEventListener('click', () => complete('finish'));
+
+      // in-slide "Mulai" buttons
+      document.querySelectorAll('[data-go="next"]').forEach(b =>
+        b.addEventListener('click', () => go(idx + 1))
+      );
+
+      // dots
+      dots.forEach(d =>
+        d.addEventListener('click', () => go(parseInt(d.dataset.i, 10)))
+      );
+
+      // keyboard
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'PageDown') { e.preventDefault(); go(idx + 1); }
+        else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); go(idx - 1); }
+        else if (e.key === 'Escape') { complete('skip'); }
+      });
+
+      // touch swipe
+      let touchStartX = null;
+      const vp = document.getElementById('viewport');
+      vp.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+      vp.addEventListener('touchend', (e) => {
+        if (touchStartX == null) return;
+        const dx = e.changedTouches[0].clientX - touchStartX;
+        if (Math.abs(dx) > 50) go(idx + (dx < 0 ? 1 : -1));
+        touchStartX = null;
+      });
+
+      // log event for hosts (visible to user when previewing)
+      window.addEventListener('onboarding-complete', (e) => {
+        console.log('[NSMS] onboarding-complete', e.detail);
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
