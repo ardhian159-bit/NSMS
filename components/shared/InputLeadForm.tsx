@@ -202,6 +202,7 @@ export default function InputLeadForm({
       } else {
         // === INSERT MODE ===
         const funnelId = await generateFunnelId(form.ownerName)
+        const { data: { user } } = await supabase.auth.getUser()
         const now = new Date()
         const weekLabel = getWeekLabel(now)
 
@@ -228,6 +229,7 @@ export default function InputLeadForm({
           forecast_netto: forecastNetto,
           keterangan: form.keterangan,
           owner_name: form.ownerName,
+          owner_id: user?.id ?? null,
           input_week_label: weekLabel,
           input_week: parseInt(weekLabel.replace('W', '').split('-')[0]),
           input_year: now.getFullYear(),
