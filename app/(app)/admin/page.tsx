@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
-import { mapLeadRow } from '@/lib/types'
-import type { LeadRow, SettingRowRaw, AppSettings } from '@/lib/types'
+import { mapLeadRow, mapProfileRow } from '@/lib/types'
+import type { LeadRow, ProfileRow, SettingRowRaw, AppSettings } from '@/lib/types'
 import AdminClient from './admin-client'
 
 export default async function AdminPage() {
@@ -10,15 +10,17 @@ export default async function AdminPage() {
   if (!user) redirect('/login')
 
   // Check role
-  const { data: profile } = await supabase
+  const { data: profileRow } = await supabase
     .from('profiles')
-    .select('role')
+    .select('*')
     .eq('id', user.id)
     .single()
 
-  if (!profile || !['superadmin', 'admin'].includes(profile.role)) {
+  if (!profileRow || !['superadmin', 'admin'].includes((profileRow as ProfileRow).role ?? '')) {
     redirect('/dashboard')
   }
+
+  const profile = mapProfileRow(profileRow as ProfileRow)
 
   // Fetch leads
   const { data: leadRows } = await supabase
@@ -50,5 +52,5 @@ export default async function AdminPage() {
     }
   })
 
-  return <AdminClient leads={leads} settings={settings} />
+  return <AdminClient leads={leads} settings={settings} profile={profile} />
 }

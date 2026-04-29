@@ -161,7 +161,8 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
                   <th className="text-left px-3 py-2 font-medium">#</th>
                   <th className="text-left px-3 py-2 font-medium">PIC</th>
                   <th className="text-left px-3 py-2 font-medium">Nama Paket</th>
-                  <th className="text-left px-3 py-2 font-medium">Wilayah</th>
+                  <th className="text-left px-3 py-2 font-medium max-w-[120px]">Wilayah</th>
+                  <th className="px-3 py-2 font-medium text-center w-16">Quarter</th>
                   <th className="text-right px-3 py-2 font-medium">
                     {metricMode === 'netto' ? 'Forecast Netto' : 'Bruto'}
                   </th>
@@ -177,7 +178,12 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
                     </td>
                     <td className="px-3 py-2 text-[#1A1A18] font-medium">{c.ownerName}</td>
                     <td className="px-3 py-2 text-[#6B6B65] max-w-[200px] truncate">{c.namaPaket}</td>
-                    <td className="px-3 py-2 text-[#6B6B65]">{c.wilayah}</td>
+                    <td className="px-3 py-2 text-[#6B6B65] max-w-[120px] truncate">{c.wilayah}</td>
+                    <td className="px-3 py-2 text-center w-16">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-[#F5F5F2] text-[#6B6B65] font-medium">
+                        {c.quarter || '—'}
+                      </span>
+                    </td>
                     <td className="px-3 py-2 text-right font-semibold text-green-700">
                       {formatRupiahShort(metricMode === 'netto' ? c.forecastNetto : c.nilaiAnggaran)}
                     </td>
@@ -190,7 +196,7 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
                         {topClosing.length + idx + 1}
                       </span>
                     </td>
-                    <td colSpan={4} className="px-3 py-2 text-[#A0A09A] italic text-sm">
+                    <td colSpan={5} className="px-3 py-2 text-[#A0A09A] italic text-sm">
                       Menunggu Closing
                     </td>
                   </tr>

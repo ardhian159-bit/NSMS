@@ -168,6 +168,7 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
           <InputLeadForm
             defaultOwnerName={profile.picName}
             settings={settings}
+            profile={profile}
             onSuccess={() => { setEditingLead(null); refetch() }}
             editLead={editingLead}
             onCancelEdit={() => setEditingLead(null)}
@@ -187,16 +188,18 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
                   className="form-input pl-9 text-sm w-full"
                 />
               </div>
-              <select
-                value={filterPic}
-                onChange={(e) => setFilterPic(e.target.value)}
-                className="form-select text-sm w-full sm:w-48"
-              >
-                <option value="">Semua PIC</option>
-                {settings.picNames.map((name) => (
-                  <option key={name} value={name}>{name}</option>
-                ))}
-              </select>
+              {profile.role !== 'sales' && (
+                <select
+                  value={filterPic}
+                  onChange={(e) => setFilterPic(e.target.value)}
+                  className="form-select text-sm w-full sm:w-48"
+                >
+                  <option value="">Semua PIC</option>
+                  {settings.picNames.map((name) => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                </select>
+              )}
               <span className="text-xs text-[#A0A09A] self-center whitespace-nowrap">
                 {filteredInputLeads.length} paket
               </span>

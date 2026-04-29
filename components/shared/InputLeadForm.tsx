@@ -7,7 +7,7 @@ import { calcDPP, calcForecastNetto, formatDotted, parseCurrency } from '@/lib/d
 import { getWeekLabel } from '@/lib/dashboard/week'
 import { PROVINSI_LIST, getKabKotaList } from '@/lib/region-data'
 import { generateFunnelId } from '@/lib/funnel/generateFunnelId'
-import type { AppSettings, Lead } from '@/lib/types'
+import type { AppSettings, Lead, Profile } from '@/lib/types'
 
 interface InputLeadFormProps {
   /** Pre-fill PIC as read-only (pipeline/sales mode) */
@@ -16,6 +16,8 @@ interface InputLeadFormProps {
   picOptions?: string[]
   /** Settings for dropdowns */
   settings: AppSettings
+  /** Current user profile */
+  profile: Profile
   /** Callback after successful submit */
   onSuccess?: () => void
   /** Lead to edit (switches to edit mode) */
@@ -70,6 +72,7 @@ export default function InputLeadForm({
   defaultOwnerName,
   picOptions,
   settings,
+  profile,
   onSuccess,
   editLead,
   onCancelEdit,
@@ -230,6 +233,7 @@ export default function InputLeadForm({
           keterangan: form.keterangan,
           owner_name: form.ownerName,
           owner_id: user?.id ?? null,
+          mp_id: profile.role === 'mp' ? user?.id ?? null : null,
           input_week_label: weekLabel,
           input_week: parseInt(weekLabel.replace('W', '').split('-')[0]),
           input_year: now.getFullYear(),
@@ -270,24 +274,18 @@ export default function InputLeadForm({
         {/* PIC */}
         <div>
           <Label>PIC *</Label>
-          {picOptions ? (
-            <select
-              value={form.ownerName}
-              onChange={(e) => update('ownerName', e.target.value)}
-              className="form-select"
-            >
-              <option value="">-- Pilih PIC --</option>
-              {picOptions.map((p) => (
-                <option key={p} value={p}>{p}</option>
-              ))}
-            </select>
-          ) : (
+          {profile.role === 'sales' ? (
             <input
               type="text"
               value={form.ownerName}
               readOnly
-              className="form-input bg-[#F5F5F2] text-[#A0A09A] cursor-not-allowed"
+              className="form-input bg-[#F5F5F2] cursor-not-allowed text-[#6B6B65]"
             />
+          ) : (
+            <select value={form.ownerName} onChange={(e) => update('ownerName', e.target.value)} className="form-select">
+              <option value="">-- Pilih PIC --</option>
+              {settings.picNames.map((n) => <option key={n} value={n}>{n}</option>)}
+            </select>
           )}
         </div>
 

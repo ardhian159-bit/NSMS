@@ -65,7 +65,7 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
   }
 
   return (
-    <div className="p-4 md:p-6 space-y-6 max-w-xl">
+    <div className="p-4 md:p-6 space-y-6 max-w-2xl">
       {/* Header */}
       <div>
         <h1 className="text-xl font-semibold text-[#1A1A18]">Pengaturan</h1>

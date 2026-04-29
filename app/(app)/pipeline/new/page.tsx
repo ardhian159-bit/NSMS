@@ -50,6 +50,7 @@ export default async function NewLeadPage() {
       <InputLeadForm
         defaultOwnerName={profile.picName}
         settings={settings}
+        profile={profile}
       />
     </div>
   )

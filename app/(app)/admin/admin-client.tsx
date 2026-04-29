@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import type { Lead, AppSettings } from '@/lib/types'
+import type { Lead, AppSettings, Profile } from '@/lib/types'
 import InputLeadForm from '@/components/shared/InputLeadForm'
 import AdminLeadTable from '@/components/admin/AdminLeadTable'
 import EditLeadModal from '@/components/admin/EditLeadModal'
@@ -11,6 +11,7 @@ import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog'
 interface AdminClientProps {
   leads: Lead[]
   settings: AppSettings
+  profile: Profile
 }
 
 const TABS = [
@@ -20,7 +21,7 @@ const TABS = [
 
 type TabKey = typeof TABS[number]['key']
 
-export default function AdminClient({ leads, settings }: AdminClientProps) {
+export default function AdminClient({ leads, settings, profile }: AdminClientProps) {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState<TabKey>('input')
   const [editLead, setEditLead] = useState<Lead | null>(null)
@@ -60,6 +61,7 @@ export default function AdminClient({ leads, settings }: AdminClientProps) {
         <InputLeadForm
           picOptions={settings.picNames}
           settings={settings}
+          profile={profile}
           onSuccess={refetch}
         />
       )}
