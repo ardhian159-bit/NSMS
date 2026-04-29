@@ -6,6 +6,7 @@ import { TK_STATUS_MAP, TK_VALUES, QUARTER_OPTIONS } from '@/lib/constants'
 import { calcDPP, calcForecastNetto, formatDotted, parseCurrency } from '@/lib/dashboard/formatters'
 import { getWeekLabel } from '@/lib/dashboard/week'
 import { PROVINSI_LIST, getKabKotaList } from '@/lib/region-data'
+import { generateFunnelId } from '@/lib/funnel/generateFunnelId'
 import type { AppSettings, Lead } from '@/lib/types'
 
 interface InputLeadFormProps {
@@ -565,47 +566,4 @@ function Label({ children }: { children: React.ReactNode }) {
   return (
     <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">{children}</label>
   )
-}
-
-/**
- * Generate a unique funnel ID.
- * Prefix: first 3 chars of first name. Collision → 4 chars.
- * Overrides: BAMBANG SURYANTO → BST, BAMBANG MUDJIRAN → BM
- */
-async function generateFunnelId(picName: string): Promise<string> {
-  const OVERRIDES: Record<string, string> = {
-    'BAMBANG SURYANTO': 'BST',
-    'BAMBANG MUDJIRAN': 'BM',
-  }
-
-  const upper = picName.toUpperCase().trim()
-  let prefix = OVERRIDES[upper]
-
-  if (!prefix) {
-    const firstName = upper.split(' ')[0]
-    prefix = firstName.substring(0, 3)
-
-    // Check collision
-    const { data: existing } = await supabase
-      .from('leads')
-      .select('funnel_id, owner_name')
-      .ilike('funnel_id', `${prefix}-%`)
-
-    const hasCollision = (existing ?? []).some(
-      (row) => (row.owner_name ?? '').toUpperCase().trim() !== upper
-    )
-
-    if (hasCollision) {
-      prefix = firstName.substring(0, 4)
-    }
-  }
-
-  // Count existing for this prefix
-  const { count } = await supabase
-    .from('leads')
-    .select('*', { count: 'exact', head: true })
-    .ilike('funnel_id', `${prefix}-%`)
-
-  const seq = ((count ?? 0) + 1).toString().padStart(4, '0')
-  return `${prefix}-${seq}`
 }
