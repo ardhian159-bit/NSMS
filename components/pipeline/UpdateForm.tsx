@@ -162,9 +162,8 @@ export default function UpdateForm({ lead, trackerHistory, onUpdated }: UpdateFo
             <input
               type="text"
               value={week}
-              onChange={(e) => setWeek(e.target.value)}
-              className="form-input font-[family-name:var(--font-dm-mono)]"
-              disabled={isLocked || loading}
+              readOnly
+              className="form-input font-[family-name:var(--font-dm-mono)] bg-[#F5F5F2] cursor-not-allowed text-[#A0A09A]"
             />
           </div>
         </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo, useCallback } from 'react'
+import { useState, useMemo, useCallback, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Search, Pencil } from 'lucide-react'
 import type { Lead, TrackerEntry, AppSettings, Profile } from '@/lib/types'
@@ -31,6 +31,10 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [editingLead, setEditingLead] = useState<Lead | null>(null)
+  const [inputSearch, setInputSearch] = useState('')
+  const [filterPic, setFilterPic] = useState('')
+  const [inputPage, setInputPage] = useState(0)
+  const inputPageSize = 25
 
   const filteredLeads = useMemo(() => {
     if (!search) return leads
@@ -42,6 +46,30 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
         l.instansi.toLowerCase().includes(s)
     )
   }, [leads, search])
+
+  const filteredInputLeads = useMemo(() => {
+    let result = leads
+    if (filterPic) result = result.filter((l) => l.ownerName === filterPic)
+    if (inputSearch) {
+      const s = inputSearch.toLowerCase()
+      result = result.filter(
+        (l) =>
+          (l.namaPaket || '').toLowerCase().includes(s) ||
+          l.funnelId.toLowerCase().includes(s) ||
+          (l.instansi || '').toLowerCase().includes(s)
+      )
+    }
+    return result
+  }, [leads, filterPic, inputSearch])
+
+  const paginatedInputLeads = useMemo(() => {
+    const start = inputPage * inputPageSize
+    return filteredInputLeads.slice(start, start + inputPageSize)
+  }, [filteredInputLeads, inputPage, inputPageSize])
+
+  useEffect(() => {
+    setInputPage(0)
+  }, [inputSearch, filterPic])
 
   const selectedLead = useMemo(
     () => (selectedFunnelId ? leads.find((l) => l.funnelId === selectedFunnelId) ?? null : null),
@@ -147,11 +175,34 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
 
           {/* Tabel leads untuk edit */}
           <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
-            <div className="px-4 py-3 border-b border-[#EBEBE7] bg-[#FAFAF8]">
-              <h3 className="text-xs font-semibold text-[#A0A09A] uppercase tracking-wider">
-                Daftar Lead — {leads.length} paket
-              </h3>
+            {/* Toolbar */}
+            <div className="px-4 py-3 border-b border-[#EBEBE7] bg-[#FAFAF8] flex flex-col sm:flex-row gap-3">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0A09A]" />
+                <input
+                  type="text"
+                  value={inputSearch}
+                  onChange={(e) => setInputSearch(e.target.value)}
+                  placeholder="Cari funnel ID, nama paket, instansi..."
+                  className="form-input pl-9 text-sm w-full"
+                />
+              </div>
+              <select
+                value={filterPic}
+                onChange={(e) => setFilterPic(e.target.value)}
+                className="form-select text-sm w-full sm:w-48"
+              >
+                <option value="">Semua PIC</option>
+                {settings.picNames.map((name) => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
+              <span className="text-xs text-[#A0A09A] self-center whitespace-nowrap">
+                {filteredInputLeads.length} paket
+              </span>
             </div>
+
+            {/* Table */}
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
                 <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
@@ -164,7 +215,7 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#EBEBE7]">
-                  {leads.map((lead) => {
+                  {paginatedInputLeads.map((lead) => {
                     const isLocked = lead.tk === 100 || lead.tk === 0
                     const isEditing = editingLead?.id === lead.id
                     return (
@@ -208,6 +259,34 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
                   })}
                 </tbody>
               </table>
+            </div>
+
+            {/* Pagination Footer */}
+            <div className="px-4 py-3 border-t border-[#EBEBE7] flex items-center justify-between text-xs text-[#6B6B65]">
+              <span>
+                Menampilkan {filteredInputLeads.length === 0 ? 0 : inputPage * inputPageSize + 1}–
+                {Math.min((inputPage + 1) * inputPageSize, filteredInputLeads.length)} dari {filteredInputLeads.length} entri
+              </span>
+              <div className="flex gap-1">
+                {[
+                  { label: '«', target: 0 },
+                  { label: '‹', target: inputPage - 1 },
+                  { label: '›', target: inputPage + 1 },
+                  { label: '»', target: Math.ceil(filteredInputLeads.length / inputPageSize) - 1 },
+                ].map(({ label, target }) => (
+                  <button
+                    key={label}
+                    onClick={() => setInputPage(Math.max(0, Math.min(target, Math.ceil(filteredInputLeads.length / inputPageSize) - 1)))}
+                    disabled={
+                      (label === '«' || label === '‹') ? inputPage === 0 :
+                      inputPage >= Math.ceil(filteredInputLeads.length / inputPageSize) - 1
+                    }
+                    className="px-2 py-1 rounded border border-[#EBEBE7] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    {label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
         </div>
