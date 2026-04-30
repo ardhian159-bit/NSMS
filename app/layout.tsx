@@ -17,6 +17,11 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: 'NSMS — Sales Management System',
   description: 'National Sales Management System — Intan Pariwara KLDI',
+  icons: {
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
+  },
 }
 
 export default function RootLayout({
