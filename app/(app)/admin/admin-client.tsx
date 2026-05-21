@@ -2,29 +2,28 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import type { Lead, AppSettings, Profile } from '@/lib/types'
-import InputLeadForm from '@/components/shared/InputLeadForm'
-import AdminLeadTable from '@/components/admin/AdminLeadTable'
-import EditLeadModal from '@/components/admin/EditLeadModal'
+import type { Lead, TrackerEntry, AppSettings, Profile } from '@/lib/types'
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog'
+import AdminTabUpdateFunnel from '@/components/admin/AdminTabUpdateFunnel'
+import LeadManagementTab from '@/components/shared/LeadManagementTab'
 
 interface AdminClientProps {
   leads: Lead[]
+  trackers: TrackerEntry[]
   settings: AppSettings
   profile: Profile
 }
 
 const TABS = [
-  { key: 'input', label: 'Input Lead' },
-  { key: 'kelola', label: 'Kelola Lead' },
+  { key: 'update', label: '🔄 Update Funnel' },
+  { key: 'kelola', label: '🗂️ Kelola Lead' },
 ] as const
 
 type TabKey = typeof TABS[number]['key']
 
-export default function AdminClient({ leads, settings, profile }: AdminClientProps) {
+export default function AdminClient({ leads, trackers, settings, profile }: AdminClientProps) {
   const router = useRouter()
-  const [activeTab, setActiveTab] = useState<TabKey>('input')
-  const [editLead, setEditLead] = useState<Lead | null>(null)
+  const [activeTab, setActiveTab] = useState<TabKey>('update')
   const [deleteLead, setDeleteLead] = useState<Lead | null>(null)
 
   const refetch = useCallback(() => {
@@ -40,12 +39,12 @@ export default function AdminClient({ leads, settings, profile }: AdminClientPro
       </div>
 
       {/* Tab Pills */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-none">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
               activeTab === tab.key
                 ? 'bg-[#1A1A18] text-white'
                 : 'bg-white text-[#6B6B65] border border-[#EBEBE7] hover:bg-[#F5F5F2]'
@@ -56,31 +55,26 @@ export default function AdminClient({ leads, settings, profile }: AdminClientPro
         ))}
       </div>
 
-      {/* Tab Content */}
-      {activeTab === 'input' && (
-        <InputLeadForm
-          picOptions={settings.picNames}
+      {/* Tab: Update Funnel */}
+      {activeTab === 'update' && (
+        <AdminTabUpdateFunnel
+          leads={leads}
+          trackers={trackers}
           settings={settings}
-          profile={profile}
-          onSuccess={refetch}
+          onUpdated={refetch}
         />
       )}
 
+      {/* Tab: Kelola Lead */}
       {activeTab === 'kelola' && (
         <>
-          <AdminLeadTable
+          <LeadManagementTab
             leads={leads}
-            onEdit={setEditLead}
+            settings={settings}
+            profile={profile}
+            onRefetch={refetch}
             onDelete={setDeleteLead}
           />
-
-          <EditLeadModal
-            lead={editLead}
-            open={!!editLead}
-            onClose={() => setEditLead(null)}
-            onSaved={refetch}
-          />
-
           <DeleteConfirmDialog
             lead={deleteLead}
             open={!!deleteLead}

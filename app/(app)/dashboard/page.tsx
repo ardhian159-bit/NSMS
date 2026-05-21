@@ -20,10 +20,15 @@ export default async function DashboardPage() {
 
   const profile = mapProfileRow(profileRow as ProfileRow)
 
-  // Fetch leads + trackers in parallel
-  const [{ data: leadRows, error: leadsErr }, { data: trackerRows, error: trackersErr }] = await Promise.all([
+  // Fetch leads + trackers + company targets in parallel
+  const [
+    { data: leadRows, error: leadsErr },
+    { data: trackerRows, error: trackersErr },
+    { data: companyTargets },
+  ] = await Promise.all([
     supabase.from('leads').select('*').order('created_at', { ascending: false }),
     supabase.from('tracker').select('*').order('created_at', { ascending: false }),
+    supabase.from('company_targets').select('quarter, target_bruto, target_netto').eq('year', 2026),
   ])
 
   if (trackersErr) {
@@ -33,5 +38,5 @@ export default async function DashboardPage() {
   const leads = (leadRows as LeadRow[] | null)?.map(mapLeadRow) ?? []
   const trackers = (trackerRows as TrackerRow[] | null)?.map(mapTrackerRow) ?? []
 
-  return <DashboardClient leads={leads || []} trackers={trackers || []} profile={profile} />
+  return <DashboardClient leads={leads || []} trackers={trackers || []} profile={profile} companyTargets={companyTargets ?? []} />
 }

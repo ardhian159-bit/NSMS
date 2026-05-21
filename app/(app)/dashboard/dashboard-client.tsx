@@ -28,14 +28,16 @@ import ChartTopPic from '@/components/dashboard/charts/ChartTopPic'
 import ChartSumberDana from '@/components/dashboard/charts/ChartSumberDana'
 import ChartPrincipal from '@/components/dashboard/charts/ChartPrincipal'
 import ChartJenisProduk from '@/components/dashboard/charts/ChartJenisProduk'
+import TargetProgress from '@/components/dashboard/TargetProgress'
 
 interface DashboardClientProps {
   leads: Lead[]
   trackers: TrackerEntry[]
   profile: Profile
+  companyTargets: { quarter: string; target_bruto: number; target_netto: number }[]
 }
 
-export default function DashboardClient({ leads, trackers, profile }: DashboardClientProps) {
+export default function DashboardClient({ leads, trackers, profile, companyTargets }: DashboardClientProps) {
   // --- State ---
   const [filters, setFilters] = useState<FilterState>({ ...DEFAULT_FILTER_STATE })
   const [sort, setSort] = useState<SortState>({ column: 'forecastNetto', ascending: false })
@@ -133,6 +135,14 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
       {/* KPI Cards */}
       <KpiCards kpis={kpis} />
 
+      {/* Target Progress */}
+      <TargetProgress
+        leads={leads}
+        targets={companyTargets}
+        metricMode={metricMode}
+        onToggle={() => setMetricMode(m => m === 'netto' ? 'bruto' : 'netto')}
+      />
+
       {/* Bruto / Netto Toggle */}
       <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5 w-fit">
         {(['netto', 'bruto'] as const).map((m) => (
@@ -210,7 +220,11 @@ export default function DashboardClient({ leads, trackers, profile }: DashboardC
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <ChartFunnel data={funnelChart} metricMode={metricMode} />
-        <ChartQuarter data={quarterChart} />
+        <ChartQuarter
+          data={quarterChart}
+          targets={companyTargets}
+          metricMode={metricMode}
+        />
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {profile.role === 'sales'

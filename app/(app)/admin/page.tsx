@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
-import { mapLeadRow, mapProfileRow } from '@/lib/types'
-import type { LeadRow, ProfileRow, SettingRowRaw, AppSettings } from '@/lib/types'
+import { mapLeadRow, mapProfileRow, mapTrackerRow } from '@/lib/types'
+import type { LeadRow, ProfileRow, TrackerRow, SettingRowRaw, AppSettings } from '@/lib/types'
 import AdminClient from './admin-client'
 
 export default async function AdminPage() {
@@ -28,6 +28,12 @@ export default async function AdminPage() {
     .select('*')
     .order('created_at', { ascending: false })
 
+  // Fetch trackers
+  const { data: trackerRows } = await supabase
+    .from('tracker')
+    .select('funnel_id, week, status_baru, forecast_netto, notes, pic, nama_paket')
+    .order('week', { ascending: false })
+
   // Fetch settings
   const { data: settingRows } = await supabase
     .from('settings')
@@ -35,6 +41,7 @@ export default async function AdminPage() {
     .order('sort_order', { ascending: true })
 
   const leads = (leadRows as LeadRow[] | null)?.map(mapLeadRow) ?? []
+  const trackers = (trackerRows as TrackerRow[] | null)?.map(mapTrackerRow) ?? []
 
   const settings: AppSettings = {
     picNames: [],
@@ -52,5 +59,5 @@ export default async function AdminPage() {
     }
   })
 
-  return <AdminClient leads={leads} settings={settings} profile={profile} />
+  return <AdminClient leads={leads} trackers={trackers} settings={settings} profile={profile} />
 }

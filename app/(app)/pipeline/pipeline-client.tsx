@@ -1,15 +1,13 @@
 'use client'
 
-import { useState, useMemo, useCallback, useEffect } from 'react'
+import { useState, useMemo, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { Search, Pencil } from 'lucide-react'
+import { Search } from 'lucide-react'
 import type { Lead, TrackerEntry, AppSettings, Profile } from '@/lib/types'
 import { getTrackerHistory } from '@/lib/dashboard/detail'
 import LeadListItem from '@/components/pipeline/LeadListItem'
 import UpdateForm from '@/components/pipeline/UpdateForm'
-import InputLeadForm from '@/components/shared/InputLeadForm'
-import Badge from '@/components/dashboard/Badge'
-import { formatRupiahShort } from '@/lib/dashboard/formatters'
+import LeadManagementTab from '@/components/shared/LeadManagementTab'
 
 interface PipelineClientProps {
   leads: Lead[]
@@ -30,46 +28,20 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
   const [activeTab, setActiveTab] = useState<TabKey>('update')
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null)
   const [search, setSearch] = useState('')
-  const [editingLead, setEditingLead] = useState<Lead | null>(null)
-  const [inputSearch, setInputSearch] = useState('')
-  const [filterPic, setFilterPic] = useState('')
-  const [inputPage, setInputPage] = useState(0)
-  const inputPageSize = 25
+  const [filterPicUpdate, setFilterPicUpdate] = useState('')
 
   const filteredLeads = useMemo(() => {
-    if (!search) return leads
+    let result = leads
+    if (filterPicUpdate) result = result.filter((l) => l.ownerName === filterPicUpdate)
+    if (!search) return result
     const s = search.toLowerCase()
-    return leads.filter(
+    return result.filter(
       (l) =>
         l.namaPaket.toLowerCase().includes(s) ||
         l.funnelId.toLowerCase().includes(s) ||
         l.instansi.toLowerCase().includes(s)
     )
-  }, [leads, search])
-
-  const filteredInputLeads = useMemo(() => {
-    let result = leads
-    if (filterPic) result = result.filter((l) => l.ownerName === filterPic)
-    if (inputSearch) {
-      const s = inputSearch.toLowerCase()
-      result = result.filter(
-        (l) =>
-          (l.namaPaket || '').toLowerCase().includes(s) ||
-          l.funnelId.toLowerCase().includes(s) ||
-          (l.instansi || '').toLowerCase().includes(s)
-      )
-    }
-    return result
-  }, [leads, filterPic, inputSearch])
-
-  const paginatedInputLeads = useMemo(() => {
-    const start = inputPage * inputPageSize
-    return filteredInputLeads.slice(start, start + inputPageSize)
-  }, [filteredInputLeads, inputPage, inputPageSize])
-
-  useEffect(() => {
-    setInputPage(0)
-  }, [inputSearch, filterPic])
+  }, [leads, search, filterPicUpdate])
 
   const selectedLead = useMemo(
     () => (selectedFunnelId ? leads.find((l) => l.funnelId === selectedFunnelId) ?? null : null),
@@ -134,6 +106,18 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
                   className="form-input pl-9 text-sm"
                 />
               </div>
+              {profile.role !== 'sales' && (
+                <select
+                  value={filterPicUpdate}
+                  onChange={(e) => setFilterPicUpdate(e.target.value)}
+                  className="form-select text-sm w-full mb-3"
+                >
+                  <option value="">Semua PIC</option>
+                  {settings.picNames.map((name) => (
+                    <option key={name} value={name}>{name}</option>
+                  ))}
+                </select>
+              )}
               <div className="space-y-2 max-h-[65vh] overflow-y-auto pr-1">
                 {filteredLeads.length === 0 ? (
                   <p className="text-sm text-[#A0A09A] text-center py-6">Tidak ada data</p>
@@ -164,135 +148,12 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
 
       {/* Tab: Input Lead */}
       {activeTab === 'input' && (
-        <div className="space-y-6">
-          <InputLeadForm
-            defaultOwnerName={profile.picName}
-            settings={settings}
-            profile={profile}
-            onSuccess={() => { setEditingLead(null); refetch() }}
-            editLead={editingLead}
-            onCancelEdit={() => setEditingLead(null)}
-          />
-
-          {/* Tabel leads untuk edit */}
-          <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
-            {/* Toolbar */}
-            <div className="px-4 py-3 border-b border-[#EBEBE7] bg-[#FAFAF8] flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0A09A]" />
-                <input
-                  type="text"
-                  value={inputSearch}
-                  onChange={(e) => setInputSearch(e.target.value)}
-                  placeholder="Cari funnel ID, nama paket, instansi..."
-                  className="form-input pl-9 text-sm w-full"
-                />
-              </div>
-              {profile.role !== 'sales' && (
-                <select
-                  value={filterPic}
-                  onChange={(e) => setFilterPic(e.target.value)}
-                  className="form-select text-sm w-full sm:w-48"
-                >
-                  <option value="">Semua PIC</option>
-                  {settings.picNames.map((name) => (
-                    <option key={name} value={name}>{name}</option>
-                  ))}
-                </select>
-              )}
-              <span className="text-xs text-[#A0A09A] self-center whitespace-nowrap">
-                {filteredInputLeads.length} paket
-              </span>
-            </div>
-
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
-                  <tr>
-                    <th className="px-3 py-2.5 font-medium">Funnel ID</th>
-                    <th className="px-3 py-2.5 font-medium">Nama Paket</th>
-                    <th className="px-3 py-2.5 font-medium text-center">Status</th>
-                    <th className="px-3 py-2.5 font-medium text-right">Netto</th>
-                    <th className="px-3 py-2.5 font-medium text-center w-16">Edit</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#EBEBE7]">
-                  {paginatedInputLeads.map((lead) => {
-                    const isLocked = lead.tk === 100 || lead.tk === 0
-                    const isEditing = editingLead?.id === lead.id
-                    return (
-                      <tr
-                        key={lead.id}
-                        className={`transition-colors ${
-                          isEditing
-                            ? 'bg-green-50 border-l-2 border-l-[#064E3B]'
-                            : 'hover:bg-[#FAFAF8]'
-                        }`}
-                      >
-                        <td className="px-3 py-2.5 font-[family-name:var(--font-dm-mono)] text-xs text-[#A0A09A]">
-                          {lead.funnelId}
-                          {isLocked && (
-                            <span className="ml-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
-                              TERKUNCI
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-3 py-2.5 text-[#1A1A18]">{lead.namaPaket || '-'}</td>
-                        <td className="px-3 py-2.5 text-center"><Badge tk={lead.tk} /></td>
-                        <td className="px-3 py-2.5 text-right font-semibold text-[#1A1A18]">
-                          {formatRupiahShort(lead.forecastNetto)}
-                        </td>
-                        <td className="px-3 py-2.5 text-center">
-                          {!isLocked && (
-                            <button
-                              onClick={() => {
-                                setEditingLead(lead)
-                                window.scrollTo({ top: 0, behavior: 'smooth' })
-                              }}
-                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
-                              title="Edit lead ini"
-                            >
-                              <Pencil className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    )
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Footer */}
-            <div className="px-4 py-3 border-t border-[#EBEBE7] flex items-center justify-between text-xs text-[#6B6B65]">
-              <span>
-                Menampilkan {filteredInputLeads.length === 0 ? 0 : inputPage * inputPageSize + 1}–
-                {Math.min((inputPage + 1) * inputPageSize, filteredInputLeads.length)} dari {filteredInputLeads.length} entri
-              </span>
-              <div className="flex gap-1">
-                {[
-                  { label: '«', target: 0 },
-                  { label: '‹', target: inputPage - 1 },
-                  { label: '›', target: inputPage + 1 },
-                  { label: '»', target: Math.ceil(filteredInputLeads.length / inputPageSize) - 1 },
-                ].map(({ label, target }) => (
-                  <button
-                    key={label}
-                    onClick={() => setInputPage(Math.max(0, Math.min(target, Math.ceil(filteredInputLeads.length / inputPageSize) - 1)))}
-                    disabled={
-                      (label === '«' || label === '‹') ? inputPage === 0 :
-                      inputPage >= Math.ceil(filteredInputLeads.length / inputPageSize) - 1
-                    }
-                    className="px-2 py-1 rounded border border-[#EBEBE7] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed"
-                  >
-                    {label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
+        <LeadManagementTab
+          leads={leads}
+          settings={settings}
+          profile={profile}
+          onRefetch={refetch}
+        />
       )}
     </div>
   )
