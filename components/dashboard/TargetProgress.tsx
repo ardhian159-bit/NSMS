@@ -45,8 +45,27 @@ export default function TargetProgress({ leads, targets, metricMode, onToggle }:
     }
   })
 
+  const totalTarget = targets.reduce((sum, t) =>
+    sum + (metricMode === 'netto' ? t.target_netto : t.target_bruto), 0)
+  const totalClosing = Object.values(closingByQ).reduce((sum, v) => sum + v, 0)
+  const totalPct = totalTarget > 0 ? Math.min(100, (totalClosing / totalTarget) * 100) : 0
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className="space-y-3">
+      {/* Summary bar */}
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs text-[#A0A09A]">
+          Target {metricMode === 'netto' ? 'Netto' : 'Bruto'} 2026
+        </span>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-[#6B6B65]">{formatRupiahShort(totalClosing)} / {formatRupiahShort(totalTarget)}</span>
+          <span className={`text-xs font-semibold ${totalPct >= 70 ? 'text-emerald-600' : totalPct >= 30 ? 'text-amber-600' : 'text-red-500'}`}>
+            {totalPct.toFixed(1)}%
+          </span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {QUARTERS.map(q => {
         const target = targets.find(t => t.quarter === q)
         const targetVal = target
@@ -100,6 +119,7 @@ export default function TargetProgress({ leads, targets, metricMode, onToggle }:
           </div>
         )
       })}
+      </div>
     </div>
   )
 }
