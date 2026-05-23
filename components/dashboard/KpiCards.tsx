@@ -1,6 +1,5 @@
 'use client'
 
-import { TrendingDown, TrendingUp, Package, CheckCircle } from 'lucide-react'
 import type { KPIData } from '@/lib/types'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
 
@@ -8,78 +7,58 @@ interface KpiCardsProps {
   kpis: KPIData
 }
 
-interface CardConfig {
-  title: string
-  getValue: (k: KPIData) => string
-  getSubtext?: (k: KPIData) => string
-  icon: React.ElementType
-  iconColor: string
-  iconBg: string
-}
-
-const CARDS: CardConfig[] = [
-  {
-    title: 'Total Brutto',
-    getValue: (k) => formatRupiahShort(k.totalBrutto),
-    getSubtext: (k) =>
-      k.gagalBrutto > 0
-        ? `▼ ${formatRupiahShort(k.gagalBrutto)} (${k.gagalPercent}% gagal)`
-        : '',
-    icon: TrendingUp,
-    iconColor: 'text-blue-600',
-    iconBg: 'bg-blue-50',
-  },
-  {
-    title: 'Forecast Netto',
-    getValue: (k) => formatRupiahShort(k.totalNetto),
-    icon: TrendingDown,
-    iconColor: 'text-emerald-600',
-    iconBg: 'bg-emerald-50',
-  },
-  {
-    title: 'Total Pipeline',
-    getValue: (k) => `${k.totalPipeline} Paket`,
-    icon: Package,
-    iconColor: 'text-purple-600',
-    iconBg: 'bg-purple-50',
-  },
-  {
-    title: 'Closing',
-    getValue: (k) => formatRupiahShort(k.closingNetto),
-    getSubtext: (k) => `${k.closingCount} Paket`,
-    icon: CheckCircle,
-    iconColor: 'text-green-600',
-    iconBg: 'bg-green-50',
-  },
-]
-
 export default function KpiCards({ kpis }: KpiCardsProps) {
+  const cards = [
+    {
+      label: 'Total Brutto',
+      value: formatRupiahShort(kpis.totalBrutto),
+      sub: kpis.gagalBrutto > 0
+        ? `▼ ${formatRupiahShort(kpis.gagalBrutto)} (${kpis.gagalPercent}% gagal)`
+        : undefined,
+      valueColor: '#1A1A18',
+    },
+    {
+      label: 'Forecast Netto',
+      value: formatRupiahShort(kpis.totalNetto),
+      sub: 'Setelah PPN & CB',
+      valueColor: '#1A1A18',
+    },
+    {
+      label: 'Total Pipeline',
+      value: `${kpis.totalPipeline} Paket`,
+      sub: 'Paket aktif',
+      valueColor: '#1A1A18',
+    },
+    {
+      label: 'Closing',
+      value: formatRupiahShort(kpis.closingNetto),
+      sub: `${kpis.closingCount} Paket`,
+      valueColor: '#16a34a',
+    },
+  ]
+
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {CARDS.map((card) => {
-        const subtext = card.getSubtext?.(kpis)
-        return (
-          <div
-            key={card.title}
-            className="bg-white rounded-lg border border-[#EBEBE7] p-4 transition-shadow hover:shadow-sm"
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      {cards.map((card) => (
+        <div
+          key={card.label}
+          className="bg-white rounded-[14px] border border-[#EBEBE7]"
+          style={{ padding: '14px 18px' }}
+        >
+          <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#A0A09A]">
+            {card.label}
+          </p>
+          <p
+            className="text-[20px] font-bold tracking-[-0.01em] mt-1.5"
+            style={{ color: card.valueColor }}
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider">
-                {card.title}
-              </span>
-              <div className={`w-8 h-8 rounded-lg ${card.iconBg} flex items-center justify-center`}>
-                <card.icon className={`w-4 h-4 ${card.iconColor}`} />
-              </div>
-            </div>
-            <p className="text-lg font-semibold text-[#1A1A18]">
-              {card.getValue(kpis)}
-            </p>
-            {subtext && (
-              <p className="text-[11px] text-[#A0A09A] mt-1">{subtext}</p>
-            )}
-          </div>
-        )
-      })}
+            {card.value}
+          </p>
+          {card.sub && (
+            <p className="text-[11px] text-[#A0A09A] mt-0.5">{card.sub}</p>
+          )}
+        </div>
+      ))}
     </div>
   )
 }

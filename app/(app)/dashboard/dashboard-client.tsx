@@ -28,7 +28,7 @@ import ChartTopPic from '@/components/dashboard/charts/ChartTopPic'
 import ChartSumberDana from '@/components/dashboard/charts/ChartSumberDana'
 import ChartPrincipal from '@/components/dashboard/charts/ChartPrincipal'
 import ChartJenisProduk from '@/components/dashboard/charts/ChartJenisProduk'
-import TargetProgress from '@/components/dashboard/TargetProgress'
+import TargetGauge from '@/components/dashboard/TargetGauge'
 
 interface DashboardClientProps {
   leads: Lead[]
@@ -116,7 +116,7 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
   }, [])
 
   return (
-    <div className="p-4 md:p-6 space-y-6">
+    <div className="p-6 md:p-7 flex flex-col gap-3.5">
       {/* Header */}
       {(() => {
         const { week, year, dateLabel } = getISOWeekInfo()
@@ -126,22 +126,22 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
               <h1 className="text-xl font-semibold text-[#1A1A18]">Dashboard</h1>
               <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-[#F0FDF4] text-[#065F46] border border-[#BBF7D0] rounded-full px-2 py-0.5">W{week} · {year}</span>
             </div>
-            <p className="text-sm text-[#A0A09A] mt-0.5">Overview pipeline nasional</p>
-            <p className="text-xs text-[#6B6B65] mt-0.5">{dateLabel}</p>
+            <p className="text-[12.5px] text-[#6B6B65] mt-0.5">
+              Apakah kita on track ke target 2026?
+            </p>
           </div>
         )
       })()}
 
-      {/* KPI Cards */}
-      <KpiCards kpis={kpis} />
-
-      {/* Target Progress */}
-      <TargetProgress
+      {/* Target Gauge — hero */}
+      <TargetGauge
         leads={leads}
         targets={companyTargets}
         metricMode={metricMode}
-        onToggle={() => setMetricMode(m => m === 'netto' ? 'bruto' : 'netto')}
       />
+
+      {/* KPI Cards */}
+      <KpiCards kpis={kpis} />
 
       {/* Bruto / Netto Toggle */}
       <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5 w-fit">

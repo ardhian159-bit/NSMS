@@ -99,18 +99,23 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
       : 0
 
     return {
-      quarters: QUARTERS.map((q, i) => {
-        const target = companyTargets.find(t => t.quarter === q)
-        const targetVal = target
-          ? (metricMode === 'netto' ? target.targetNetto : target.targetBruto)
-          : 0
-        const closing = closingPerQuarter.find(c => c.quarter === q)?.closing ?? 0
-        const gap = targetVal - closing
-        const ach = targetVal > 0 ? (closing / targetVal) * 100 : 0
-        const isPast = i + 1 < currentQ
-        const isCurrent = i + 1 === currentQ
-        return { quarter: q, targetVal, closing, gap, ach, isPast, isCurrent }
-      }),
+      quarters: (() => {
+        let carryOverGap = 0
+        return QUARTERS.map((q, i) => {
+          const target = companyTargets.find(t => t.quarter === q)
+          const targetVal = target
+            ? (metricMode === 'netto' ? target.targetNetto : target.targetBruto)
+            : 0
+          const closing = closingPerQuarter.find(c => c.quarter === q)?.closing ?? 0
+          const targetRealisasi = targetVal + carryOverGap
+          const gap = targetVal - closing
+          const ach = targetVal > 0 ? (closing / targetVal) * 100 : 0
+          const isPast = i + 1 < currentQ
+          const isCurrent = i + 1 === currentQ
+          carryOverGap = Math.max(0, targetRealisasi - closing)
+          return { quarter: q, targetVal, closing, gap, ach, isPast, isCurrent, targetRealisasi }
+        })
+      })(),
       totalTarget,
       totalClosing,
       totalAch: totalTarget > 0 ? (totalClosing / totalTarget) * 100 : 0,
@@ -168,7 +173,7 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
 
         {/* 4 Quarter Cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-          {achievementData.quarters.map(({ quarter, targetVal, closing, gap, ach, isPast, isCurrent }) => {
+          {achievementData.quarters.map(({ quarter, targetVal, closing, gap, ach, isPast, isCurrent, targetRealisasi }) => {
             const color = achColor(ach)
             const clampedAch = Math.min(ach, 100)
             return (
@@ -229,6 +234,14 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
                       {gap > 0 ? formatRupiahShort(gap) : '✓'}
                     </span>
                   </div>
+                </div>
+                <div className="pt-2 mt-1 border-t border-[#EBEBE7] flex justify-between items-center">
+                  <span className="text-[10px] text-red-600 uppercase tracking-wider font-semibold">
+                    Target Realisasi
+                  </span>
+                  <span className="text-xs font-semibold text-red-600 font-[family-name:var(--font-dm-mono)]">
+                    {formatRupiahShort(targetRealisasi)}
+                  </span>
                 </div>
               </div>
             )
