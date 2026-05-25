@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, RotateCcw } from 'lucide-react'
+import { Search, RotateCcw, Download } from 'lucide-react'
 import type { FilterState } from '@/lib/types'
 import { TK_VALUES_ALL } from '@/lib/constants'
 
@@ -13,9 +13,11 @@ interface FilterBarProps {
     principals: string[]
     sumberDanas: string[]
   }
+  onExport?: () => void
+  isExporting?: boolean
 }
 
-export default function FilterBar({ filters, onFilterChange, options }: FilterBarProps) {
+export default function FilterBar({ filters, onFilterChange, options, onExport, isExporting }: FilterBarProps) {
   const update = (partial: Partial<FilterState>) => {
     onFilterChange({ ...filters, ...partial })
   }
@@ -35,21 +37,33 @@ export default function FilterBar({ filters, onFilterChange, options }: FilterBa
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4 space-y-4">
       {/* Row 1: Quarter pills */}
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider mr-1">Quarter</span>
-        {['ALL', 'Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider mr-1">Quarter</span>
+          {['ALL', 'Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
+            <button
+              key={q}
+              onClick={() => update({ quarter: q })}
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+                filters.quarter === q
+                  ? 'bg-[#1A1A18] text-white'
+                  : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
+              }`}
+            >
+              {q === 'ALL' ? 'Semua' : q}
+            </button>
+          ))}
+        </div>
+        {onExport && (
           <button
-            key={q}
-            onClick={() => update({ quarter: q })}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              filters.quarter === q
-                ? 'bg-[#1A1A18] text-white'
-                : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
-            }`}
+            onClick={onExport}
+            disabled={isExporting}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#EBEBE7] bg-white text-xs font-medium text-[#064E3B] hover:bg-[#F0FDF4] hover:border-[#064E3B] transition-colors disabled:opacity-50 flex-shrink-0"
           >
-            {q === 'ALL' ? 'Semua' : q}
+            <Download className="w-3.5 h-3.5" />
+            {isExporting ? 'Menyiapkan...' : 'Export Excel'}
           </button>
-        ))}
+        )}
       </div>
 
       {/* Row 2: TK pills */}

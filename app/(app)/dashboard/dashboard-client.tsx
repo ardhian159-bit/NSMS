@@ -16,6 +16,7 @@ import { getTrackerHistory } from '@/lib/dashboard/detail'
 import { getTopClosingLeads } from '@/lib/dashboard/filters'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
 import { getISOWeekInfo } from '@/lib/dashboard/week'
+import { exportFilteredLeads } from '@/lib/dashboard/exporters'
 
 import KpiCards from '@/components/dashboard/KpiCards'
 import FilterBar from '@/components/dashboard/FilterBar'
@@ -44,6 +45,7 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
   const [page, setPage] = useState(1)
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null)
   const [metricMode, setMetricMode] = useState<'netto' | 'bruto'>('netto')
+  const [isExporting, setIsExporting] = useState(false)
 
   // --- Derived data (pure functions) ---
   const filterOptions = useMemo(() => getUniqueFilterOptions(leads), [leads])
@@ -106,6 +108,19 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
     setFilters(f)
     setPage(1)
   }, [])
+
+  const handleExport = async () => {
+    setIsExporting(true)
+    try {
+      const activeFilters = Object.entries(filters)
+        .filter(([k, v]) => v !== 'ALL' && v !== '')
+        .map(([_, v]) => v)
+        .join('-')
+      await exportFilteredLeads(filteredData, activeFilters || undefined)
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   const handleSort = useCallback((column: string) => {
     setSort((prev) => ({
@@ -240,6 +255,12 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
         filters={filters}
         onFilterChange={handleFilterChange}
         options={filterOptions}
+        onExport={
+          profile.role === 'admin' || profile.role === 'superadmin'
+            ? handleExport
+            : undefined
+        }
+        isExporting={isExporting}
       />
 
       {/* Data Table */}
