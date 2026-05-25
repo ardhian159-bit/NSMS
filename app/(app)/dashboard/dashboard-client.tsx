@@ -142,7 +142,7 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
               <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-[#F0FDF4] text-[#065F46] border border-[#BBF7D0] rounded-full px-2 py-0.5">W{week} · {year}</span>
             </div>
             <p className="text-[12.5px] text-[#6B6B65] mt-0.5">
-              Apakah kita on track ke target 2026?
+              Overview pipeline nasional 2026
             </p>
           </div>
         )
