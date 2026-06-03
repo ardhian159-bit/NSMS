@@ -44,4 +44,11 @@ export const FUNNEL_PREFIX_MAP: Record<string, string> = {
   'FIKRI': 'FIK',
   'FILIP': 'FIL',
   'INDRA': 'IND',
+  // Import realisasi 2026 — user aktif non-rekanan
+  'ACHMAD ANGSORUDIN': 'ACHA',
+  'ACHMAD SUHARYADI': 'ACHS',
+  'AGUS PURNOMO': 'AGP',
+  'I WAYAN BIMA KARTA': 'IWB',
+  'ARIF HIDAYAT': 'ARF',
+  'TEGUH IMAM PERDANA': 'TEG',
 }
