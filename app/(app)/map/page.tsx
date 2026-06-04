@@ -11,14 +11,19 @@ export default async function MapPage() {
   const profile = await fetchCurrentProfile()
   if (!profile) redirect('/login')
 
-  if (!['superadmin', 'admin', 'mp', 'sp', 'dirut', 'am'].includes(profile.role)) {
+  if (!['superadmin', 'admin', 'mp', 'sp', 'dirut', 'am', 'sales'].includes(profile.role)) {
     redirect('/dashboard')
   }
 
-  // Ambil agregasi leads per provinsi
-  const { data: leadsRaw } = await supabase
+  // Ambil agregasi leads per provinsi — sales/mp hanya lihat leads miliknya
+  const isRestricted = ['sales', 'mp'].includes(profile.role)
+  let query = supabase
     .from('leads')
     .select('provinsi, forecast_netto, owner_name, nama_paket, status, kab_kota, nilai_anggaran')
+  if (isRestricted) {
+    query = query.eq('owner_id', user.id)
+  }
+  const { data: leadsRaw } = await query
 
   type RegionData = {
     totalNetto: number
