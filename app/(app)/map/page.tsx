@@ -20,29 +20,42 @@ export default async function MapPage() {
     .from('leads')
     .select('provinsi, forecast_netto, owner_name, nama_paket, status, kab_kota, nilai_anggaran')
 
-  // Agregasi per provinsi
-  const provinsiMap: Record<string, {
+  type RegionData = {
     totalNetto: number
     count: number
     leads: { ownerName: string; namaPaket: string; kabKota?: string; nilaiAnggaran?: number; status: string; netto: number }[]
-  }> = {}
+  }
+
+  // Agregasi per provinsi
+  const provinsiMap: Record<string, RegionData> = {}
+  // Agregasi per kab/kota
+  const kabKotaMap: Record<string, RegionData> = {}
 
   leadsRaw?.forEach((lead) => {
-    const prov = lead.provinsi || 'Tidak Diketahui'
-    if (!provinsiMap[prov]) {
-      provinsiMap[prov] = { totalNetto: 0, count: 0, leads: [] }
-    }
-    provinsiMap[prov].totalNetto += lead.forecast_netto || 0
-    provinsiMap[prov].count += 1
-    provinsiMap[prov].leads.push({
+    const detail = {
       ownerName: lead.owner_name,
       namaPaket: lead.nama_paket,
       kabKota: lead.kab_kota,
       nilaiAnggaran: lead.nilai_anggaran || 0,
       status: lead.status,
       netto: lead.forecast_netto || 0,
-    })
+    }
+
+    const prov = lead.provinsi || 'Tidak Diketahui'
+    if (!provinsiMap[prov]) provinsiMap[prov] = { totalNetto: 0, count: 0, leads: [] }
+    provinsiMap[prov].totalNetto += lead.forecast_netto || 0
+    provinsiMap[prov].count += 1
+    provinsiMap[prov].leads.push(detail)
+
+    // Kab/kota — skip yang kosong atau scope nasional ("Indonesia")
+    const kk = lead.kab_kota
+    if (kk && kk !== 'Indonesia') {
+      if (!kabKotaMap[kk]) kabKotaMap[kk] = { totalNetto: 0, count: 0, leads: [] }
+      kabKotaMap[kk].totalNetto += lead.forecast_netto || 0
+      kabKotaMap[kk].count += 1
+      kabKotaMap[kk].leads.push(detail)
+    }
   })
 
-  return <MapClient provinsiData={provinsiMap} profile={profile} />
+  return <MapClient provinsiData={provinsiMap} kabKotaData={kabKotaMap} profile={profile} />
 }

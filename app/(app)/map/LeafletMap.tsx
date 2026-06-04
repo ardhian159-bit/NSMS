@@ -4,15 +4,42 @@ import { useState, useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+type MapView = 'provinsi' | 'kabkota'
+
 interface LeafletMapProps {
-  provinsiData: Record<string, { totalNetto: number; count: number; leads: any[] }>
+  data: Record<string, { totalNetto: number; count: number; leads: any[] }>
+  mode: MapView
   maxNetto: number
-  selectedProvinsi: string | null
+  selected: string | null
   onSelect: (name: string | null) => void
   getColor: (netto: number, maxNetto: number) => string
 }
 
-export default function LeafletMap({ provinsiData, maxNetto, selectedProvinsi, onSelect, getColor }: LeafletMapProps) {
+// Nama WADMKK di GeoJSON ≠ nama kab_kota di DB (region-data.ts).
+// Key = raw WADMKK, value = nama final di DB. Diterapkan SEBELUM normalisasi.
+const KAB_KOTA_ALIAS: Record<string, string> = {
+  'Kota Padang Sidempuan': 'Kota Padangsidimpuan',
+  'Pahuwato': 'Kab. Pohuwato',
+  'Muko Muko': 'Kab. Mukomuko',
+  'Toli Toli': 'Kab. Toli-Toli',
+  'Kota Pare Pare': 'Kota Parepare',
+  'Pangkajene Kepulauan': 'Kab. Pangkajene dan Kepulauan',
+  'Kota Tanjung Balai': 'Kota Tanjungbalai',
+  'Sumbawa/Sumbawa Barat': 'Kab. Sumbawa',
+  'Minahasa Selatan/Bolaang Mongondwo Timur': 'Kab. Minahasa Selatan',
+}
+
+function getDataKey(feature: any, mode: MapView): string | null {
+  if (mode === 'provinsi') {
+    return feature?.properties?.PROVINSI ?? null
+  }
+  const raw = feature?.properties?.WADMKK as string | undefined
+  if (!raw) return null
+  if (KAB_KOTA_ALIAS[raw]) return KAB_KOTA_ALIAS[raw]
+  return raw.startsWith('Kota ') ? raw : 'Kab. ' + raw
+}
+
+export default function LeafletMap({ data, mode, maxNetto, selected, onSelect, getColor }: LeafletMapProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<L.Map | null>(null)
   const geoLayerRef = useRef<L.GeoJSON | null>(null)
@@ -43,39 +70,51 @@ export default function LeafletMap({ provinsiData, maxNetto, selectedProvinsi, o
     }
   }, [])
 
-  // Effect 2: GeoJSON layer — runs after map is ready
+  // Effect 2: GeoJSON layer — re-runs when data or mode changes
   useEffect(() => {
     if (!mapReady || !mapRef.current) return
 
     const map = mapRef.current
 
-    // Remove previous layer if any
     if (geoLayerRef.current) {
       geoLayerRef.current.remove()
       geoLayerRef.current = null
     }
 
-    fetch('/indonesia-provinces.geojson')
+    const geoUrl = mode === 'provinsi'
+      ? '/indonesia-provinces.geojson'
+      : '/indonesia-kabkota.geojson'
+
+    let cancelled = false
+
+    fetch(geoUrl)
       .then((res) => res.json())
-      .then((data) => {
-        if (!mapRef.current) return
-        const layer = L.geoJSON(data, {
+      .then((geo) => {
+        if (cancelled || !mapRef.current) return
+        const layer = L.geoJSON(geo, {
           style: (feature: any) => {
-            const name = feature?.properties?.PROVINSI
-            const pData = provinsiData[name]
+            const key = getDataKey(feature, mode)
+            const d = key ? data[key] : undefined
             return {
-              fillColor: pData ? getColor(pData.totalNetto, maxNetto) : '#E5E7EB',
+              fillColor: d ? getColor(d.totalNetto, maxNetto) : '#E5E7EB',
               fillOpacity: 0.8,
               color: '#fff',
-              weight: 1,
+              weight: mode === 'kabkota' ? 0.5 : 1,
             }
           },
-          onEachFeature: (feature: any, layer: any) => {
-            const name = feature?.properties?.PROVINSI
-            layer.on({
+          onEachFeature: (feature: any, lyr: any) => {
+            const key = getDataKey(feature, mode)
+            const d = key ? data[key] : undefined
+            if (key) {
+              lyr.bindTooltip(
+                `${key}${d ? ` · ${d.count} leads` : ''}`,
+                { sticky: true, direction: 'top', className: 'nsms-map-tooltip' }
+              )
+            }
+            lyr.on({
               mouseover: (e: any) => { e.target.setStyle({ weight: 2, color: '#064E3B' }) },
               mouseout: (e: any) => { geoLayerRef.current?.resetStyle(e.target) },
-              click: () => { onSelect(name) },
+              click: () => { if (key) onSelect(key) },
             })
           },
         }).addTo(map)
@@ -86,7 +125,24 @@ export default function LeafletMap({ provinsiData, maxNetto, selectedProvinsi, o
         map.setMaxBounds(bounds)
         map.setMinZoom(4)
       })
-  }, [mapReady, provinsiData])
+
+    return () => { cancelled = true }
+  }, [mapReady, data, mode, maxNetto])
+
+  // Effect 3: highlight selected region
+  useEffect(() => {
+    const layer = geoLayerRef.current
+    if (!layer) return
+    layer.eachLayer((lyr: any) => {
+      const key = getDataKey(lyr.feature, mode)
+      if (key && key === selected) {
+        lyr.setStyle({ weight: 2.5, color: '#064E3B' })
+        lyr.bringToFront()
+      } else {
+        layer.resetStyle(lyr)
+      }
+    })
+  }, [selected, mode])
 
   return <div ref={containerRef} style={{ width: '100%', height: '100%' }} />
 }

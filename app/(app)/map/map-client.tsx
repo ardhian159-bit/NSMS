@@ -1,21 +1,24 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import dynamic from 'next/dynamic'
 import type { Profile } from '@/lib/types'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
 import { X } from 'lucide-react'
 
-interface ProvinsiData {
+interface RegionData {
   totalNetto: number
   count: number
   leads: { ownerName: string; namaPaket: string; kabKota?: string; nilaiAnggaran?: number; status: string; netto: number }[]
 }
 
 interface MapClientProps {
-  provinsiData: Record<string, ProvinsiData>
+  provinsiData: Record<string, RegionData>
+  kabKotaData: Record<string, RegionData>
   profile: Profile
 }
+
+type MapView = 'provinsi' | 'kabkota'
 
 function getHeatmapColor(netto: number, maxNetto: number): string {
   if (netto === 0 || maxNetto === 0) return '#E5E7EB'
@@ -29,40 +32,69 @@ function getHeatmapColor(netto: number, maxNetto: number): string {
 
 const LeafletMap = dynamic(() => import('./LeafletMap'), { ssr: false })
 
-export default function MapClient({ provinsiData, profile }: MapClientProps) {
-  const [selectedProvinsi, setSelectedProvinsi] = useState<string | null>(null)
-  const maxNetto = Math.max(...Object.values(provinsiData).map((d) => d.totalNetto), 0)
-  const selectedData = selectedProvinsi ? provinsiData[selectedProvinsi] : null
+export default function MapClient({ provinsiData, kabKotaData, profile }: MapClientProps) {
+  const [mapView, setMapView] = useState<MapView>('provinsi')
+  const [selected, setSelected] = useState<string | null>(null)
+
+  const activeData = mapView === 'provinsi' ? provinsiData : kabKotaData
+  const maxNetto = Math.max(...Object.values(activeData).map((d) => d.totalNetto), 0)
+  const selectedData = selected ? activeData[selected] : null
+
+  const handleViewChange = (v: MapView) => {
+    setMapView(v)
+    setSelected(null)
+  }
 
   return (
     <div className="p-4 md:p-6 space-y-4">
       <div>
         <h1 className="text-xl font-semibold text-[#1A1A18]">Peta Sebaran</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">Distribusi leads per provinsi</p>
+        <p className="text-sm text-[#A0A09A] mt-0.5">
+          Distribusi leads {mapView === 'provinsi' ? 'per provinsi' : 'per kab/kota'}
+        </p>
+      </div>
+
+      <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5 w-fit">
+        {(['provinsi', 'kabkota'] as const).map((v) => (
+          <button
+            key={v}
+            onClick={() => handleViewChange(v)}
+            className={`text-xs px-4 py-1.5 rounded-full transition-all duration-200 font-medium ${
+              mapView === v
+                ? 'bg-white text-[#1A1A18] shadow-sm'
+                : 'text-[#6B6B65] hover:text-[#1A1A18]'
+            }`}
+          >
+            {v === 'provinsi' ? 'Per Provinsi' : 'Per Kab/Kota'}
+          </button>
+        ))}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 bg-white rounded-lg border border-[#EBEBE7] overflow-hidden" style={{ height: '480px' }}>
           <LeafletMap
-            provinsiData={provinsiData}
+            data={activeData}
+            mode={mapView}
             maxNetto={maxNetto}
-            selectedProvinsi={selectedProvinsi}
-            onSelect={setSelectedProvinsi}
+            selected={selected}
+            onSelect={setSelected}
             getColor={getHeatmapColor}
           />
         </div>
 
         <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-          {!selectedProvinsi ? (
+          {!selected ? (
             <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
-              <p className="text-sm font-medium text-[#1A1A18]">Klik provinsi</p>
+              <p className="text-sm font-medium text-[#1A1A18]">
+                Klik {mapView === 'provinsi' ? 'provinsi' : 'kab/kota'}
+              </p>
               <p className="text-xs text-[#A0A09A] mt-1">untuk melihat detail leads</p>
             </div>
           ) : (
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-sm font-semibold text-[#1A1A18]">{selectedProvinsi}</h3>
+                  <h3 className="text-sm font-semibold text-[#1A1A18]">{selected}</h3>
                   {selectedData && (
                     <p className="text-xs text-[#A0A09A] mt-0.5">
                       {selectedData.count} leads · {formatRupiahShort(selectedData.totalNetto)}
@@ -70,14 +102,16 @@ export default function MapClient({ provinsiData, profile }: MapClientProps) {
                   )}
                 </div>
                 <button
-                  onClick={() => setSelectedProvinsi(null)}
+                  onClick={() => setSelected(null)}
                   className="p-1 rounded text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2]"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
               {!selectedData ? (
-                <p className="text-xs text-[#A0A09A] text-center py-6">Belum ada leads di provinsi ini</p>
+                <p className="text-xs text-[#A0A09A] text-center py-6">
+                  Belum ada leads di {mapView === 'provinsi' ? 'provinsi' : 'kab/kota'} ini
+                </p>
               ) : (
                 <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
                   {selectedData.leads.map((lead, i) => (
