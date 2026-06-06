@@ -130,13 +130,13 @@ export interface Target {
 // --- Dashboard State ---
 
 export interface FilterState {
-  quarter: string    // 'ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4'
-  sumberDana: string // 'ALL' | specific value
-  pic: string        // 'ALL' | specific PIC name
-  wilayah: string    // 'ALL' | specific value
-  principal: string  // 'ALL' | specific value
-  ketPenggarap: string // 'ALL' | 'SP' | 'MP' | 'SR' | 'BM' | 'REKANAN' | 'PUSAT'
-  tk: string         // 'ALL' | '0' | '5' | '10' | '25' | '50' | '75' | '100'
+  quarter: string      // 'ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4' (single — pill)
+  tk: string           // 'ALL' | '0' | '5' | ... (single — pill)
+  sumberDana: string[] // [] = semua, multi-select
+  pic: string[]        // [] = semua, multi-select
+  wilayah: string[]    // [] = semua, multi-select
+  principal: string[]  // [] = semua, multi-select
+  ketPenggarap: string[] // [] = semua, multi-select
   search: string
 }
 

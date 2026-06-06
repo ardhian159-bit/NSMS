@@ -113,8 +113,8 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
     setIsExporting(true)
     try {
       const activeFilters = Object.entries(filters)
-        .filter(([k, v]) => v !== 'ALL' && v !== '')
-        .map(([_, v]) => v)
+        .filter(([_, v]) => (Array.isArray(v) ? v.length > 0 : v !== 'ALL' && v !== ''))
+        .map(([_, v]) => (Array.isArray(v) ? v.join('+') : v))
         .join('-')
       await exportFilteredLeads(filteredData, activeFilters || undefined)
     } finally {

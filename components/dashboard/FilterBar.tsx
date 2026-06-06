@@ -3,6 +3,7 @@
 import { Search, RotateCcw, Download } from 'lucide-react'
 import type { FilterState } from '@/lib/types'
 import { TK_VALUES_ALL } from '@/lib/constants'
+import MultiSelect from './MultiSelect'
 
 interface FilterBarProps {
   filters: FilterState
@@ -26,12 +27,12 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
   const reset = () => {
     onFilterChange({
       quarter: 'ALL',
-      sumberDana: 'ALL',
-      pic: 'ALL',
-      wilayah: 'ALL',
-      principal: 'ALL',
-      ketPenggarap: 'ALL',
       tk: 'ALL',
+      sumberDana: [],
+      pic: [],
+      wilayah: [],
+      principal: [],
+      ketPenggarap: [],
       search: '',
     })
   }
@@ -99,64 +100,44 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
       {/* Row 3: Dropdowns + Search */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {/* PIC */}
-        <select
-          value={filters.pic}
-          onChange={(e) => update({ pic: e.target.value })}
-          className="rounded-lg border border-[#EBEBE7] bg-white text-sm text-[#1A1A18] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A1A18]"
-        >
-          <option value="ALL">Semua PIC</option>
-          {options.pics.map((p) => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-        </select>
+        <MultiSelect
+          label="PIC"
+          options={options.pics}
+          selected={filters.pic}
+          onChange={(v) => update({ pic: v })}
+        />
 
         {/* Principal */}
-        <select
-          value={filters.principal}
-          onChange={(e) => update({ principal: e.target.value })}
-          className="rounded-lg border border-[#EBEBE7] bg-white text-sm text-[#1A1A18] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A1A18]"
-        >
-          <option value="ALL">Semua Principal</option>
-          {options.principals.map((p) => (
-            <option key={p} value={p}>{p}</option>
-          ))}
-        </select>
+        <MultiSelect
+          label="Principal"
+          options={options.principals}
+          selected={filters.principal}
+          onChange={(v) => update({ principal: v })}
+        />
 
         {/* Wilayah */}
-        <select
-          value={filters.wilayah}
-          onChange={(e) => update({ wilayah: e.target.value })}
-          className="rounded-lg border border-[#EBEBE7] bg-white text-sm text-[#1A1A18] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A1A18]"
-        >
-          <option value="ALL">Semua Wilayah</option>
-          {options.wilayahs.map((w) => (
-            <option key={w} value={w}>{w}</option>
-          ))}
-        </select>
+        <MultiSelect
+          label="Wilayah"
+          options={options.wilayahs}
+          selected={filters.wilayah}
+          onChange={(v) => update({ wilayah: v })}
+        />
 
         {/* Sumber Dana */}
-        <select
-          value={filters.sumberDana}
-          onChange={(e) => update({ sumberDana: e.target.value })}
-          className="rounded-lg border border-[#EBEBE7] bg-white text-sm text-[#1A1A18] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A1A18]"
-        >
-          <option value="ALL">Semua Sumber Dana</option>
-          {options.sumberDanas.map((s) => (
-            <option key={s} value={s}>{s}</option>
-          ))}
-        </select>
+        <MultiSelect
+          label="Sumber Dana"
+          options={options.sumberDanas}
+          selected={filters.sumberDana}
+          onChange={(v) => update({ sumberDana: v })}
+        />
 
         {/* Penggarap */}
-        <select
-          value={filters.ketPenggarap}
-          onChange={(e) => update({ ketPenggarap: e.target.value })}
-          className="rounded-lg border border-[#EBEBE7] bg-white text-sm text-[#1A1A18] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A1A18]"
-        >
-          <option value="ALL">Semua Penggarap</option>
-          {options.ketPenggaraps.map((k) => (
-            <option key={k} value={k}>{k}</option>
-          ))}
-        </select>
+        <MultiSelect
+          label="Penggarap"
+          options={options.ketPenggaraps}
+          selected={filters.ketPenggarap}
+          onChange={(v) => update({ ketPenggarap: v })}
+        />
 
         {/* Search + Reset */}
         <div className="flex gap-2 col-span-2 md:col-span-4 lg:col-span-1">

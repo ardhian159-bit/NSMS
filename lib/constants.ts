@@ -103,15 +103,15 @@ export function getTKBadgeStyle(tk: number): BadgeStyle {
 // Default filter state
 // =============================================================================
 
-export const DEFAULT_FILTER_STATE = {
+export const DEFAULT_FILTER_STATE: import('./types').FilterState = {
   quarter: 'ALL',
-  sumberDana: 'ALL',
-  pic: 'ALL',
-  wilayah: 'ALL',
-  principal: 'ALL',
-  ketPenggarap: 'ALL',
   tk: 'ALL',
+  sumberDana: [],
+  pic: [],
+  wilayah: [],
+  principal: [],
+  ketPenggarap: [],
   search: '',
-} as const
+}
 
 export const DEFAULT_PER_PAGE = 20

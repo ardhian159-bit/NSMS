@@ -12,15 +12,16 @@ import type { Lead, FilterState, KPIData } from '../types'
  */
 export function applyFilters(data: Lead[], filters: FilterState): Lead[] {
   return data.filter((d) => {
+    // Single-value (pills)
     if (filters.quarter !== 'ALL' && d.quarter !== filters.quarter) return false
-    if (filters.sumberDana !== 'ALL') {
-      if (!d.sumberDana.toUpperCase().includes(filters.sumberDana.toUpperCase())) return false
-    }
     if (filters.tk !== 'ALL' && d.tk.toString() !== filters.tk) return false
-    if (filters.pic !== 'ALL' && d.ownerName !== filters.pic) return false
-    if (filters.wilayah !== 'ALL' && d.wilayah !== filters.wilayah) return false
-    if (filters.principal !== 'ALL' && d.principal !== filters.principal) return false
-    if (filters.ketPenggarap !== 'ALL' && d.ketPenggarap !== filters.ketPenggarap) return false
+
+    // Multi-select ([] = semua, lolos jika nilai lead ada di array terpilih)
+    if (filters.sumberDana.length && !filters.sumberDana.includes(d.sumberDana)) return false
+    if (filters.pic.length && !filters.pic.includes(d.ownerName)) return false
+    if (filters.wilayah.length && !filters.wilayah.includes(d.wilayah)) return false
+    if (filters.principal.length && !filters.principal.includes(d.principal)) return false
+    if (filters.ketPenggarap.length && !filters.ketPenggarap.includes(d.ketPenggarap)) return false
 
     if (filters.search) {
       const search = filters.search.toLowerCase()
