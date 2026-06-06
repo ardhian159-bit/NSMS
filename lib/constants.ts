@@ -109,6 +109,7 @@ export const DEFAULT_FILTER_STATE = {
   pic: 'ALL',
   wilayah: 'ALL',
   principal: 'ALL',
+  ketPenggarap: 'ALL',
   tk: 'ALL',
   search: '',
 } as const

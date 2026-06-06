@@ -16,16 +16,27 @@ import type { Lead } from '@/lib/types'
 import type { CompanyTarget } from '@/lib/api'
 
 interface PerformanceClientProps {
-  initialLeads: { owner_name: string; forecast_netto: number; quarter: string; tk: number }[]
+  initialLeads: { owner_name: string; forecast_netto: number; quarter: string; tk: number; ket_penggarap: string | null }[]
   companyTargets: CompanyTarget[]
 }
 
 const COLORS = ['#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
 const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4']
+const PENGGARAP_FILTERS = ['', 'SP', 'MP', 'REKANAN']
 
 
 
 export default function PerformanceClient({ initialLeads, companyTargets }: PerformanceClientProps) {
+  // Map owner_name → ket_penggarap (untuk pre-filter chip list)
+  const picKeteranganMap = useMemo(() => {
+    const map: Record<string, string> = {}
+    initialLeads.forEach(l => {
+      const pic = l.owner_name || 'Unknown'
+      if (l.ket_penggarap && !map[pic]) map[pic] = l.ket_penggarap
+    })
+    return map
+  }, [initialLeads])
+
   // Aggregate data per PIC
   const picAgg = useMemo(() => {
     const map: Record<string, number> = {}
@@ -39,6 +50,14 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
       .sort((a, b) => b.netto - a.netto)
   }, [initialLeads])
 
+  const [filterPenggarap, setFilterPenggarap] = useState<string>('')
+
+  // Chip list PIC, pre-filtered by penggarap
+  const filteredPicAgg = useMemo(() => {
+    if (filterPenggarap === '') return picAgg
+    return picAgg.filter(p => picKeteranganMap[p.name] === filterPenggarap)
+  }, [picAgg, filterPenggarap, picKeteranganMap])
+
   // Initial selection (up to 4)
   const initialSelection = useMemo(() => {
     return picAgg.slice(0, 4).map(p => p.name)
@@ -46,6 +65,16 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
 
   const [selectedPics, setSelectedPics] = useState<string[]>(initialSelection)
   const [metricMode, setMetricMode] = useState<'netto' | 'bruto'>('netto')
+
+  // Ganti filter penggarap — prune PIC terpilih yang tidak ada di list baru
+  const changePenggarap = (val: string) => {
+    setFilterPenggarap(val)
+    if (val === '') return
+    const allowed = new Set(
+      picAgg.filter(p => picKeteranganMap[p.name] === val).map(p => p.name)
+    )
+    setSelectedPics(prev => prev.filter(p => allowed.has(p)))
+  }
 
   const togglePic = (pic: string) => {
     setSelectedPics(prev => {
@@ -290,9 +319,29 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
       </div>
 
       <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
-        <h2 className="text-sm font-semibold text-[#1A1A18] mb-3">Pilih PIC (Maks. 4)</h2>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-sm font-semibold text-[#1A1A18]">Pilih PIC (Maks. 4)</h2>
+          <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5">
+            {PENGGARAP_FILTERS.map((f) => (
+              <button
+                key={f || 'all'}
+                onClick={() => changePenggarap(f)}
+                className={`text-xs px-3 py-1 rounded-full transition-all duration-200 font-medium ${
+                  filterPenggarap === f
+                    ? 'bg-white text-[#1A1A18] shadow-sm'
+                    : 'text-[#6B6B65] hover:text-[#1A1A18]'
+                }`}
+              >
+                {f === '' ? 'Semua' : f}
+              </button>
+            ))}
+          </div>
+        </div>
         <div className="flex flex-wrap gap-2">
-          {picAgg.map((p) => {
+          {filteredPicAgg.length === 0 && (
+            <p className="text-xs text-[#A0A09A] py-1">Tidak ada PIC untuk penggarap ini</p>
+          )}
+          {filteredPicAgg.map((p) => {
             const isSelected = selectedPics.includes(p.name)
             const isDisabled = !isSelected && selectedPics.length >= 4
             return (

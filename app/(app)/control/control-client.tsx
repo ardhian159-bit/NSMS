@@ -39,6 +39,7 @@ const CATEGORIES = [
   { key: 'principals', label: 'Principals' },
   { key: 'sumberDana', label: 'Sumber Dana' },
   { key: 'jenisProduk', label: 'Jenis Produk' },
+  { key: 'ketPenggarap', label: 'Ket Penggarap' },
 ]
 
 export default function ControlClient({

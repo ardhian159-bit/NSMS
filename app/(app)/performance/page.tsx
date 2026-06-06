@@ -30,7 +30,7 @@ export default async function PerformancePage() {
   const [{ data: leads }, companyTargets] = await Promise.all([
     supabase
       .from('leads')
-      .select('owner_name, forecast_netto, quarter, tk')
+      .select('owner_name, forecast_netto, quarter, tk, ket_penggarap')
       .eq('tk', 100)
       .gt('forecast_netto', 0),
     fetchCompanyTargets(new Date().getFullYear()),

@@ -47,6 +47,16 @@ interface FormData {
   ownerName: string
 }
 
+// Auto-label penggarap dari role user — invisible ke user, di-set saat insert.
+// admin/superadmin → null (bisa di-set manual via Control Panel/PUSAT).
+const KET_PENGGARAP_MAP: Record<string, string> = {
+  sales: 'SP',
+  mp: 'MP',
+  am: 'MP',
+  dirut: 'MP',
+  rekanan: 'REKANAN',
+}
+
 const INITIAL_FORM: FormData = {
   namaPaket: '',
   instansi: '',
@@ -231,6 +241,7 @@ export default function InputLeadForm({
           dpp,
           forecast_netto: forecastNetto,
           keterangan: form.keterangan,
+          ket_penggarap: KET_PENGGARAP_MAP[profile.role] ?? null,
           owner_name: form.ownerName,
           owner_id: user?.id ?? null,
           mp_id: profile.role === 'mp' ? user?.id ?? null : null,

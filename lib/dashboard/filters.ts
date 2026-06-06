@@ -20,6 +20,7 @@ export function applyFilters(data: Lead[], filters: FilterState): Lead[] {
     if (filters.pic !== 'ALL' && d.ownerName !== filters.pic) return false
     if (filters.wilayah !== 'ALL' && d.wilayah !== filters.wilayah) return false
     if (filters.principal !== 'ALL' && d.principal !== filters.principal) return false
+    if (filters.ketPenggarap !== 'ALL' && d.ketPenggarap !== filters.ketPenggarap) return false
 
     if (filters.search) {
       const search = filters.search.toLowerCase()
@@ -73,8 +74,9 @@ export function getUniqueFilterOptions(data: Lead[]) {
   const wilayahs = [...new Set(data.map((d) => d.wilayah).filter(Boolean))].sort()
   const principals = [...new Set(data.map((d) => d.principal).filter(Boolean))].sort()
   const sumberDanas = [...new Set(data.map((d) => d.sumberDana).filter(Boolean))].sort()
+  const ketPenggaraps = [...new Set(data.map((d) => d.ketPenggarap).filter(Boolean))].sort()
 
-  return { pics, wilayahs, principals, sumberDanas }
+  return { pics, wilayahs, principals, sumberDanas, ketPenggaraps }
 }
 
 /**

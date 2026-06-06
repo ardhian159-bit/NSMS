@@ -12,6 +12,7 @@ interface FilterBarProps {
     wilayahs: string[]
     principals: string[]
     sumberDanas: string[]
+    ketPenggaraps: string[]
   }
   onExport?: () => void
   isExporting?: boolean
@@ -29,6 +30,7 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
       pic: 'ALL',
       wilayah: 'ALL',
       principal: 'ALL',
+      ketPenggarap: 'ALL',
       tk: 'ALL',
       search: '',
     })
@@ -95,7 +97,7 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
       </div>
 
       {/* Row 3: Dropdowns + Search */}
-      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
         {/* PIC */}
         <select
           value={filters.pic}
@@ -141,6 +143,18 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
           <option value="ALL">Semua Sumber Dana</option>
           {options.sumberDanas.map((s) => (
             <option key={s} value={s}>{s}</option>
+          ))}
+        </select>
+
+        {/* Penggarap */}
+        <select
+          value={filters.ketPenggarap}
+          onChange={(e) => update({ ketPenggarap: e.target.value })}
+          className="rounded-lg border border-[#EBEBE7] bg-white text-sm text-[#1A1A18] px-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A1A18]"
+        >
+          <option value="ALL">Semua Penggarap</option>
+          {options.ketPenggaraps.map((k) => (
+            <option key={k} value={k}>{k}</option>
           ))}
         </select>
 

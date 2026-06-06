@@ -67,6 +67,7 @@ export interface Lead {
   isShadow: boolean
   parentLeadId: number | null
   keterangan: string
+  ketPenggarap: string
   inputDate: string | null
   createdAt: string
   updatedAt: string
@@ -134,6 +135,7 @@ export interface FilterState {
   pic: string        // 'ALL' | specific PIC name
   wilayah: string    // 'ALL' | specific value
   principal: string  // 'ALL' | specific value
+  ketPenggarap: string // 'ALL' | 'SP' | 'MP' | 'SR' | 'BM' | 'REKANAN' | 'PUSAT'
   tk: string         // 'ALL' | '0' | '5' | '10' | '25' | '50' | '75' | '100'
   search: string
 }
@@ -196,6 +198,7 @@ export interface LeadRow {
   is_shadow: boolean | null
   parent_lead_id: number | null
   keterangan: string | null
+  ket_penggarap: string | null
   input_date: string | null
   created_at: string
   updated_at: string
@@ -285,6 +288,7 @@ export function mapLeadRow(row: LeadRow): Lead {
     isShadow: row.is_shadow ?? false,
     parentLeadId: row.parent_lead_id,
     keterangan: row.keterangan ?? '',
+    ketPenggarap: row.ket_penggarap ?? '',
     inputDate: row.input_date,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
