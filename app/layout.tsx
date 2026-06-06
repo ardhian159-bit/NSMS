@@ -14,13 +14,32 @@ const dmMono = DM_Mono({
   weight: ['400', '500'],
 })
 
+const SITE_URL = 'https://nsms-three.vercel.app'
+const OG_TITLE = 'NSMS — Satu sistem. Seluruh pipeline nasional.'
+const OG_DESC =
+  'NSMS membantu tim sales memantau, mencatat, dan menganalisis progres penjualan dari seluruh wilayah — real-time, terstruktur, dan terpusat.'
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: 'NSMS — Sales Management System',
-  description: 'National Sales Management System — Intan Pariwara KLDI',
+  description: OG_DESC,
   icons: {
     icon: '/icon.svg',
     shortcut: '/icon.svg',
     apple: '/icon.svg',
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'id_ID',
+    url: SITE_URL,
+    siteName: 'NSMS',
+    title: OG_TITLE,
+    description: OG_DESC,
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: OG_TITLE,
+    description: OG_DESC,
   },
 }
 
