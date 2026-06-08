@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Search } from 'lucide-react'
 import type { Lead, TrackerEntry, AppSettings, Profile } from '@/lib/types'
 import { getTrackerHistory } from '@/lib/dashboard/detail'
+import { formatRupiahShort } from '@/lib/dashboard/formatters'
 import LeadListItem from '@/components/pipeline/LeadListItem'
 import UpdateForm from '@/components/pipeline/UpdateForm'
 import LeadManagementTab from '@/components/shared/LeadManagementTab'
@@ -43,6 +44,18 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
     )
   }, [leads, search, filterPicUpdate])
 
+  // KPI personal — ringkasan leads milik PIC ini
+  const kpis = useMemo(() => {
+    let totalNetto = 0, closingCount = 0, closingNetto = 0, hotCount = 0, gagalCount = 0
+    leads.forEach((l) => {
+      totalNetto += l.forecastNetto || 0
+      if (l.tk === 100) { closingCount++; closingNetto += l.forecastNetto || 0 }
+      else if (l.tk === 75) hotCount++
+      else if (l.tk === 0) gagalCount++
+    })
+    return { totalNetto, closingCount, closingNetto, hotCount, gagalCount }
+  }, [leads])
+
   const selectedLead = useMemo(
     () => (selectedFunnelId ? leads.find((l) => l.funnelId === selectedFunnelId) ?? null : null),
     [leads, selectedFunnelId]
@@ -65,6 +78,33 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
           Pipeline — {profile.picName || profile.username}
         </h1>
         <p className="text-sm text-[#A0A09A] mt-0.5">{leads.length} paket aktif</p>
+      </div>
+
+      {/* KPI Strip — ringkasan personal */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
+          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Total Netto</p>
+          <p className="text-lg font-semibold text-[#1A1A18] mt-0.5 font-[family-name:var(--font-dm-mono)]">
+            {formatRupiahShort(kpis.totalNetto)}
+          </p>
+        </div>
+        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
+          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Closing</p>
+          <p className="text-lg font-semibold text-green-700 mt-0.5">
+            {kpis.closingCount}
+            <span className="text-[11px] font-normal text-[#A0A09A] ml-1.5 font-[family-name:var(--font-dm-mono)]">
+              {formatRupiahShort(kpis.closingNetto)}
+            </span>
+          </p>
+        </div>
+        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
+          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Hot Prospek</p>
+          <p className="text-lg font-semibold text-red-600 mt-0.5">{kpis.hotCount}</p>
+        </div>
+        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
+          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Gagal</p>
+          <p className="text-lg font-semibold text-[#A0A09A] mt-0.5">{kpis.gagalCount}</p>
+        </div>
       </div>
 
       {/* Tab Pills */}
