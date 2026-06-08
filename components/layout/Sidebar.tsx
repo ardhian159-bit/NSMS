@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Link from 'next/link'
+import Link, { useLinkStatus } from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import {
   LayoutDashboard,
@@ -15,6 +15,7 @@ import {
   UserCog,
   MapPin,
   BarChart2,
+  Loader2,
 } from 'lucide-react'
 import type { Profile } from '@/lib/types'
 import { supabase } from '@/lib/supabase'
@@ -31,6 +32,18 @@ interface SidebarProps {
 }
 
 const STORAGE_KEY = 'nsms_sidebar_collapsed'
+
+// Spinner per-link — useLinkStatus() lapor pending saat navigasi sedang jalan.
+// Harus dirender sebagai descendant <Link> agar dapat status link tsb.
+function NavPending({ collapsed }: { collapsed: boolean }) {
+  const { pending } = useLinkStatus()
+  if (!pending) return null
+  return (
+    <Loader2
+      className={`w-3.5 h-3.5 animate-spin flex-shrink-0 ${collapsed ? 'absolute right-1 top-1' : 'ml-auto'}`}
+    />
+  )
+}
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
@@ -109,7 +122,7 @@ export default function Sidebar({ profile }: SidebarProps) {
               <Link
                 href={item.href}
                 className={`
-                  flex items-center gap-3 rounded-lg text-sm font-medium transition-colors
+                  relative flex items-center gap-3 rounded-lg text-sm font-medium transition-colors
                   ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
                   ${isActive
                     ? 'bg-[#1A1A18] text-white'
@@ -119,6 +132,7 @@ export default function Sidebar({ profile }: SidebarProps) {
               >
                 <item.icon className="w-[18px] h-[18px] flex-shrink-0" />
                 {!collapsed && item.label}
+                <NavPending collapsed={collapsed} />
               </Link>
             )
 
