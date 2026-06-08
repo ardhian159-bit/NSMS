@@ -33,12 +33,9 @@ export default function MultiSelect({ label, options, selected, onChange }: Mult
     }
   }
 
-  const selectAllFiltered = () => {
-    const merged = new Set([...selected, ...filtered])
-    onChange([...merged])
-  }
-
-  const clearAll = () => onChange([])
+  // Master "Semua" → balik ke [] (semua masuk). selected=[] berarti semua.
+  const isAll = selected.length === 0
+  const selectAll = () => onChange([])
 
   // Label trigger
   const triggerLabel =
@@ -85,23 +82,23 @@ export default function MultiSelect({ label, options, selected, onChange }: Mult
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex items-center justify-between px-3 py-1.5 border-b border-[#EBEBE7] text-xs">
-            <button
-              onClick={selectAllFiltered}
-              className="text-[#064E3B] font-medium hover:underline"
-            >
-              Pilih semua
-            </button>
-            <span className="text-[#A0A09A]">{selected.length} terpilih</span>
-            <button
-              onClick={clearAll}
-              className="text-[#6B6B65] font-medium hover:text-[#1A1A18] hover:underline disabled:opacity-40"
-              disabled={selected.length === 0}
-            >
-              Hapus
-            </button>
-          </div>
+          {/* Master "Semua" */}
+          <button
+            onClick={selectAll}
+            className="flex items-center justify-between gap-2.5 w-full px-3 py-2 text-sm text-left border-b border-[#EBEBE7] hover:bg-[#F5F5F2] transition-colors"
+          >
+            <span className="flex items-center gap-2.5">
+              <span
+                className={`flex items-center justify-center w-4 h-4 rounded border flex-shrink-0 ${
+                  isAll ? 'bg-[#1A1A18] border-[#1A1A18]' : 'border-[#D4D4D0] bg-white'
+                }`}
+              >
+                {isAll && <Check className="w-3 h-3 text-white" />}
+              </span>
+              <span className="font-medium text-[#1A1A18]">Semua {label}</span>
+            </span>
+            {!isAll && <span className="text-xs text-[#A0A09A]">{selected.length} terpilih</span>}
+          </button>
 
           {/* Checklist */}
           <div className="max-h-60 overflow-y-auto py-1">
