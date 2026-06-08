@@ -1,7 +1,10 @@
 'use client'
 
-import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer, Tooltip, LabelList } from 'recharts'
+import { BarChart, Bar, Cell, XAxis, YAxis, ResponsiveContainer, Tooltip, LabelList } from 'recharts'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
+
+// Palet kategorikal — tiap jenis produk dapat warna sendiri (selaras pie Sumber Dana)
+const PRODUK_COLORS = ['#ef4444', '#8b5cf6', '#14b8a6', '#f59e0b', '#3b82f6', '#10b981', '#6366f1', '#ec4899']
 
 interface JenisProdukChartItem {
   name: string
@@ -22,10 +25,10 @@ export default function ChartJenisProduk({ data }: ChartJenisProdukProps) {
       
       <div style={{ height: Math.max(200, data.length * 44) }} className="w-full">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart 
-            data={data} 
+          <BarChart
+            data={data}
             layout="vertical"
-            margin={{ top: 0, right: 30, left: 0, bottom: 0 }}
+            margin={{ top: 0, right: 170, left: 0, bottom: 0 }}
           >
             <XAxis type="number" hide />
             <YAxis 
@@ -54,24 +57,26 @@ export default function ChartJenisProduk({ data }: ChartJenisProdukProps) {
                 return null
               }}
             />
-            <Bar 
-              dataKey="netto" 
-              fill="#064E3B" 
+            <Bar
+              dataKey="netto"
               radius={[0, 4, 4, 0]}
               barSize={24}
             >
-              <LabelList 
-                dataKey="netto" 
-                position="insideRight" 
+              {data.map((_, i) => (
+                <Cell key={i} fill={PRODUK_COLORS[i % PRODUK_COLORS.length]} />
+              ))}
+              <LabelList
+                dataKey="netto"
+                position="right"
                 content={(props: any) => {
                   const { x, y, width, height, value, index } = props;
                   const count = data[index]?.count || 0;
                   return (
-                    <text 
-                      x={x + width - 10} 
-                      y={y + height / 2 + 3} 
-                      fill="#FFFFFF" 
-                      textAnchor="end" 
+                    <text
+                      x={x + width + 8}
+                      y={y + height / 2 + 4}
+                      fill="#6B6B65"
+                      textAnchor="start"
                       style={{ fontSize: '11px', fontWeight: 500, fontFamily: 'var(--font-dm-sans)' }}
                     >
                       {`${count} Paket — ${formatRupiahShort(value as number)}`}
