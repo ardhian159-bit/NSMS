@@ -23,7 +23,7 @@ const PRINCIPAL_ALIAS: Record<string, string> = {
   'PT APSARA TIYASA SAMBADA': 'ATS',
 }
 
-export function makeMatcher(options: string[], threshold: number) {
+export function makeMatcher(options: string[], threshold: number, opts?: { prefixMatch?: boolean }) {
   const fuse = new Fuse(options, { includeScore: true, threshold, ignoreLocation: true })
   const exactMap = new Map(options.map((o) => [normStr(o), o]))
 
@@ -37,9 +37,19 @@ export function makeMatcher(options: string[], threshold: number) {
       if (a) return { value: a, status: 'ok', candidates: [] }
     }
 
+    const nq = normStr(q)
+
     // exact (case-insensitive)
-    const exact = exactMap.get(normStr(q))
+    const exact = exactMap.get(nq)
     if (exact) return { value: exact, status: 'ok', candidates: [] }
+
+    // prefix match opsional: input punya kata tambahan setelah kode valid
+    // ("apbd prov" / "APBD Provinsi" → APBD). Forward-only, aman dari hierarki kab/kota.
+    if (opts?.prefixMatch) {
+      for (const o of options) {
+        if (nq.startsWith(normStr(o) + ' ')) return { value: o, status: 'ok', candidates: [] }
+      }
+    }
 
     // fuzzy
     const res = fuse.search(q).slice(0, 3)

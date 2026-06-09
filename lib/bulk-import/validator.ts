@@ -49,7 +49,7 @@ function numCell(raw: string, required: boolean): CellResult {
 export function processRows(raw: Record<string, string>[], ref: ReferenceData): ProcessedRow[] {
   const picMatcher = makeMatcher(ref.pics.map((p) => p.picName), 0.35)
   const principalMatcher = makeMatcher(ref.principals, 0.3)
-  const sumberMatcher = makeMatcher(ref.sumberDana, 0.3)
+  const sumberMatcher = makeMatcher(ref.sumberDana, 0.3, { prefixMatch: true })
   const kabKotaMatcher = makeMatcher(ALL_KABKOTA, 0.3)
   const picByName = new Map(ref.pics.map((p) => [normStr(p.picName), p]))
 
