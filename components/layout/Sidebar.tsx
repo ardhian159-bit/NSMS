@@ -48,7 +48,7 @@ function NavPending({ collapsed }: { collapsed: boolean }) {
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
   { href: '/performance', label: 'Performance', icon: BarChart2, roles: ['superadmin', 'admin'] },
-  { href: '/pipeline', label: 'Pipeline', icon: GitBranch, roles: ['superadmin', 'admin', 'sales', 'am'] },
+  { href: '/pipeline', label: 'Pipeline', icon: GitBranch, roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
   { href: '/admin', label: 'Admin Panel', icon: ShieldCheck, roles: ['superadmin', 'admin'] },
   { href: '/monitoring', label: 'Monitoring', icon: Eye, roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
   { href: '/map', label: 'Peta Sebaran', icon: MapPin, roles: ['superadmin', 'admin', 'mp', 'sp', 'dirut', 'am'] },
