@@ -385,6 +385,13 @@ export default function ControlClient({
             ))}
           </div>
 
+          {activeCategory === 'picNames' && (
+            <p className="text-xs text-[#A0A09A] mb-3 px-1 leading-relaxed">
+              Ini hanya daftar manual (mis. pre-seed rekanan). Dropdown PIC saat input otomatis
+              juga mencakup semua akun (profiles) &amp; nama yang sudah dipakai di leads.
+            </p>
+          )}
+
           {/* Items list */}
           <div className="space-y-1.5 mb-4">
             {categoryItems.length === 0 ? (

@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { mapLeadRow, mapProfileRow, mapTrackerRow } from '@/lib/types'
 import type { LeadRow, ProfileRow, TrackerRow, SettingRowRaw, AppSettings } from '@/lib/types'
+import { fetchPicOptions } from '@/lib/api'
 import AdminClient from './admin-client'
 
 export default async function AdminPage() {
@@ -58,6 +59,7 @@ export default async function AdminPage() {
       case 'jenisProduk': settings.jenisProduk.push(row.value); break
     }
   })
+  settings.picNames = await fetchPicOptions(settings.picNames)
 
   return <AdminClient leads={leads} trackers={trackers} settings={settings} profile={profile} />
 }

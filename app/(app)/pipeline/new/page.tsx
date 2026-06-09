@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { mapProfileRow } from '@/lib/types'
 import type { ProfileRow, SettingRowRaw, AppSettings } from '@/lib/types'
+import { fetchPicOptions } from '@/lib/api'
 import InputLeadForm from '@/components/shared/InputLeadForm'
 
 export default async function NewLeadPage() {
@@ -40,6 +41,7 @@ export default async function NewLeadPage() {
       case 'jenisProduk': settings.jenisProduk.push(row.value); break
     }
   })
+  settings.picNames = await fetchPicOptions(settings.picNames)
 
   return (
     <div className="p-4 md:p-6 space-y-6">

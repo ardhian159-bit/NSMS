@@ -140,6 +140,29 @@ export async function fetchSettings(): Promise<AppSettings> {
   return result
 }
 
+/**
+ * Opsi PIC untuk dropdown = union profiles.pic_name + owner_name distinct (leads)
+ * + daftar manual (settings.picNames). Dedupe case-insensitive, proper-case menang.
+ */
+export async function fetchPicOptions(manual: string[] = []): Promise<string[]> {
+  const supabase = await createClient()
+  const [{ data: profs }, { data: leads }] = await Promise.all([
+    supabase.from('profiles').select('pic_name').not('pic_name', 'is', null),
+    supabase.from('leads').select('owner_name').not('owner_name', 'is', null),
+  ])
+  const byKey = new Map<string, string>()
+  const add = (n?: string | null) => {
+    const t = (n ?? '').trim()
+    if (!t) return
+    const k = t.toLowerCase()
+    if (!byKey.has(k)) byKey.set(k, t)
+  }
+  ;(profs as { pic_name: string | null }[] | null ?? []).forEach((p) => add(p.pic_name))
+  ;(leads as { owner_name: string | null }[] | null ?? []).forEach((l) => add(l.owner_name))
+  manual.forEach(add)
+  return [...byKey.values()].sort((a, b) => a.localeCompare(b, 'id'))
+}
+
 // =============================================================================
 // TARGETS
 // =============================================================================

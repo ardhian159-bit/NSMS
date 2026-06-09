@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { mapLeadRow, mapTrackerRow, mapProfileRow } from '@/lib/types'
 import type { LeadRow, TrackerRow, ProfileRow, SettingRowRaw, AppSettings } from '@/lib/types'
+import { fetchPicOptions } from '@/lib/api'
 import PipelineClient from './pipeline-client'
 
 export default async function PipelinePage() {
@@ -67,6 +68,7 @@ export default async function PipelinePage() {
       case 'jenisProduk': settings.jenisProduk.push(row.value); break
     }
   })
+  settings.picNames = await fetchPicOptions(settings.picNames)
 
   return (
     <PipelineClient
