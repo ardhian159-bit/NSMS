@@ -1,8 +1,19 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient as createAdminClient } from '@supabase/supabase-js'
+import { createClient as createServerClient } from '@/lib/supabase-server'
 import { NextResponse } from 'next/server'
 
 export async function POST(req: Request) {
-  const supabaseAdmin = createClient(
+  // 1. Verifikasi caller = superadmin (pakai session cookie, BUKAN service role)
+  const supabase = await createServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return NextResponse.json({ error: 'Tidak terautentikasi' }, { status: 401 })
+
+  const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+  if (!profile || profile.role !== 'superadmin') {
+    return NextResponse.json({ error: 'Hanya superadmin yang boleh membuat user' }, { status: 403 })
+  }
+
+  const supabaseAdmin = createAdminClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )

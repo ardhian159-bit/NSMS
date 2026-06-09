@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -73,6 +74,23 @@ export default function LoginPage() {
           >
             {loading ? 'Masuk...' : 'Login'}
           </button>
+
+          <div className="text-center pt-1">
+            <button
+              type="button"
+              onClick={() => setShowHelp((v) => !v)}
+              className="text-xs text-[#A0A09A] hover:text-[#064E3B] transition-colors"
+            >
+              Lupa password?
+            </button>
+          </div>
+
+          {showHelp && (
+            <div className="text-xs text-[#6B6B65] bg-[#F5F5F2] border border-[#EBEBE7] rounded-lg px-3 py-2.5 leading-relaxed">
+              Hubungi <b className="text-[#1A1A18]">superadmin</b> untuk reset password.
+              Kamu akan diberi password sementara, lalu diminta membuat password baru saat login.
+            </div>
+          )}
         </form>
       </div>
       
