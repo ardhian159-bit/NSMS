@@ -12,7 +12,7 @@ import { detectFileDuplicates, detectDbDuplicates } from './dedupe'
 import type { ProcessedRow, CellResult, RowStatus, ReferenceData } from './types'
 
 const KET_PENGGARAP_MAP: Record<string, string> = {
-  sales: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN',
+  sales: 'SP', sp: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN',
 }
 
 // Region: semua kab/kota + reverse map ke provinsi + exact map + bare-name index

@@ -51,6 +51,7 @@ interface FormData {
 // admin/superadmin → null (bisa di-set manual via Control Panel/PUSAT).
 const KET_PENGGARAP_MAP: Record<string, string> = {
   sales: 'SP',
+  sp: 'SP',
   mp: 'MP',
   am: 'MP',
   dirut: 'MP',

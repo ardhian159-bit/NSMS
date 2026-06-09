@@ -25,7 +25,7 @@ interface BulkImportClientProps {
   knownOwners: KnownOwnerRef[]
 }
 
-const KET_PENGGARAP_MAP: Record<string, string> = { sales: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN' }
+const KET_PENGGARAP_MAP: Record<string, string> = { sales: 'SP', sp: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN' }
 const DISPLAY_HEADERS = LEADS_COLUMNS.filter((c) => c.import !== 'ignore').map((c) => c.header)
 const FUZZY_HEADERS = new Set(['Principal', 'Sumber Dana', 'Kab/Kota', 'PIC'])
 
