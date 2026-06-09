@@ -6,7 +6,7 @@ import type { Profile, Lead } from '@/lib/types'
 import type { CompanyTarget } from '@/lib/api'
 import Badge from '@/components/dashboard/Badge'
 import { formatRupiahShort } from '@/lib/dashboard/formatters'
-import { Pencil, Check, X, Unlock } from 'lucide-react'
+import { Pencil, Check, X, Unlock, KeyRound, Copy } from 'lucide-react'
 
 interface SettingItem {
   id: number
@@ -74,6 +74,29 @@ export default function ControlClient({
     )
     setEditingId(null)
     setSaving(false)
+  }
+
+  // Reset Password
+  const [resettingId, setResettingId] = useState<string | null>(null)
+  const [resetResult, setResetResult] = useState<{ name: string; password: string } | null>(null)
+  const [copied, setCopied] = useState(false)
+
+  const handleResetPassword = async (p: Profile) => {
+    if (!confirm(`Reset password untuk ${p.picName || p.username}? Password lama akan tidak berlaku.`)) return
+    setResettingId(p.id)
+    try {
+      const res = await fetch('/api/admin/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ targetId: p.id }),
+      })
+      const json = await res.json()
+      if (!res.ok) { alert(json.error ?? 'Gagal reset'); return }
+      setResetResult({ name: p.picName || p.username, password: json.tempPassword })
+      setCopied(false)
+    } finally {
+      setResettingId(null)
+    }
   }
 
   // Add User
@@ -300,18 +323,28 @@ export default function ControlClient({
                           </span>
                         </td>
                         <td className="px-4 py-3 text-[#6B6B65]">{p.branch || '-'}</td>
-                        <td className="px-4 py-3 text-center">
-                          <button
-                            onClick={() => {
-                              setEditingId(p.id)
-                              setEditRole(p.role)
-                              setEditPicName(p.picName)
-                            }}
-                            className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
-                            title="Edit"
-                          >
-                            <Pencil className="w-3.5 h-3.5" />
-                          </button>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center justify-center gap-1">
+                            <button
+                              onClick={() => {
+                                setEditingId(p.id)
+                                setEditRole(p.role)
+                                setEditPicName(p.picName)
+                              }}
+                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                              title="Edit"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleResetPassword(p)}
+                              disabled={resettingId === p.id}
+                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-40"
+                              title="Reset Password"
+                            >
+                              <KeyRound className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </td>
                       </>
                     )}
@@ -577,6 +610,34 @@ export default function ControlClient({
                 </tr>
               </tfoot>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Reset Password Result Modal */}
+      {resetResult && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setResetResult(null)}>
+          <div className="bg-white rounded-2xl border border-[#EBEBE7] shadow-lg w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-semibold text-[#1A1A18]">Password Sementara</h3>
+            <p className="text-sm text-[#6B6B65] mt-1">
+              Untuk <b>{resetResult.name}</b>. Berikan ke user — dia akan dipaksa ganti password saat login.
+            </p>
+            <div className="mt-4 flex items-center gap-2 bg-[#F5F5F2] rounded-lg px-3 py-2.5 border border-[#EBEBE7]">
+              <code className="flex-1 text-base font-[family-name:var(--font-dm-mono)] text-[#1A1A18] select-all">{resetResult.password}</code>
+              <button
+                onClick={() => { navigator.clipboard.writeText(resetResult.password); setCopied(true) }}
+                className="flex items-center gap-1 text-xs font-medium text-[#064E3B] hover:underline"
+              >
+                <Copy className="w-3.5 h-3.5" /> {copied ? 'Tersalin' : 'Salin'}
+              </button>
+            </div>
+            <p className="text-[11px] text-[#A0A09A] mt-2">Password ini hanya tampil sekali. Salin sekarang.</p>
+            <button
+              onClick={() => setResetResult(null)}
+              className="mt-4 w-full py-2 rounded-lg bg-[#1A1A18] text-white text-sm font-semibold hover:bg-[#2A2A28]"
+            >
+              Selesai
+            </button>
           </div>
         </div>
       )}

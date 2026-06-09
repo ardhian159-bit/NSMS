@@ -34,6 +34,11 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
+    // Password baru di-reset admin → paksa ganti dulu (kecuali sudah di halaman itu)
+    if (user && user.user_metadata?.must_change_password && pathname !== '/change-password') {
+        return NextResponse.redirect(new URL('/change-password', request.url))
+    }
+
     return supabaseResponse
 }
 
