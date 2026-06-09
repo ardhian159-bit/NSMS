@@ -6,6 +6,7 @@ import type { TrackerEntry, Profile } from '@/lib/types'
 import Badge from '@/components/dashboard/Badge'
 import { formatRupiahShort, truncateText } from '@/lib/dashboard/formatters'
 import { getISOWeekInfo } from '@/lib/dashboard/week'
+import { weekRank } from '@/lib/dashboard/detail'
 import { Pencil, Check, X, Search } from 'lucide-react'
 
 interface MonitoringClientProps {
@@ -108,7 +109,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
     [localTrackers]
   )
   const weekOptions = useMemo(
-    () => ['ALL', ...Array.from(new Set(localTrackers.map((t) => t.week).filter(Boolean))).sort().reverse()],
+    () => ['ALL', ...Array.from(new Set(localTrackers.map((t) => t.week).filter(Boolean))).sort((a, b) => weekRank(b) - weekRank(a))],
     [localTrackers]
   )
   const statusOptions = useMemo(

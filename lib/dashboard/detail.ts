@@ -7,6 +7,16 @@
 import type { Lead, TrackerEntry } from '../types'
 
 /**
+ * Parse week label "W{N}-YYYY" → rank numerik (year*100 + week).
+ * Untuk sort kronologis yang benar (localeCompare salah: "W3" > "W24").
+ */
+export function weekRank(label: string | null | undefined): number {
+  const m = (label || '').match(/^W(\d+)-(\d+)$/i)
+  if (!m) return -1
+  return parseInt(m[2], 10) * 100 + parseInt(m[1], 10)
+}
+
+/**
  * Find a lead by funnelId from an array.
  * Used by the detail drawer/modal.
  */
@@ -15,13 +25,13 @@ export function getLeadByFunnelId(data: Lead[], funnelId: string): Lead | undefi
 }
 
 /**
- * Get tracker history entries for a given funnelId, sorted newest first.
- * Source: dashboard.html line 998-1000
+ * Get tracker history entries for a given funnelId, sorted newest first
+ * (year desc, lalu week desc).
  */
 export function getTrackerHistory(trackers: TrackerEntry[], funnelId: string): TrackerEntry[] {
   return trackers
     .filter((t) => t.funnelId === funnelId)
-    .sort((a, b) => (b.week || '').localeCompare(a.week || ''))
+    .sort((a, b) => weekRank(b.week) - weekRank(a.week))
 }
 
 /**
@@ -42,7 +52,7 @@ export function getLatestWeekForFunnel(trackers: TrackerEntry[], funnelId: strin
   const weeks = trackers
     .filter((t) => t.funnelId === funnelId && t.week)
     .map((t) => t.week)
-    .sort()
+    .sort((a, b) => weekRank(a) - weekRank(b))
 
   return weeks.length > 0 ? weeks[weeks.length - 1] : ''
 }
