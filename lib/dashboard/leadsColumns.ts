@@ -33,7 +33,7 @@ export const LEADS_COLUMNS: LeadColumn[] = [
   { header: 'Kab/Kota',         key: 'kabKota',          width: 20, import: 'required' },
   { header: 'PPN',              key: 'ppn',              width: 10, import: 'required' },
   { header: 'DPP',              key: 'dpp',              width: 18, import: 'ignore'   },
-  { header: 'Perkiraan CB (%)', key: 'perkiraanCb',      width: 16, import: 'optional' },
+  { header: 'Perkiraan CB (%)', key: 'perkiraanCb',      width: 16, import: 'required' },
   { header: 'PIC',              key: 'ownerName',        width: 24, import: 'required' },
   { header: 'Target Close',     key: 'targetCloseWeek',  width: 14, import: 'optional' },
   { header: 'Input Week',       key: 'inputWeekLabel',   width: 12, import: 'ignore'   },

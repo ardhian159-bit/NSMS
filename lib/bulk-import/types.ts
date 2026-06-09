@@ -29,9 +29,18 @@ export interface ProcessedRow {
   forceInsert?: boolean
 }
 
+/** Nama owner yang sudah ada di tabel leads (untuk match PIC tanpa akun) */
+export interface KnownOwner {
+  name: string
+  ownerId: string | null
+  ketPenggarap: string | null
+}
+
 export interface ReferenceData {
   pics: { id: string; picName: string; role: string }[]
   principals: string[]
   sumberDana: string[]
   existingLeads: { funnelId: string; namaPaket: string; instansi: string; nilaiAnggaran: number }[]
+  /** owner_name + ket_penggarap distinct dari leads (penggarap tanpa akun) */
+  knownOwners: KnownOwner[]
 }

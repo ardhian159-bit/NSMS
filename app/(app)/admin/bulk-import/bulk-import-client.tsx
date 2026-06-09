@@ -9,24 +9,40 @@ import { processRows, computeStatus } from '@/lib/bulk-import/validator'
 import { detectFileDuplicates, detectDbDuplicates } from '@/lib/bulk-import/dedupe'
 import { bulkInsert, downloadInsertReport, type InsertResultRow } from '@/lib/bulk-import/insert'
 import { LEADS_COLUMNS } from '@/lib/dashboard/leadsColumns'
+// Header normalisasi: case-insensitive, abaikan spasi & titik/underscore
+const normHeader = (h: string) => h.toLowerCase().replace(/\s+/g, '').replace(/[._]/g, '')
+const HEADER_CANON = new Map(LEADS_COLUMNS.map((c) => [normHeader(c.header), c.header]))
+const REQUIRED_HEADERS = LEADS_COLUMNS.filter((c) => c.import === 'required').map((c) => c.header)
 import { normStr } from '@/lib/bulk-import/normalizer'
 import type { ProcessedRow, ReferenceData } from '@/lib/bulk-import/types'
-import type { PicRef, ExistingLeadRef } from './page'
+import type { PicRef, ExistingLeadRef, KnownOwnerRef } from './page'
 
 interface BulkImportClientProps {
   pics: PicRef[]
   principals: string[]
   sumberDana: string[]
   existingLeads: ExistingLeadRef[]
+  knownOwners: KnownOwnerRef[]
 }
 
 const KET_PENGGARAP_MAP: Record<string, string> = { sales: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN' }
 const DISPLAY_HEADERS = LEADS_COLUMNS.filter((c) => c.import !== 'ignore').map((c) => c.header)
 const FUZZY_HEADERS = new Set(['Principal', 'Sumber Dana', 'Kab/Kota', 'PIC'])
 
-export default function BulkImportClient({ pics, principals, sumberDana, existingLeads }: BulkImportClientProps) {
-  const ref: ReferenceData = useMemo(() => ({ pics, principals, sumberDana, existingLeads }), [pics, principals, sumberDana, existingLeads])
+export default function BulkImportClient({ pics, principals, sumberDana, existingLeads, knownOwners }: BulkImportClientProps) {
+  const ref: ReferenceData = useMemo(() => ({ pics, principals, sumberDana, existingLeads, knownOwners }), [pics, principals, sumberDana, existingLeads, knownOwners])
   const picByName = useMemo(() => new Map(pics.map((p) => [normStr(p.picName), p])), [pics])
+  const knownOwnerByName = useMemo(() => new Map(knownOwners.map((o) => [normStr(o.name), o])), [knownOwners])
+
+  // Cascade PIC: profiles (akun) → nama di DB → nama baru (rekanan).
+  const resolvePicInfo = useCallback((value: string): { ownerId: string | null; ket: string | null } => {
+    const norm = normStr(value)
+    const prof = picByName.get(norm)
+    if (prof) return { ownerId: prof.id, ket: KET_PENGGARAP_MAP[prof.role] ?? null }
+    const known = knownOwnerByName.get(norm)
+    if (known) return { ownerId: known.ownerId, ket: known.ketPenggarap }
+    return { ownerId: null, ket: 'REKANAN' }
+  }, [picByName, knownOwnerByName])
 
   const [rows, setRows] = useState<ProcessedRow[] | null>(null)
   const [fileName, setFileName] = useState('')
@@ -43,7 +59,23 @@ export default function BulkImportClient({ pics, principals, sumberDana, existin
     try {
       const parsed = await parseFile(file)
       if (parsed.rows.length === 0) { setError('File kosong / tidak ada baris data.'); setRows(null); return }
-      setRows(processRows(parsed.rows, ref))
+
+      // Validasi kolom wajib (header dinormalisasi)
+      const presentCanon = new Set<string>()
+      parsed.headers.forEach((h) => { const c = HEADER_CANON.get(normHeader(h)); if (c) presentCanon.add(c) })
+      const missing = REQUIRED_HEADERS.filter((h) => !presentCanon.has(h))
+      if (missing.length > 0) {
+        setError(`Kolom wajib tidak ditemukan di file: ${missing.join(', ')}. Pastikan header sama persis dengan template (Download Template).`)
+        setRows(null); return
+      }
+
+      // Remap header ke nama kanonik (toleran spasi/kapital)
+      const remapped = parsed.rows.map((row) => {
+        const o: Record<string, string> = {}
+        for (const [k, v] of Object.entries(row)) o[HEADER_CANON.get(normHeader(k)) ?? k] = v
+        return o
+      })
+      setRows(processRows(remapped, ref))
       setFileName(file.name)
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Gagal membaca file'); setRows(null)
@@ -71,9 +103,9 @@ export default function BulkImportClient({ pics, principals, sumberDana, existin
     if (row) {
       row.cells[header] = { ...row.cells[header], value, status: 'ok', message: undefined }
       if (header === 'PIC') {
-        const pic = picByName.get(normStr(value))
-        row.ownerId = pic?.id ?? null
-        row.ketPenggarap = pic ? (KET_PENGGARAP_MAP[pic.role] ?? null) : null
+        const info = resolvePicInfo(value)
+        row.ownerId = info.ownerId
+        row.ketPenggarap = info.ket
       }
     }
     recompute(draft)
@@ -98,9 +130,9 @@ export default function BulkImportClient({ pics, principals, sumberDana, existin
           const v = c.candidates?.[0] ?? c.value
           r.cells[h] = { ...c, value: v, status: 'ok', message: undefined }
           if (h === 'PIC') {
-            const pic = picByName.get(normStr(v))
-            r.ownerId = pic?.id ?? null
-            r.ketPenggarap = pic ? (KET_PENGGARAP_MAP[pic.role] ?? null) : null
+            const info = resolvePicInfo(v)
+            r.ownerId = info.ownerId
+            r.ketPenggarap = info.ket
           }
         }
       })

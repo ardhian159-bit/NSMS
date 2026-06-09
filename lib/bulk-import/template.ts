@@ -51,25 +51,61 @@ export async function downloadTemplate() {
   // Baris contoh
   SAMPLE_ROWS.forEach((r) => ws.addRow(r))
 
-  // Style header: bold + highlight kolom wajib kuning, opsional abu, ignore abu gelap
+  // Style header: highlight kolom wajib kuning cerah, opsional abu terang, auto abu gelap
   const headerRow = ws.getRow(1)
   LEADS_COLUMNS.forEach((c, i) => {
     const cell = headerRow.getCell(i + 1)
-    cell.font = { bold: true }
-    const argb =
-      c.import === 'required' ? 'FFFFF3C4' :   // kuning — wajib
-      c.import === 'optional' ? 'FFEFEFEC' :    // abu terang — opsional
-      'FFE0E0DC'                                // abu — auto/abaikan
-    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb } }
-    cell.alignment = { vertical: 'middle' }
+    const fill =
+      c.import === 'required' ? 'FFFFD43B' :   // kuning cerah — WAJIB
+      c.import === 'optional' ? 'FFE7F5E9' :    // hijau pucat — opsional
+      'FFD4D4CE'                                // abu gelap — auto/jangan diisi
+    const fontColor = c.import === 'ignore' ? 'FF8A8A82' : 'FF1A1A18'
+    cell.font = { bold: true, color: { argb: fontColor }, italic: c.import === 'ignore' }
+    cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: fill } }
+    cell.alignment = { vertical: 'middle', horizontal: 'center' }
+    cell.border = { bottom: { style: 'thin', color: { argb: 'FFBFBFB8' } } }
   })
-  headerRow.height = 20
+  headerRow.height = 22
 
   // Currency format
   ;['Nilai Anggaran', 'Forecast Netto'].forEach((h) => {
     const idx = LEADS_COLUMNS.findIndex((c) => c.header === h)
     if (idx >= 0) ws.getColumn(idx + 1).numFmt = '#,##0'
   })
+
+  // ===== Sheet Petunjuk (legenda) =====
+  const guide = wb.addWorksheet('Petunjuk')
+  guide.columns = [{ width: 22 }, { width: 60 }]
+  const title = guide.addRow(['Petunjuk Pengisian'])
+  title.getCell(1).font = { bold: true, size: 14 }
+  guide.addRow([])
+
+  const legend: [string, string, string][] = [
+    ['FFFFD43B', 'WAJIB', 'Header kuning cerah — harus diisi, baris tidak bisa di-insert kalau kosong.'],
+    ['FFE7F5E9', 'Opsional', 'Header hijau pucat — boleh dikosongkan.'],
+    ['FFD4D4CE', 'Otomatis', 'Header abu (miring) — JANGAN diisi, dihitung sistem (Status, DPP, Funnel ID, Input Week).'],
+  ]
+  legend.forEach(([argb, label, desc]) => {
+    const row = guide.addRow([label, desc])
+    row.getCell(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb } }
+    row.getCell(1).font = { bold: true }
+    row.getCell(1).alignment = { horizontal: 'center' }
+  })
+  guide.addRow([])
+
+  const wajib = LEADS_COLUMNS.filter((c) => c.import === 'required').map((c) => c.header)
+  const opsional = LEADS_COLUMNS.filter((c) => c.import === 'optional').map((c) => c.header)
+  guide.addRow(['Field wajib:', wajib.join(', ')]).getCell(1).font = { bold: true }
+  guide.addRow(['Field opsional:', opsional.join(', ')]).getCell(1).font = { bold: true }
+  guide.addRow([])
+  const notes = [
+    'Status dihitung otomatis dari Stage (TK).',
+    'DPP & Forecast Netto dihitung otomatis dari Nilai Anggaran, PPN, dan Perkiraan CB (%).',
+    'Provinsi dihitung otomatis dari Kab/Kota.',
+    'PIC tanpa akun (rekanan) tetap bisa diisi — nama akan dipakai apa adanya.',
+    'Header boleh beda kapital/spasi, tapi nama kolom harus sama.',
+  ]
+  notes.forEach((n) => guide.addRow(['•', n]))
 
   const buf = await wb.xlsx.writeBuffer()
   const blob = new Blob([buf], {
