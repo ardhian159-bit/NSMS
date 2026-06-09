@@ -2,6 +2,8 @@
 
 import { useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { Upload } from 'lucide-react'
 import type { Lead, TrackerEntry, AppSettings, Profile } from '@/lib/types'
 import DeleteConfirmDialog from '@/components/admin/DeleteConfirmDialog'
 import AdminTabUpdateFunnel from '@/components/admin/AdminTabUpdateFunnel'
@@ -33,9 +35,18 @@ export default function AdminClient({ leads, trackers, settings, profile }: Admi
   return (
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Admin Panel</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">Kelola pipeline dan data funnel</p>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <h1 className="text-xl font-semibold text-[#1A1A18]">Admin Panel</h1>
+          <p className="text-sm text-[#A0A09A] mt-0.5">Kelola pipeline dan data funnel</p>
+        </div>
+        <Link
+          href="/admin/bulk-import"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#EBEBE7] bg-white text-sm font-medium text-[#064E3B] hover:bg-[#F0FDF4] hover:border-[#064E3B] transition-colors flex-shrink-0"
+        >
+          <Upload className="w-4 h-4" />
+          Import Massal
+        </Link>
       </div>
 
       {/* Tab Pills */}

@@ -45,3 +45,6 @@ next-env.d.ts
 *.xls
 *.csv
 scripts/
+
+# local session handoff notes (untuk agent/dev lokal, bukan untuk repo)
+HANDOFF.md
