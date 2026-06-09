@@ -12,9 +12,9 @@ import type { Lead, FilterState, KPIData } from '../types'
  */
 export function applyFilters(data: Lead[], filters: FilterState): Lead[] {
   return data.filter((d) => {
-    // Single-value (pills)
-    if (filters.quarter !== 'ALL' && d.quarter !== filters.quarter) return false
-    if (filters.tk !== 'ALL' && d.tk.toString() !== filters.tk) return false
+    // Multi-toggle pills ([] = semua)
+    if (filters.quarter.length && !filters.quarter.includes(d.quarter)) return false
+    if (filters.tk.length && !filters.tk.includes(d.tk.toString())) return false
 
     // Multi-select ([] = semua, lolos jika nilai lead ada di array terpilih)
     if (filters.sumberDana.length && !filters.sumberDana.includes(d.sumberDana)) return false

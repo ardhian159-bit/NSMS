@@ -104,8 +104,8 @@ export function getTKBadgeStyle(tk: number): BadgeStyle {
 // =============================================================================
 
 export const DEFAULT_FILTER_STATE: import('./types').FilterState = {
-  quarter: 'ALL',
-  tk: 'ALL',
+  quarter: [],
+  tk: [],
   sumberDana: [],
   pic: [],
   wilayah: [],

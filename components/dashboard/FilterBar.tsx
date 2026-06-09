@@ -26,8 +26,8 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
 
   const reset = () => {
     onFilterChange({
-      quarter: 'ALL',
-      tk: 'ALL',
+      quarter: [],
+      tk: [],
       sumberDana: [],
       pic: [],
       wilayah: [],
@@ -37,23 +37,29 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
     })
   }
 
+  // toggle satu nilai dalam array filter (klik lagi = lepas)
+  const toggle = (key: 'quarter' | 'tk', value: string) => {
+    const cur = filters[key]
+    update({ [key]: cur.includes(value) ? cur.filter((v) => v !== value) : [...cur, value] })
+  }
+
+  const pillClass = (active: boolean) =>
+    `px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
+      active ? 'bg-[#1A1A18] text-white' : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
+    }`
+
   return (
     <div className="bg-white rounded-lg border border-[#EBEBE7] p-4 space-y-4">
       {/* Row 1: Quarter pills */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider mr-1">Quarter</span>
-          {['ALL', 'Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
-            <button
-              key={q}
-              onClick={() => update({ quarter: q })}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                filters.quarter === q
-                  ? 'bg-[#1A1A18] text-white'
-                  : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
-              }`}
-            >
-              {q === 'ALL' ? 'Semua' : q}
+          <button onClick={() => update({ quarter: [] })} className={pillClass(filters.quarter.length === 0)}>
+            Semua
+          </button>
+          {['Q1', 'Q2', 'Q3', 'Q4'].map((q) => (
+            <button key={q} onClick={() => toggle('quarter', q)} className={pillClass(filters.quarter.includes(q))}>
+              {q}
             </button>
           ))}
         </div>
@@ -72,26 +78,11 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
       {/* Row 2: TK pills */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider mr-1">Stage</span>
-        <button
-          onClick={() => update({ tk: 'ALL' })}
-          className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-            filters.tk === 'ALL'
-              ? 'bg-[#1A1A18] text-white'
-              : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
-          }`}
-        >
+        <button onClick={() => update({ tk: [] })} className={pillClass(filters.tk.length === 0)}>
           Semua
         </button>
         {TK_VALUES_ALL.map((tk) => (
-          <button
-            key={tk}
-            onClick={() => update({ tk: tk.toString() })}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-              filters.tk === tk.toString()
-                ? 'bg-[#1A1A18] text-white'
-                : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
-            }`}
-          >
+          <button key={tk} onClick={() => toggle('tk', tk.toString())} className={pillClass(filters.tk.includes(tk.toString()))}>
             {tk}%
           </button>
         ))}

@@ -130,8 +130,8 @@ export interface Target {
 // --- Dashboard State ---
 
 export interface FilterState {
-  quarter: string      // 'ALL' | 'Q1' | 'Q2' | 'Q3' | 'Q4' (single — pill)
-  tk: string           // 'ALL' | '0' | '5' | ... (single — pill)
+  quarter: string[]    // [] = semua, multi-toggle pill ('Q1'..'Q4')
+  tk: string[]         // [] = semua, multi-toggle pill ('0'|'5'|..|'100')
   sumberDana: string[] // [] = semua, multi-select
   pic: string[]        // [] = semua, multi-select
   wilayah: string[]    // [] = semua, multi-select
