@@ -53,11 +53,11 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
 
   return (
     <>
-      <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+      <div className="bg-surface rounded-lg border border-line overflow-hidden">
         {/* Toolbar */}
-        <div className="px-4 py-3 border-b border-[#EBEBE7] bg-[#FAFAF8] flex flex-col sm:flex-row gap-3">
+        <div className="px-4 py-3 border-b border-line bg-surface-alt flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0A09A]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-hint" />
             <input
               type="text"
               value={search}
@@ -76,7 +76,7 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
               <option key={name} value={name}>{name}</option>
             ))}
           </select>
-          <span className="text-xs text-[#A0A09A] self-center whitespace-nowrap">
+          <span className="text-xs text-ink-hint self-center whitespace-nowrap">
             {filtered.length} paket
           </span>
         </div>
@@ -84,7 +84,7 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+            <thead className="text-xs text-ink-hint uppercase tracking-wider bg-surface-alt border-b border-line">
               <tr>
                 <th className="px-3 py-2.5 font-medium">Funnel ID</th>
                 <th className="px-3 py-2.5 font-medium">PIC</th>
@@ -94,10 +94,10 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
                 <th className="px-3 py-2.5 font-medium text-right">Netto</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EBEBE7]">
+            <tbody className="divide-y divide-line">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-[#A0A09A]">
+                  <td colSpan={6} className="px-4 py-10 text-center text-ink-hint">
                     Tidak ada data ditemukan
                   </td>
                 </tr>
@@ -108,9 +108,9 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
                     <tr
                       key={lead.id}
                       onClick={() => setSelectedLead(lead)}
-                      className="hover:bg-[#FAFAF8] cursor-pointer transition-colors"
+                      className="hover:bg-surface-alt cursor-pointer transition-colors"
                     >
-                      <td className="px-3 py-2.5 font-[family-name:var(--font-dm-mono)] text-xs text-[#A0A09A]">
+                      <td className="px-3 py-2.5 font-[family-name:var(--font-dm-mono)] text-xs text-ink-hint">
                         {lead.funnelId}
                         {isLocked && (
                           <span className="ml-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
@@ -118,19 +118,19 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
                           </span>
                         )}
                       </td>
-                      <td className="px-3 py-2.5 font-medium text-[#1A1A18] whitespace-nowrap">
+                      <td className="px-3 py-2.5 font-medium text-ink whitespace-nowrap">
                         {lead.ownerName}
                       </td>
-                      <td className="px-3 py-2.5 text-[#1A1A18]">
+                      <td className="px-3 py-2.5 text-ink">
                         {truncateText(lead.namaPaket || '-', 35)}
                       </td>
-                      <td className="px-3 py-2.5 text-[#6B6B65]">
+                      <td className="px-3 py-2.5 text-ink-muted">
                         {truncateText(lead.instansi || '-', 24)}
                       </td>
                       <td className="px-3 py-2.5 text-center">
                         <Badge tk={lead.tk} showLabel={false} />
                       </td>
-                      <td className="px-3 py-2.5 text-right font-semibold text-[#1A1A18]">
+                      <td className="px-3 py-2.5 text-right font-semibold text-ink">
                         {formatRupiahShort(lead.forecastNetto)}
                       </td>
                     </tr>
@@ -141,8 +141,8 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
           </table>
         </div>
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8]">
-          <p className="text-xs text-[#A0A09A]">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-line bg-surface-alt">
+          <p className="text-xs text-ink-hint">
             {filtered.length > 0
               ? `${(safePage - 1) * PER_PAGE + 1}–${Math.min(safePage * PER_PAGE, filtered.length)} dari ${filtered.length}`
               : '0 data'}
@@ -151,15 +151,15 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={safePage <= 1}
-              className="p-1.5 rounded border border-[#EBEBE7] bg-white text-[#6B6B65] disabled:opacity-30 hover:bg-[#F5F5F2] transition-colors"
+              className="p-1.5 rounded border border-line bg-surface text-ink-muted disabled:opacity-30 hover:bg-page transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <span className="text-xs text-[#6B6B65] font-medium">{safePage} / {totalPages}</span>
+            <span className="text-xs text-ink-muted font-medium">{safePage} / {totalPages}</span>
             <button
               onClick={() => setPage(p => Math.min(totalPages, p + 1))}
               disabled={safePage >= totalPages}
-              className="p-1.5 rounded border border-[#EBEBE7] bg-white text-[#6B6B65] disabled:opacity-30 hover:bg-[#F5F5F2] transition-colors"
+              className="p-1.5 rounded border border-line bg-surface text-ink-muted disabled:opacity-30 hover:bg-page transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -171,7 +171,7 @@ export default function AdminTabUpdateFunnel({ leads, trackers, onUpdated, setti
       <Dialog open={!!selectedLead} onOpenChange={open => { if (!open) setSelectedLead(null) }}>
         <DialogContent style={{ width: 'min(960px, 95vw)', maxWidth: 'none', maxHeight: '90vh', overflowY: 'auto', borderRadius: '1rem' }}>
           <DialogHeader>
-            <DialogTitle className="text-base font-semibold text-[#1A1A18]">
+            <DialogTitle className="text-base font-semibold text-ink">
               Update Funnel
             </DialogTitle>
           </DialogHeader>

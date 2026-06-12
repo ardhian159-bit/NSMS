@@ -74,36 +74,36 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">
+        <h1 className="text-xl font-semibold text-ink">
           Pipeline — {profile.picName || profile.username}
         </h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">{leads.length} paket aktif</p>
+        <p className="text-sm text-ink-hint mt-0.5">{leads.length} paket aktif</p>
       </div>
 
       {/* KPI Strip — ringkasan personal */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Total Netto</p>
-          <p className="text-lg font-semibold text-[#1A1A18] mt-0.5 font-[family-name:var(--font-dm-mono)]">
+        <div className="bg-surface rounded-lg border border-line p-3">
+          <p className="text-[10px] uppercase tracking-wider text-ink-hint">Total Netto</p>
+          <p className="text-lg font-semibold text-ink mt-0.5 font-[family-name:var(--font-dm-mono)]">
             {formatRupiahShort(kpis.totalNetto)}
           </p>
         </div>
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Closing</p>
+        <div className="bg-surface rounded-lg border border-line p-3">
+          <p className="text-[10px] uppercase tracking-wider text-ink-hint">Closing</p>
           <p className="text-lg font-semibold text-green-700 mt-0.5">
             {kpis.closingCount}
-            <span className="text-[11px] font-normal text-[#A0A09A] ml-1.5 font-[family-name:var(--font-dm-mono)]">
+            <span className="text-[11px] font-normal text-ink-hint ml-1.5 font-[family-name:var(--font-dm-mono)]">
               {formatRupiahShort(kpis.closingNetto)}
             </span>
           </p>
         </div>
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Hot Prospek</p>
+        <div className="bg-surface rounded-lg border border-line p-3">
+          <p className="text-[10px] uppercase tracking-wider text-ink-hint">Hot Prospek</p>
           <p className="text-lg font-semibold text-red-600 mt-0.5">{kpis.hotCount}</p>
         </div>
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-3">
-          <p className="text-[10px] uppercase tracking-wider text-[#A0A09A]">Gagal</p>
-          <p className="text-lg font-semibold text-[#A0A09A] mt-0.5">{kpis.gagalCount}</p>
+        <div className="bg-surface rounded-lg border border-line p-3">
+          <p className="text-[10px] uppercase tracking-wider text-ink-hint">Gagal</p>
+          <p className="text-lg font-semibold text-ink-hint mt-0.5">{kpis.gagalCount}</p>
         </div>
       </div>
 
@@ -115,8 +115,8 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               activeTab === tab.key
-                ? 'bg-[#1A1A18] text-white'
-                : 'bg-white text-[#6B6B65] border border-[#EBEBE7] hover:bg-[#F5F5F2]'
+                ? 'bg-accent-solid text-accent-on'
+                : 'bg-surface text-ink-muted border border-line hover:bg-page'
             }`}
           >
             {tab.label}
@@ -129,15 +129,15 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
           {/* Left: Project List */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
+            <div className="bg-surface rounded-lg border border-line p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-semibold text-[#A0A09A] uppercase tracking-wider">
+                <h3 className="text-xs font-semibold text-ink-hint uppercase tracking-wider">
                   Daftar Project
                 </h3>
-                <span className="text-xs text-[#A0A09A]">{filteredLeads.length}</span>
+                <span className="text-xs text-ink-hint">{filteredLeads.length}</span>
               </div>
               <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0A09A]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-hint" />
                 <input
                   type="text"
                   value={search}
@@ -160,7 +160,7 @@ export default function PipelineClient({ leads, trackers, settings, profile }: P
               )}
               <div className="space-y-2 max-h-[65vh] overflow-y-auto pr-1">
                 {filteredLeads.length === 0 ? (
-                  <p className="text-sm text-[#A0A09A] text-center py-6">Tidak ada data</p>
+                  <p className="text-sm text-ink-hint text-center py-6">Tidak ada data</p>
                 ) : (
                   filteredLeads.map((lead) => (
                     <LeadListItem

@@ -31,10 +31,10 @@ export default function OnboardingOverlay() {
 
   return (
     <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="relative w-full max-w-4xl h-[90vh] bg-white rounded-2xl overflow-hidden shadow-2xl">
+      <div className="relative w-full max-w-4xl h-[90vh] bg-surface rounded-2xl overflow-hidden shadow-2xl">
         <button
           onClick={dismiss}
-          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 hover:bg-white text-[#6B6B65] hover:text-[#1A1A18] transition-colors"
+          className="absolute top-3 right-3 z-10 p-2 rounded-full bg-surface/80 hover:bg-surface text-ink-muted hover:text-ink transition-colors"
         >
           <X className="w-4 h-4" />
         </button>

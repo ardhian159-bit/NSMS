@@ -153,7 +153,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
   }
 
   const SortIcon = ({ col }: { col: keyof TrackerEntry }) => {
-    if (sortCol !== col) return <span className="text-[#A0A09A]">↕</span>
+    if (sortCol !== col) return <span className="text-ink-hint">↕</span>
     return <span>{sortAsc ? '↑' : '↓'}</span>
   }
 
@@ -182,20 +182,20 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
         return (
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-semibold text-[#1A1A18]">Monitoring</h1>
-              <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-[#F0FDF4] text-[#065F46] border border-[#BBF7D0] rounded-full px-2 py-0.5">W{week} · {year}</span>
+              <h1 className="text-xl font-semibold text-ink">Monitoring</h1>
+              <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-brand-soft text-brand border border-brand-soft rounded-full px-2 py-0.5">W{week} · {year}</span>
             </div>
-            <p className="text-sm text-[#A0A09A] mt-0.5">Pantau update mingguan semua PIC</p>
-            <p className="text-xs text-[#6B6B65] mt-0.5">{dateLabel}</p>
+            <p className="text-sm text-ink-hint mt-0.5">Pantau update mingguan semua PIC</p>
+            <p className="text-xs text-ink-muted mt-0.5">{dateLabel}</p>
           </div>
         )
       })()}
 
       {/* Filter Bar */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
+      <div className="bg-surface rounded-lg border border-line p-4">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0A09A]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-hint" />
             <input
               type="text"
               value={search}
@@ -252,13 +252,13 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+      <div className="bg-surface rounded-lg border border-line overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+            <thead className="text-xs text-ink-hint uppercase tracking-wider bg-surface-alt border-b border-line">
               <tr>
                 <th
-                  className="px-3 py-3 font-medium cursor-pointer hover:text-[#1A1A18] transition-colors"
+                  className="px-3 py-3 font-medium cursor-pointer hover:text-ink transition-colors"
                   onClick={() => handleSort('week')}
                 >
                   <span className="flex items-center gap-1">
@@ -266,7 +266,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                   </span>
                 </th>
                 <th
-                  className="px-3 py-3 font-medium cursor-pointer hover:text-[#1A1A18] transition-colors"
+                  className="px-3 py-3 font-medium cursor-pointer hover:text-ink transition-colors"
                   onClick={() => handleSort('funnelId')}
                 >
                   <span className="flex items-center gap-1">
@@ -274,7 +274,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                   </span>
                 </th>
                 <th
-                  className="px-3 py-3 font-medium cursor-pointer hover:text-[#1A1A18] transition-colors"
+                  className="px-3 py-3 font-medium cursor-pointer hover:text-ink transition-colors"
                   onClick={() => handleSort('pic')}
                 >
                   <span className="flex items-center gap-1">
@@ -283,7 +283,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                 </th>
                 <th className="px-3 py-3 font-medium">Nama Paket</th>
                 <th
-                  className="px-3 py-3 font-medium cursor-pointer hover:text-[#1A1A18] transition-colors"
+                  className="px-3 py-3 font-medium cursor-pointer hover:text-ink transition-colors"
                   onClick={() => handleSort('statusBaru')}
                 >
                   <span className="flex items-center gap-1">
@@ -291,7 +291,7 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                   </span>
                 </th>
                 <th
-                  className="px-3 py-3 font-medium text-right cursor-pointer hover:text-[#1A1A18] transition-colors"
+                  className="px-3 py-3 font-medium text-right cursor-pointer hover:text-ink transition-colors"
                   onClick={() => handleSort('forecastNetto')}
                 >
                   <span className="flex items-center justify-end gap-1">
@@ -302,39 +302,39 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                 <th className="px-3 py-3 font-medium">Admin Notes</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EBEBE7]">
+            <tbody className="divide-y divide-line">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="px-4 py-10 text-center text-[#A0A09A]">
+                  <td colSpan={8} className="px-4 py-10 text-center text-ink-hint">
                     Tidak ada data ditemukan
                   </td>
                 </tr>
               ) : (
                 paginated.map((t) => (
-                  <tr key={t.id} className="hover:bg-[#FAFAF8] transition-colors group cursor-pointer" onClick={() => setSelectedEntry(t)}>
-                    <td className="px-3 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-[#1A1A18] whitespace-nowrap">
+                  <tr key={t.id} className="hover:bg-surface-alt transition-colors group cursor-pointer" onClick={() => setSelectedEntry(t)}>
+                    <td className="px-3 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-ink whitespace-nowrap">
                       {t.week}
                     </td>
-                    <td className="px-3 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-[#A0A09A] whitespace-nowrap">
+                    <td className="px-3 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-ink-hint whitespace-nowrap">
                       {t.funnelId}
                     </td>
-                    <td className="px-3 py-3 text-[#1A1A18] font-medium whitespace-nowrap">
+                    <td className="px-3 py-3 text-ink font-medium whitespace-nowrap">
                       {t.pic}
                     </td>
-                    <td className="px-3 py-3 text-[#1A1A18]" title={t.namaPaket}>
+                    <td className="px-3 py-3 text-ink" title={t.namaPaket}>
                       {truncateText(t.namaPaket, 30)}
                     </td>
                     <td className="px-3 py-3">
                       <Badge tk={STATUS_TO_TK[t.statusBaru] ?? 0} />
                     </td>
-                    <td className="px-3 py-3 text-right font-semibold text-[#1A1A18]">
+                    <td className="px-3 py-3 text-right font-semibold text-ink">
                       {formatRupiahShort(t.forecastNetto)}
                     </td>
-                    <td className="px-3 py-3 text-[#6B6B65] max-w-[150px] truncate" title={t.notes}>
+                    <td className="px-3 py-3 text-ink-muted max-w-[150px] truncate" title={t.notes}>
                       {t.notes || '-'}
                     </td>
                     <td className="px-3 py-3 min-w-[180px]">
-                      <span className="text-[#6B6B65] truncate max-w-[150px]" title={t.adminNotes}>
+                      <span className="text-ink-muted truncate max-w-[150px]" title={t.adminNotes}>
                         {t.adminNotes || '-'}
                       </span>
                     </td>
@@ -352,37 +352,37 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
             onClick={() => { setSelectedEntry(null); setEditingNotes(false) }}
           >
             <div
-              className="bg-white rounded-xl border border-[#EBEBE7] shadow-lg w-full max-w-lg mx-4 p-6"
+              className="bg-surface rounded-xl border border-line shadow-lg w-full max-w-lg mx-4 p-6"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-[#A0A09A]">
+                  <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-ink-hint">
                     {selectedEntry.funnelId}
                   </span>
-                  <h3 className="text-base font-semibold text-[#1A1A18] mt-0.5">
+                  <h3 className="text-base font-semibold text-ink mt-0.5">
                     {selectedEntry.namaPaket}
                   </h3>
                 </div>
                 <button
                   onClick={() => { setSelectedEntry(null); setEditingNotes(false) }}
-                  className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2]"
+                  className="p-1.5 rounded-md text-ink-hint hover:text-ink hover:bg-page"
                 >
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               {/* Tab Bar */}
-              <div className="flex gap-1 mb-4 border-b border-[#EBEBE7]">
+              <div className="flex gap-1 mb-4 border-b border-line">
                 {(['detail', 'history'] as const).map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveTab(tab)}
                     className={`px-3 py-1.5 text-xs font-medium transition-colors ${
                       activeTab === tab
-                        ? 'text-[#064E3B] border-b-2 border-[#064E3B] -mb-px'
-                        : 'text-[#A0A09A] hover:text-[#6B6B65]'
+                        ? 'text-brand border-b-2 border-brand -mb-px'
+                        : 'text-ink-hint hover:text-ink-muted'
                     }`}
                   >
                     {tab === 'detail' ? 'Detail' : 'Netto History'}
@@ -396,29 +396,29 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                   {/* Meta grid */}
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">PIC</span>
-                      <p className="text-[#1A1A18] font-medium">{selectedEntry.pic}</p>
+                      <span className="text-[10px] text-ink-hint uppercase tracking-wider">PIC</span>
+                      <p className="text-ink font-medium">{selectedEntry.pic}</p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Week</span>
-                      <p className="font-[family-name:var(--font-dm-mono)] text-[#1A1A18]">{selectedEntry.week}</p>
+                      <span className="text-[10px] text-ink-hint uppercase tracking-wider">Week</span>
+                      <p className="font-[family-name:var(--font-dm-mono)] text-ink">{selectedEntry.week}</p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Status</span>
+                      <span className="text-[10px] text-ink-hint uppercase tracking-wider">Status</span>
                       <div className="mt-0.5">
                         <Badge tk={STATUS_TO_TK[selectedEntry.statusBaru] ?? 0} />
                       </div>
                     </div>
                     <div>
-                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Forecast Netto</span>
-                      <p className="text-[#1A1A18] font-semibold">{formatRupiahShort(selectedEntry.forecastNetto)}</p>
+                      <span className="text-[10px] text-ink-hint uppercase tracking-wider">Forecast Netto</span>
+                      <p className="text-ink font-semibold">{formatRupiahShort(selectedEntry.forecastNetto)}</p>
                     </div>
                   </div>
 
                   {/* Notes */}
                   <div>
-                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Notes</span>
-                    <p className="mt-1 text-sm text-[#6B6B65] whitespace-pre-wrap">
+                    <span className="text-[10px] text-ink-hint uppercase tracking-wider">Notes</span>
+                    <p className="mt-1 text-sm text-ink-muted whitespace-pre-wrap">
                       {selectedEntry.notes || '-'}
                     </p>
                   </div>
@@ -426,11 +426,11 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                   {/* Admin Notes */}
                   <div>
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Admin Notes</span>
+                      <span className="text-[10px] text-ink-hint uppercase tracking-wider">Admin Notes</span>
                       {isAdmin && !editingNotes && (
                         <button
                           onClick={() => { setDraftNotes(selectedEntry.adminNotes || ''); setEditingNotes(true) }}
-                          className="p-1 rounded text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                          className="p-1 rounded text-ink-hint hover:text-ink hover:bg-page transition-colors"
                         >
                           <Pencil className="w-3 h-3" />
                         </button>
@@ -448,21 +448,21 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
                         <div className="flex gap-2 justify-end">
                           <button
                             onClick={() => setEditingNotes(false)}
-                            className="px-3 py-1.5 text-xs rounded-lg border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] transition-colors"
+                            className="px-3 py-1.5 text-xs rounded-lg border border-line text-ink-muted hover:bg-page transition-colors"
                           >
                             Batal
                           </button>
                           <button
                             onClick={handleSaveAdminNotes}
                             disabled={savingNotes}
-                            className="px-3 py-1.5 text-xs rounded-lg bg-[#064E3B] text-white hover:bg-[#065F46] transition-colors disabled:opacity-50"
+                            className="px-3 py-1.5 text-xs rounded-lg bg-brand-solid text-white hover:bg-brand-solid-hover transition-colors disabled:opacity-50"
                           >
                             {savingNotes ? 'Menyimpan...' : 'Simpan'}
                           </button>
                         </div>
                       </div>
                     ) : (
-                      <p className="mt-1 text-sm text-[#6B6B65] whitespace-pre-wrap">
+                      <p className="mt-1 text-sm text-ink-muted whitespace-pre-wrap">
                         {selectedEntry.adminNotes || '-'}
                       </p>
                     )}
@@ -474,33 +474,33 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
               {activeTab === 'history' && (
                 <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                   {loadingLog ? (
-                    <p className="text-xs text-[#A0A09A] text-center py-6">Memuat...</p>
+                    <p className="text-xs text-ink-hint text-center py-6">Memuat...</p>
                   ) : nettoLog.length === 0 ? (
-                    <p className="text-xs text-[#A0A09A] text-center py-6">
+                    <p className="text-xs text-ink-hint text-center py-6">
                       Belum ada perubahan netto tercatat.
                     </p>
                   ) : (
                     nettoLog.map((log) => (
                       <div
                         key={log.id}
-                        className="flex items-start gap-3 p-3 bg-[#FAFAF8] rounded-lg border border-[#EBEBE7]"
+                        className="flex items-start gap-3 p-3 bg-surface-alt rounded-lg border border-line"
                       >
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 text-xs">
-                            <span className="text-[#A0A09A] line-through">
+                            <span className="text-ink-hint line-through">
                               {formatRupiahShort(log.old_netto)}
                             </span>
-                            <span className="text-[#A0A09A]">→</span>
-                            <span className="font-semibold text-[#064E3B]">
+                            <span className="text-ink-hint">→</span>
+                            <span className="font-semibold text-brand">
                               {formatRupiahShort(log.new_netto)}
                             </span>
                           </div>
                           <div className="flex items-center gap-2 mt-1">
-                            <span className="text-[10px] text-[#A0A09A]">
+                            <span className="text-[10px] text-ink-hint">
                               {log.changedByName}
                             </span>
-                            <span className="text-[10px] text-[#A0A09A]">·</span>
-                            <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-[#A0A09A]">
+                            <span className="text-[10px] text-ink-hint">·</span>
+                            <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-ink-hint">
                               {new Date(log.changed_at).toLocaleString('id-ID', {
                                 day: 'numeric',
                                 month: 'short',
@@ -521,17 +521,17 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
         )}
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8] flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-[#A0A09A]">
+        <div className="px-4 py-3 border-t border-line bg-surface-alt flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-ink-hint">
             Menampilkan {filtered.length === 0 ? 0 : page * pageSize + 1}–{Math.min((page + 1) * pageSize, filtered.length)} dari {filtered.length} entri
           </p>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-[#A0A09A]">Per halaman</span>
+              <span className="text-xs text-ink-hint">Per halaman</span>
               <select
                 value={pageSize}
                 onChange={(e) => { setPageSize(Number(e.target.value)); setPage(0) }}
-                className="text-xs border border-[#EBEBE7] rounded-md px-2 py-1 bg-white text-[#1A1A18] focus:outline-none"
+                className="text-xs border border-line rounded-md px-2 py-1 bg-surface text-ink focus:outline-none"
               >
                 {[10, 25, 50, 100].map((n) => (
                   <option key={n} value={n}>{n}</option>
@@ -542,25 +542,25 @@ export default function MonitoringClient({ trackers, profile }: MonitoringClient
               <button
                 onClick={() => setPage(0)}
                 disabled={page === 0}
-                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1 text-xs rounded-md border border-line text-ink-muted hover:bg-page disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >«</button>
               <button
                 onClick={() => setPage((p) => Math.max(0, p - 1))}
                 disabled={page === 0}
-                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1 text-xs rounded-md border border-line text-ink-muted hover:bg-page disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >‹</button>
-              <span className="px-3 py-1 text-xs text-[#1A1A18]">
+              <span className="px-3 py-1 text-xs text-ink">
                 {page + 1} / {Math.max(1, totalPages)}
               </span>
               <button
                 onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={page >= totalPages - 1}
-                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1 text-xs rounded-md border border-line text-ink-muted hover:bg-page disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >›</button>
               <button
                 onClick={() => setPage(totalPages - 1)}
                 disabled={page >= totalPages - 1}
-                className="px-2 py-1 text-xs rounded-md border border-[#EBEBE7] text-[#6B6B65] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                className="px-2 py-1 text-xs rounded-md border border-line text-ink-muted hover:bg-page disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
               >»</button>
             </div>
           </div>

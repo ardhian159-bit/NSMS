@@ -46,8 +46,8 @@ export default async function NewLeadPage() {
   return (
     <div className="p-4 md:p-6 space-y-6">
       <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Input Lead Baru</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">PIC: {profile.picName}</p>
+        <h1 className="text-xl font-semibold text-ink">Input Lead Baru</h1>
+        <p className="text-sm text-ink-hint mt-0.5">PIC: {profile.picName}</p>
       </div>
       <InputLeadForm
         defaultOwnerName={profile.picName}

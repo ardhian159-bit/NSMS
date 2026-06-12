@@ -230,8 +230,8 @@ export default function ControlClient({
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Control Panel</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">Superadmin — Kelola sistem</p>
+        <h1 className="text-xl font-semibold text-ink">Control Panel</h1>
+        <p className="text-sm text-ink-hint mt-0.5">Superadmin — Kelola sistem</p>
       </div>
 
       {/* Tab Pills */}
@@ -242,8 +242,8 @@ export default function ControlClient({
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               activeTab === tab.key
-                ? 'bg-[#1A1A18] text-white'
-                : 'text-[#6B6B65] hover:bg-[#F5F5F2]'
+                ? 'bg-accent-solid text-accent-on'
+                : 'text-ink-muted hover:bg-page'
             }`}
           >
             {tab.label}
@@ -253,10 +253,10 @@ export default function ControlClient({
 
       {/* ===================== TAB 1: USERS ===================== */}
       {activeTab === 'users' && (
-        <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+        <div className="bg-surface rounded-lg border border-line overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+              <thead className="text-xs text-ink-hint uppercase tracking-wider bg-surface-alt border-b border-line">
                 <tr>
                   <th className="px-4 py-3 font-medium">PIC Name</th>
                   <th className="px-4 py-3 font-medium">Username</th>
@@ -265,9 +265,9 @@ export default function ControlClient({
                   <th className="px-4 py-3 font-medium w-28 text-center">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EBEBE7]">
+              <tbody className="divide-y divide-line">
                 {localProfiles.map((p) => (
-                  <tr key={p.id} className="hover:bg-[#FAFAF8] transition-colors">
+                  <tr key={p.id} className="hover:bg-surface-alt transition-colors">
                     {editingId === p.id ? (
                       <>
                         <td className="px-4 py-2.5">
@@ -278,7 +278,7 @@ export default function ControlClient({
                             className="form-input text-sm"
                           />
                         </td>
-                        <td className="px-4 py-2.5 text-[#6B6B65]">{p.username}</td>
+                        <td className="px-4 py-2.5 text-ink-muted">{p.username}</td>
                         <td className="px-4 py-2.5">
                           <select
                             value={editRole}
@@ -292,7 +292,7 @@ export default function ControlClient({
                             ))}
                           </select>
                         </td>
-                        <td className="px-4 py-2.5 text-[#6B6B65]">{p.branch || '-'}</td>
+                        <td className="px-4 py-2.5 text-ink-muted">{p.branch || '-'}</td>
                         <td className="px-4 py-2.5">
                           <div className="flex items-center justify-center gap-1">
                             <button
@@ -315,14 +315,14 @@ export default function ControlClient({
                       </>
                     ) : (
                       <>
-                        <td className="px-4 py-3 text-[#1A1A18] font-medium">{p.picName || '-'}</td>
-                        <td className="px-4 py-3 text-[#6B6B65]">{p.username}</td>
+                        <td className="px-4 py-3 text-ink font-medium">{p.picName || '-'}</td>
+                        <td className="px-4 py-3 text-ink-muted">{p.username}</td>
                         <td className="px-4 py-3">
-                          <span className="text-xs px-2 py-0.5 rounded-full bg-[#F5F5F2] text-[#6B6B65] font-medium">
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-page text-ink-muted font-medium">
                             {p.role}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-[#6B6B65]">{p.branch || '-'}</td>
+                        <td className="px-4 py-3 text-ink-muted">{p.branch || '-'}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-center gap-1">
                             <button
@@ -331,7 +331,7 @@ export default function ControlClient({
                                 setEditRole(p.role)
                                 setEditPicName(p.picName)
                               }}
-                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                              className="p-1.5 rounded-md text-ink-hint hover:text-ink hover:bg-page transition-colors"
                               title="Edit"
                             >
                               <Pencil className="w-3.5 h-3.5" />
@@ -339,7 +339,7 @@ export default function ControlClient({
                             <button
                               onClick={() => handleResetPassword(p)}
                               disabled={resettingId === p.id}
-                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-40"
+                              className="p-1.5 rounded-md text-ink-hint hover:text-amber-600 hover:bg-amber-50 transition-colors disabled:opacity-40"
                               title="Reset Password"
                             >
                               <KeyRound className="w-3.5 h-3.5" />
@@ -353,11 +353,11 @@ export default function ControlClient({
               </tbody>
             </table>
           </div>
-          <div className="px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8] flex items-center justify-between">
-            <p className="text-xs text-[#A0A09A]">{localProfiles.length} user terdaftar</p>
+          <div className="px-4 py-3 border-t border-line bg-surface-alt flex items-center justify-between">
+            <p className="text-xs text-ink-hint">{localProfiles.length} user terdaftar</p>
             <button
               onClick={() => setShowAddUser(true)}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] transition-colors"
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-brand-solid hover:bg-brand-solid-hover transition-colors"
             >
               + Tambah User
             </button>
@@ -367,7 +367,7 @@ export default function ControlClient({
 
       {/* ===================== TAB 2: SETTINGS ===================== */}
       {activeTab === 'settings' && (
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
+        <div className="bg-surface rounded-lg border border-line p-5">
           {/* Category sub-tabs */}
           <div className="flex gap-2 mb-5 flex-wrap">
             {CATEGORIES.map((cat) => (
@@ -376,8 +376,8 @@ export default function ControlClient({
                 onClick={() => setActiveCategory(cat.key)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   activeCategory === cat.key
-                    ? 'bg-[#1A1A18] text-white'
-                    : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
+                    ? 'bg-accent-solid text-accent-on'
+                    : 'bg-page text-ink-muted hover:bg-line'
                 }`}
               >
                 {cat.label}
@@ -386,7 +386,7 @@ export default function ControlClient({
           </div>
 
           {activeCategory === 'picNames' && (
-            <p className="text-xs text-[#A0A09A] mb-3 px-1 leading-relaxed">
+            <p className="text-xs text-ink-hint mb-3 px-1 leading-relaxed">
               Ini hanya daftar manual (mis. pre-seed rekanan). Dropdown PIC saat input otomatis
               juga mencakup semua akun (profiles) &amp; nama yang sudah dipakai di leads.
             </p>
@@ -395,17 +395,17 @@ export default function ControlClient({
           {/* Items list */}
           <div className="space-y-1.5 mb-4">
             {categoryItems.length === 0 ? (
-              <p className="text-sm text-[#A0A09A] py-4 text-center">Belum ada item</p>
+              <p className="text-sm text-ink-hint py-4 text-center">Belum ada item</p>
             ) : (
               categoryItems.map((item) => (
                 <div
                   key={item.id}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-[#FAFAF8] group"
+                  className="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-alt group"
                 >
-                  <span className="text-sm text-[#1A1A18]">{item.value}</span>
+                  <span className="text-sm text-ink">{item.value}</span>
                   <button
                     onClick={() => handleDeleteItem(item.id)}
-                    className="p-1 rounded text-[#A0A09A] hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
+                    className="p-1 rounded text-ink-hint hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all"
                     title="Hapus"
                   >
                     <X className="w-3.5 h-3.5" />
@@ -432,7 +432,7 @@ export default function ControlClient({
               />
               <button
                 onClick={() => handleAddItem(activeCategory, newValue)}
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#1A1A18] hover:bg-[#2A2A28] transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-accent-on bg-accent-solid hover:bg-accent-solid-hover transition-colors"
               >
                 Tambah
               </button>
@@ -441,7 +441,7 @@ export default function ControlClient({
                   setAddingCategory(null)
                   setNewValue('')
                 }}
-                className="px-3 py-2 rounded-lg text-sm text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] transition-colors"
+                className="px-3 py-2 rounded-lg text-sm text-ink-muted bg-page hover:bg-line transition-colors"
               >
                 Batal
               </button>
@@ -449,7 +449,7 @@ export default function ControlClient({
           ) : (
             <button
               onClick={() => setAddingCategory(activeCategory)}
-              className="px-4 py-2 rounded-lg text-sm font-medium text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+              className="px-4 py-2 rounded-lg text-sm font-medium text-ink-muted bg-page hover:bg-line border border-line transition-colors"
             >
               + Tambah Item
             </button>
@@ -459,19 +459,19 @@ export default function ControlClient({
 
       {/* ===================== TAB 3: UNLOCK ===================== */}
       {activeTab === 'unlock' && (
-        <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+        <div className="bg-surface rounded-lg border border-line overflow-hidden">
           {localLocked.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-16 text-center">
-              <div className="w-14 h-14 rounded-full bg-[#F5F5F2] flex items-center justify-center mb-4">
-                <Unlock className="w-6 h-6 text-[#A0A09A]" />
+              <div className="w-14 h-14 rounded-full bg-page flex items-center justify-center mb-4">
+                <Unlock className="w-6 h-6 text-ink-hint" />
               </div>
-              <p className="font-semibold text-[#1A1A18]">Tidak ada lead yang terkunci</p>
-              <p className="text-sm text-[#A0A09A] mt-1">Semua lead aktif dan dapat diupdate</p>
+              <p className="font-semibold text-ink">Tidak ada lead yang terkunci</p>
+              <p className="text-sm text-ink-hint mt-1">Semua lead aktif dan dapat diupdate</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+                <thead className="text-xs text-ink-hint uppercase tracking-wider bg-surface-alt border-b border-line">
                   <tr>
                     <th className="px-4 py-3 font-medium">Funnel ID</th>
                     <th className="px-4 py-3 font-medium">Nama Paket</th>
@@ -481,18 +481,18 @@ export default function ControlClient({
                     <th className="px-4 py-3 font-medium text-center">Aksi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#EBEBE7]">
+                <tbody className="divide-y divide-line">
                   {localLocked.map((lead) => (
-                    <tr key={lead.id} className="hover:bg-[#FAFAF8] transition-colors">
-                      <td className="px-4 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-[#A0A09A]">
+                    <tr key={lead.id} className="hover:bg-surface-alt transition-colors">
+                      <td className="px-4 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-ink-hint">
                         {lead.funnelId}
                       </td>
-                      <td className="px-4 py-3 text-[#1A1A18]">{lead.namaPaket || '-'}</td>
-                      <td className="px-4 py-3 text-[#6B6B65] font-medium">{lead.ownerName}</td>
+                      <td className="px-4 py-3 text-ink">{lead.namaPaket || '-'}</td>
+                      <td className="px-4 py-3 text-ink-muted font-medium">{lead.ownerName}</td>
                       <td className="px-4 py-3 text-center">
                         <Badge tk={lead.tk} />
                       </td>
-                      <td className="px-4 py-3 text-right font-semibold text-[#1A1A18]">
+                      <td className="px-4 py-3 text-right font-semibold text-ink">
                         {formatRupiahShort(lead.forecastNetto)}
                       </td>
                       <td className="px-4 py-3 text-center">
@@ -512,8 +512,8 @@ export default function ControlClient({
             </div>
           )}
           {localLocked.length > 0 && (
-            <div className="px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8]">
-              <p className="text-xs text-[#A0A09A]">
+            <div className="px-4 py-3 border-t border-line bg-surface-alt">
+              <p className="text-xs text-ink-hint">
                 {localLocked.length} lead terkunci (Closing / Gagal)
               </p>
             </div>
@@ -525,11 +525,11 @@ export default function ControlClient({
       {activeTab === 'targets' && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-sm text-[#6B6B65]">Target perusahaan tahun {currentYear}</p>
+            <p className="text-sm text-ink-muted">Target perusahaan tahun {currentYear}</p>
           </div>
-          <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+          <div className="bg-surface rounded-lg border border-line overflow-hidden">
             <table className="w-full text-sm text-left">
-              <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+              <thead className="text-xs text-ink-hint uppercase tracking-wider bg-surface-alt border-b border-line">
                 <tr>
                   <th className="px-4 py-3 font-medium">Quarter</th>
                   <th className="px-4 py-3 font-medium text-right">Target Bruto</th>
@@ -537,10 +537,10 @@ export default function ControlClient({
                   <th className="px-4 py-3 font-medium text-center w-28">Aksi</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EBEBE7]">
+              <tbody className="divide-y divide-line">
                 {localTargets.map((t) => (
-                  <tr key={t.id} className="hover:bg-[#FAFAF8] transition-colors">
-                    <td className="px-4 py-3 font-semibold text-[#1A1A18]">{t.quarter}</td>
+                  <tr key={t.id} className="hover:bg-surface-alt transition-colors">
+                    <td className="px-4 py-3 font-semibold text-ink">{t.quarter}</td>
                     {editingTarget === t.quarter ? (
                       <>
                         <td className="px-4 py-3">
@@ -572,7 +572,7 @@ export default function ControlClient({
                             </button>
                             <button
                               onClick={() => setEditingTarget(null)}
-                              className="p-1.5 rounded-md text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+                              className="p-1.5 rounded-md text-ink-muted bg-page hover:bg-line border border-line transition-colors"
                             >
                               <X className="w-3.5 h-3.5" />
                             </button>
@@ -581,10 +581,10 @@ export default function ControlClient({
                       </>
                     ) : (
                       <>
-                        <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] text-[#1A1A18]">
+                        <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] text-ink">
                           {formatRupiahShort(t.targetBruto)}
                         </td>
-                        <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] text-[#064E3B] font-semibold">
+                        <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] text-brand font-semibold">
                           {formatRupiahShort(t.targetNetto)}
                         </td>
                         <td className="px-4 py-3 text-center">
@@ -594,7 +594,7 @@ export default function ControlClient({
                               setEditBruto(t.targetBruto.toString())
                               setEditNetto(t.targetNetto.toString())
                             }}
-                            className="p-1.5 rounded-md text-[#6B6B65] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                            className="p-1.5 rounded-md text-ink-muted hover:text-ink hover:bg-page transition-colors"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
@@ -604,13 +604,13 @@ export default function ControlClient({
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="border-t border-[#EBEBE7] bg-[#FAFAF8]">
+              <tfoot className="border-t border-line bg-surface-alt">
                 <tr>
-                  <td className="px-4 py-3 text-xs font-semibold text-[#A0A09A] uppercase">Total</td>
-                  <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] font-semibold text-[#1A1A18]">
+                  <td className="px-4 py-3 text-xs font-semibold text-ink-hint uppercase">Total</td>
+                  <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] font-semibold text-ink">
                     {formatRupiahShort(localTargets.reduce((s, t) => s + t.targetBruto, 0))}
                   </td>
-                  <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] font-semibold text-[#064E3B]">
+                  <td className="px-4 py-3 text-right font-[family-name:var(--font-dm-mono)] font-semibold text-brand">
                     {formatRupiahShort(localTargets.reduce((s, t) => s + t.targetNetto, 0))}
                   </td>
                   <td />
@@ -624,24 +624,24 @@ export default function ControlClient({
       {/* Reset Password Result Modal */}
       {resetResult && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setResetResult(null)}>
-          <div className="bg-white rounded-2xl border border-[#EBEBE7] shadow-lg w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-base font-semibold text-[#1A1A18]">Password Sementara</h3>
-            <p className="text-sm text-[#6B6B65] mt-1">
+          <div className="bg-surface rounded-2xl border border-line shadow-lg w-full max-w-sm p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-base font-semibold text-ink">Password Sementara</h3>
+            <p className="text-sm text-ink-muted mt-1">
               Untuk <b>{resetResult.name}</b>. Berikan ke user — dia akan dipaksa ganti password saat login.
             </p>
-            <div className="mt-4 flex items-center gap-2 bg-[#F5F5F2] rounded-lg px-3 py-2.5 border border-[#EBEBE7]">
-              <code className="flex-1 text-base font-[family-name:var(--font-dm-mono)] text-[#1A1A18] select-all">{resetResult.password}</code>
+            <div className="mt-4 flex items-center gap-2 bg-page rounded-lg px-3 py-2.5 border border-line">
+              <code className="flex-1 text-base font-[family-name:var(--font-dm-mono)] text-ink select-all">{resetResult.password}</code>
               <button
                 onClick={() => { navigator.clipboard.writeText(resetResult.password); setCopied(true) }}
-                className="flex items-center gap-1 text-xs font-medium text-[#064E3B] hover:underline"
+                className="flex items-center gap-1 text-xs font-medium text-brand hover:underline"
               >
                 <Copy className="w-3.5 h-3.5" /> {copied ? 'Tersalin' : 'Salin'}
               </button>
             </div>
-            <p className="text-[11px] text-[#A0A09A] mt-2">Password ini hanya tampil sekali. Salin sekarang.</p>
+            <p className="text-[11px] text-ink-hint mt-2">Password ini hanya tampil sekali. Salin sekarang.</p>
             <button
               onClick={() => setResetResult(null)}
-              className="mt-4 w-full py-2 rounded-lg bg-[#1A1A18] text-white text-sm font-semibold hover:bg-[#2A2A28]"
+              className="mt-4 w-full py-2 rounded-lg bg-accent-solid text-accent-on text-sm font-semibold hover:bg-accent-solid-hover"
             >
               Selesai
             </button>
@@ -656,14 +656,14 @@ export default function ControlClient({
           onClick={() => setShowAddUser(false)}
         >
           <div
-            className="bg-white rounded-xl border border-[#EBEBE7] shadow-lg w-full max-w-md mx-4 p-6"
+            className="bg-surface rounded-xl border border-line shadow-lg w-full max-w-md mx-4 p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-5">
-              <h3 className="text-base font-semibold text-[#1A1A18]">Tambah User Baru</h3>
+              <h3 className="text-base font-semibold text-ink">Tambah User Baru</h3>
               <button
                 onClick={() => setShowAddUser(false)}
-                className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2]"
+                className="p-1.5 rounded-md text-ink-hint hover:text-ink hover:bg-page"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -671,7 +671,7 @@ export default function ControlClient({
 
             <div className="space-y-3">
               <div>
-                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Email *</label>
+                <label className="text-[10px] text-ink-hint uppercase tracking-wider">Email *</label>
                 <input
                   type="email"
                   value={newEmail}
@@ -681,7 +681,7 @@ export default function ControlClient({
                 />
               </div>
               <div>
-                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Password *</label>
+                <label className="text-[10px] text-ink-hint uppercase tracking-wider">Password *</label>
                 <input
                   type="password"
                   value={newPassword}
@@ -691,7 +691,7 @@ export default function ControlClient({
                 />
               </div>
               <div>
-                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">PIC Name *</label>
+                <label className="text-[10px] text-ink-hint uppercase tracking-wider">PIC Name *</label>
                 <input
                   type="text"
                   value={newPicName}
@@ -701,7 +701,7 @@ export default function ControlClient({
                 />
               </div>
               <div>
-                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Role *</label>
+                <label className="text-[10px] text-ink-hint uppercase tracking-wider">Role *</label>
                 <select
                   value={newRole}
                   onChange={(e) => setNewRole(e.target.value)}
@@ -713,7 +713,7 @@ export default function ControlClient({
                 </select>
               </div>
               <div>
-                <label className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Branch</label>
+                <label className="text-[10px] text-ink-hint uppercase tracking-wider">Branch</label>
                 <input
                   type="text"
                   value={newBranch}
@@ -733,14 +733,14 @@ export default function ControlClient({
             <div className="flex gap-2 mt-5 justify-end">
               <button
                 onClick={() => setShowAddUser(false)}
-                className="px-4 py-2 rounded-lg text-sm text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] transition-colors"
+                className="px-4 py-2 rounded-lg text-sm text-ink-muted bg-page hover:bg-line transition-colors"
               >
                 Batal
               </button>
               <button
                 onClick={handleAddUser}
                 disabled={addingUser || !newEmail || !newPassword || !newPicName}
-                className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] disabled:opacity-50 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-semibold text-white bg-brand-solid hover:bg-brand-solid-hover disabled:opacity-50 transition-colors"
               >
                 {addingUser ? 'Membuat...' : 'Buat User'}
               </button>

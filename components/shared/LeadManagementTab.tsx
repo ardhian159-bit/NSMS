@@ -61,11 +61,11 @@ export default function LeadManagementTab({
         onCancelEdit={() => setEditingLead(null)}
       />
 
-      <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+      <div className="bg-surface rounded-lg border border-line overflow-hidden">
         {/* Toolbar */}
-        <div className="px-4 py-3 border-b border-[#EBEBE7] bg-[#FAFAF8] flex flex-col sm:flex-row gap-3">
+        <div className="px-4 py-3 border-b border-line bg-surface-alt flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0A09A]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-hint" />
             <input
               type="text"
               value={search}
@@ -86,7 +86,7 @@ export default function LeadManagementTab({
               ))}
             </select>
           )}
-          <span className="text-xs text-[#A0A09A] self-center whitespace-nowrap">
+          <span className="text-xs text-ink-hint self-center whitespace-nowrap">
             {filtered.length} paket
           </span>
         </div>
@@ -94,7 +94,7 @@ export default function LeadManagementTab({
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left">
-            <thead className="text-xs text-[#A0A09A] uppercase tracking-wider bg-[#FAFAF8] border-b border-[#EBEBE7]">
+            <thead className="text-xs text-ink-hint uppercase tracking-wider bg-surface-alt border-b border-line">
               <tr>
                 <th className="px-3 py-2.5 font-medium">Funnel ID</th>
                 {showPicCol && <th className="px-3 py-2.5 font-medium">PIC</th>}
@@ -105,10 +105,10 @@ export default function LeadManagementTab({
                 <th className="px-3 py-2.5 font-medium text-center w-20">Aksi</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#EBEBE7]">
+            <tbody className="divide-y divide-line">
               {paginated.length === 0 ? (
                 <tr>
-                  <td colSpan={showPicCol ? 7 : 5} className="px-4 py-10 text-center text-[#A0A09A]">
+                  <td colSpan={showPicCol ? 7 : 5} className="px-4 py-10 text-center text-ink-hint">
                     Tidak ada data ditemukan
                   </td>
                 </tr>
@@ -121,11 +121,11 @@ export default function LeadManagementTab({
                       key={lead.id}
                       className={`transition-colors ${
                         isEditing
-                          ? 'bg-green-50 border-l-2 border-l-[#064E3B]'
-                          : 'hover:bg-[#FAFAF8]'
+                          ? 'bg-brand-soft border-l-2 border-l-brand'
+                          : 'hover:bg-surface-alt'
                       }`}
                     >
-                      <td className="px-3 py-2.5 font-[family-name:var(--font-dm-mono)] text-xs text-[#A0A09A]">
+                      <td className="px-3 py-2.5 font-[family-name:var(--font-dm-mono)] text-xs text-ink-hint">
                         {lead.funnelId}
                         {isLocked && (
                           <span className="ml-1.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700">
@@ -134,22 +134,22 @@ export default function LeadManagementTab({
                         )}
                       </td>
                       {showPicCol && (
-                        <td className="px-3 py-2.5 font-medium text-[#1A1A18] whitespace-nowrap">
+                        <td className="px-3 py-2.5 font-medium text-ink whitespace-nowrap">
                           {lead.ownerName}
                         </td>
                       )}
-                      <td className="px-3 py-2.5 text-[#1A1A18]">
+                      <td className="px-3 py-2.5 text-ink">
                         {truncateText(lead.namaPaket || '-', 35)}
                       </td>
                       {showPicCol && (
-                        <td className="px-3 py-2.5 text-[#6B6B65]">
+                        <td className="px-3 py-2.5 text-ink-muted">
                           {truncateText(lead.instansi || '-', 24)}
                         </td>
                       )}
                       <td className="px-3 py-2.5 text-center">
                         <Badge tk={lead.tk} />
                       </td>
-                      <td className="px-3 py-2.5 text-right font-semibold text-[#1A1A18]">
+                      <td className="px-3 py-2.5 text-right font-semibold text-ink">
                         {formatRupiahShort(lead.forecastNetto)}
                       </td>
                       <td className="px-3 py-2.5 text-center">
@@ -160,7 +160,7 @@ export default function LeadManagementTab({
                                 setEditingLead(lead)
                                 window.scrollTo({ top: 0, behavior: 'smooth' })
                               }}
-                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                              className="p-1.5 rounded-md text-ink-hint hover:text-blue-600 hover:bg-blue-50 transition-colors"
                               title="Edit lead"
                             >
                               <Pencil className="w-3.5 h-3.5" />
@@ -169,7 +169,7 @@ export default function LeadManagementTab({
                           {onDelete && (
                             <button
                               onClick={() => onDelete(lead)}
-                              className="p-1.5 rounded-md text-[#A0A09A] hover:text-red-600 hover:bg-red-50 transition-colors"
+                              className="p-1.5 rounded-md text-ink-hint hover:text-red-600 hover:bg-red-50 transition-colors"
                               title="Hapus lead"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
@@ -186,7 +186,7 @@ export default function LeadManagementTab({
         </div>
 
         {/* Pagination */}
-        <div className="px-4 py-3 border-t border-[#EBEBE7] flex items-center justify-between text-xs text-[#6B6B65]">
+        <div className="px-4 py-3 border-t border-line flex items-center justify-between text-xs text-ink-muted">
           <span>
             {filtered.length === 0 ? '0 entri' :
               `${page * PAGE_SIZE + 1}–${Math.min((page + 1) * PAGE_SIZE, filtered.length)} dari ${filtered.length} entri`}
@@ -205,7 +205,7 @@ export default function LeadManagementTab({
                   (label === '«' || label === '‹') ? page === 0 :
                   page >= totalPages - 1
                 }
-                className="px-2 py-1 rounded border border-[#EBEBE7] hover:bg-[#F5F5F2] disabled:opacity-40 disabled:cursor-not-allowed"
+                className="px-2 py-1 rounded border border-line hover:bg-page disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {label}
               </button>

@@ -138,10 +138,10 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
         return (
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-xl font-semibold text-[#1A1A18]">Dashboard</h1>
-              <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-[#F0FDF4] text-[#065F46] border border-[#BBF7D0] rounded-full px-2 py-0.5">W{week} · {year}</span>
+              <h1 className="text-xl font-semibold text-ink">Dashboard</h1>
+              <span className="text-xs font-[family-name:var(--font-dm-mono)] bg-brand-soft text-brand border border-brand-soft rounded-full px-2 py-0.5">W{week} · {year}</span>
             </div>
-            <p className="text-[12.5px] text-[#6B6B65] mt-0.5">
+            <p className="text-[12.5px] text-ink-muted mt-0.5">
               Overview pipeline nasional 2026
             </p>
           </div>
@@ -159,15 +159,15 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
       <KpiCards kpis={kpis} />
 
       {/* Bruto / Netto Toggle */}
-      <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5 w-fit">
+      <div className="flex items-center gap-1 bg-page rounded-full p-0.5 w-fit">
         {(['netto', 'bruto'] as const).map((m) => (
           <button
             key={m}
             onClick={() => setMetricMode(m)}
             className={`text-xs px-4 py-1.5 rounded-full transition-all duration-200 font-medium ${
               metricMode === m
-                ? 'bg-white text-[#1A1A18] shadow-sm'
-                : 'text-[#6B6B65] hover:text-[#1A1A18]'
+                ? 'bg-surface text-ink shadow-sm'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
             {m === 'netto' ? 'Forecast Netto' : 'Bruto'}
@@ -177,12 +177,12 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
 
       {/* Top 10 Closing */}
       {topClosing.length > 0 && (
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-          <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">🏆 Top 10 Closing</h3>
+        <div className="bg-surface rounded-lg border border-line p-4">
+          <h3 className="text-sm font-semibold text-ink mb-3">🏆 Top 10 Closing</h3>
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
-              <thead className="sticky top-0 bg-white z-10">
-                <tr className="text-xs text-[#A0A09A] uppercase border-b border-[#EBEBE7]">
+              <thead className="sticky top-0 bg-surface z-10">
+                <tr className="text-xs text-ink-hint uppercase border-b border-line">
                   <th className="text-left px-3 py-2 font-medium">#</th>
                   <th className="text-left px-3 py-2 font-medium">PIC</th>
                   <th className="text-left px-3 py-2 font-medium">Nama Paket</th>
@@ -193,19 +193,19 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EBEBE7]">
+              <tbody className="divide-y divide-line">
                 {topClosing.map((c, idx) => (
-                  <tr key={c.funnelId} className="hover:bg-[#FAFAF8]">
+                  <tr key={c.funnelId} className="hover:bg-surface-alt">
                     <td className="px-3 py-2">
                       <span className="inline-flex w-5 h-5 bg-green-50 text-green-700 rounded-full items-center justify-center text-xs font-medium">
                         {idx + 1}
                       </span>
                     </td>
-                    <td className="px-3 py-2 text-[#1A1A18] font-medium">{c.ownerName}</td>
-                    <td className="px-3 py-2 text-[#6B6B65] max-w-[200px] truncate">{c.namaPaket}</td>
-                    <td className="px-3 py-2 text-[#6B6B65] max-w-[120px] truncate">{c.wilayah}</td>
+                    <td className="px-3 py-2 text-ink font-medium">{c.ownerName}</td>
+                    <td className="px-3 py-2 text-ink-muted max-w-[200px] truncate">{c.namaPaket}</td>
+                    <td className="px-3 py-2 text-ink-muted max-w-[120px] truncate">{c.wilayah}</td>
                     <td className="px-3 py-2 text-center w-16">
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-[#F5F5F2] text-[#6B6B65] font-medium">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-page text-ink-muted font-medium">
                         {c.quarter || '—'}
                       </span>
                     </td>
@@ -221,7 +221,7 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
                         {topClosing.length + idx + 1}
                       </span>
                     </td>
-                    <td colSpan={5} className="px-3 py-2 text-[#A0A09A] italic text-sm">
+                    <td colSpan={5} className="px-3 py-2 text-ink-hint italic text-sm">
                       Menunggu Closing
                     </td>
                   </tr>
@@ -266,8 +266,8 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
       {/* Data Table */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-semibold text-[#1A1A18]">Pipeline Data</h3>
-          <span className="text-xs text-[#A0A09A]">{filteredData.length} paket</span>
+          <h3 className="text-sm font-semibold text-ink">Pipeline Data</h3>
+          <span className="text-xs text-ink-hint">{filteredData.length} paket</span>
         </div>
         <PipelineTable
           rows={pagination.rows}

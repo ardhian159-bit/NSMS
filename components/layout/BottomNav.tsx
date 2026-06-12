@@ -40,7 +40,7 @@ export default function BottomNav({ profile }: BottomNavProps) {
   const showFab = ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'].includes(profile.role)
 
   return (
-    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white border-t border-[#EBEBE7] safe-area-bottom">
+    <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-surface border-t border-line safe-area-bottom">
       <nav className="flex items-center justify-around h-16 px-2 relative">
         {/* Left side items */}
         {leftItems.map((item) => {
@@ -50,7 +50,7 @@ export default function BottomNav({ profile }: BottomNavProps) {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 ${
-                isActive ? 'text-[#1A1A18]' : 'text-[#A0A09A]'
+                isActive ? 'text-ink' : 'text-ink-hint'
               }`}
             >
               <item.icon className="w-5 h-5" />
@@ -64,9 +64,9 @@ export default function BottomNav({ profile }: BottomNavProps) {
           <div className="flex-1 flex items-center justify-center">
             <Link
               href="/pipeline/new"
-              className="w-12 h-12 bg-[#1A1A18] rounded-xl flex items-center justify-center -mt-4 shadow-lg"
+              className="w-12 h-12 bg-accent-solid rounded-xl flex items-center justify-center -mt-4 shadow-lg"
             >
-              <Plus className="w-6 h-6 text-white" />
+              <Plus className="w-6 h-6 text-accent-on" />
             </Link>
           </div>
         )}
@@ -79,7 +79,7 @@ export default function BottomNav({ profile }: BottomNavProps) {
               key={item.href}
               href={item.href}
               className={`flex flex-col items-center justify-center gap-0.5 flex-1 py-1 ${
-                isActive ? 'text-[#1A1A18]' : 'text-[#A0A09A]'
+                isActive ? 'text-ink' : 'text-ink-hint'
               }`}
             >
               <item.icon className="w-5 h-5" />

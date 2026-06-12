@@ -286,17 +286,39 @@ D:\projects\nsms\
 
 ## Design System
 
-### Tokens
+### Tokens (semantik — dark-mode aware)
+
+> ⚠️ **JANGAN tulis hex mentah di `app/(app)/**` & `components/**`.** Pakai token utility di bawah, kalau tidak warnanya tidak adapt ke dark mode (dan tidak ada error — silent). Definisi token di `app/globals.css` (`@theme inline` + `:root` + `.dark`).
+
+| Token utility | Light | Dark | Pakai untuk |
+|---|---|---|---|
+| `bg-page` | #F5F5F2 | #14110F | background halaman |
+| `bg-surface` | #FFFFFF | #1C1A17 | card / panel / input |
+| `bg-surface-alt` | #FAFAF8 | #232019 | header tabel, hover halus |
+| `border-line` / `divide-line` | #EBEBE7 | #34302A | border & divider |
+| `text-ink` | #1A1A18 | #ECEAE3 | teks utama |
+| `text-ink-muted` | #6B6B65 | #A8A39A | teks sekunder |
+| `text-ink-hint` | #A0A09A | #7C766C | hint / placeholder |
+| `bg-accent-solid` + `text-accent-on` | #1A1A18 / putih | #ECEAE3 / gelap | tombol hitam, FAB, pill aktif (selalu **berpasangan**) |
+| `hover:bg-accent-solid-hover` | #2A2A28 | #D8D4CB | hover accent |
+| `text-brand` / `border-brand` | #064E3B | #34D399 | teks/ikon hijau (outline button) |
+| `bg-brand-solid` + `text-white` | #064E3B | #0B6E52 | tombol hijau solid (Export/Save) |
+| `bg-brand-soft` | #F0FDF4 | #14271E | chip/badge hijau muda |
+
+**Aturan:**
+- Tombol hitam = `bg-accent-solid text-accent-on` (BUKAN `bg-[#1A1A18] text-white`). Tombol hijau solid = `bg-brand-solid text-white`.
+- Warna **status / kategorikal / choropleth** (badge `bg-green-50` dll, COLORS chart, heatmap map) = **tetap Tailwind named / hex** (semantik, tidak ikut tema).
+- Chart chrome (axis/label/grid) pakai `fill: 'var(--ink-muted)'` dll, bukan hex. Peta Leaflet **sengaja tetap light** (tile peta terang).
+
 ```
-Background:   #ffffff (cards), #F5F5F2 (page bg)
-Border:       #EBEBЕ7 (0.5px)
-Text primary: #1A1A18
-Text muted:   #6B6B65
-Text hint:    #A0A09A
-Accent:       #1A1A18 (buttons, FAB)
-Font:         DM Sans (body), DM Mono (numbers)
-Radius:       8px (cards), 100px (pills/badges)
+Font:   DM Sans (body), DM Mono (numbers)
+Radius: 8px (cards), 100px (pills/badges)
 ```
+
+### Dark Mode
+- **Scope:** hanya app ter-autentikasi (`(app)/*`). Login, landing (`app/page.tsx`), change-password **sengaja tetap light** (hex literal, tidak di-tokenize).
+- **Mekanisme:** class `.dark` di `<html>`. No-flash script inline di `app/layout.tsx` (baca `localStorage('nsms-theme')` atau `prefers-color-scheme`). Provider `components/theme/ThemeProvider.tsx`, toggle `components/theme/ThemeToggle.tsx` (di footer Sidebar/MobileDrawer + Settings).
+- Default ikut OS, bisa override & persist.
 
 ### Navigation
 **Desktop (md+):** Sidebar kiri 220px, fixed
@@ -307,7 +329,7 @@ Radius:       8px (cards), 100px (pills/badges)
 
 **Mobile (<md):** Bottom navbar fixed
 - Dashboard | Monitoring | [+ FAB Input] | Update | Kontrol
-- FAB tengah: bg-[#1A1A18] rounded-xl
+- FAB tengah: bg-accent-solid rounded-xl
 
 ### Status Badge Colors
 ```

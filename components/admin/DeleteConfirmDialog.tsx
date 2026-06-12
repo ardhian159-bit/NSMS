@@ -61,7 +61,7 @@ export default function DeleteConfirmDialog({
           <AlertDialogTitle>Hapus Lead?</AlertDialogTitle>
           <AlertDialogDescription>
             Apakah Anda yakin ingin menghapus lead{' '}
-            <strong className="text-[#1A1A18]">{lead?.funnelId}</strong>
+            <strong className="text-ink">{lead?.funnelId}</strong>
             {lead?.namaPaket ? ` — ${lead.namaPaket}` : ''}?
             <br />
             Tindakan ini tidak dapat dibatalkan. Semua data tracker terkait juga akan dihapus.

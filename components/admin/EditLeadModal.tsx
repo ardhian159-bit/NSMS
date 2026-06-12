@@ -97,7 +97,7 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
           <DialogTitle>
             Edit Lead
             {lead && (
-              <span className="ml-2 text-xs font-[family-name:var(--font-dm-mono)] text-[#A0A09A]">
+              <span className="ml-2 text-xs font-[family-name:var(--font-dm-mono)] text-ink-hint">
                 {lead.funnelId}
               </span>
             )}
@@ -112,7 +112,7 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
 
         <div className="grid grid-cols-1 gap-4 py-2">
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1">Nama Paket</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1">Nama Paket</label>
             <input
               type="text"
               value={namaPaket}
@@ -121,7 +121,7 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1">Instansi</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1">Instansi</label>
             <input
               type="text"
               value={instansi}
@@ -131,7 +131,7 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[#6B6B65] mb-1">TK (%)</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1">TK (%)</label>
               <select value={tk} onChange={(e) => setTk(e.target.value)} className="form-select">
                 {TK_VALUES_ALL.map((t) => (
                   <option key={t} value={t}>{t}% — {TK_STATUS_MAP[t]}</option>
@@ -139,20 +139,20 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#6B6B65] mb-1">Status</label>
-              <input type="text" value={status} readOnly className="form-input bg-[#F5F5F2] text-[#A0A09A] cursor-not-allowed" />
+              <label className="block text-xs font-medium text-ink-muted mb-1">Status</label>
+              <input type="text" value={status} readOnly className="form-input bg-page text-ink-hint cursor-not-allowed" />
             </div>
           </div>
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-medium text-[#6B6B65] mb-1">PPN</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1">PPN</label>
               <select value={ppn} onChange={(e) => setPpn(e.target.value)} className="form-select">
                 <option value="PPN">PPN</option>
                 <option value="Non PPN">Non PPN</option>
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#6B6B65] mb-1">CB (%)</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1">CB (%)</label>
               <input
                 type="number"
                 value={perkiraanCb}
@@ -161,7 +161,7 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#6B6B65] mb-1">Brutto (Rp)</label>
+              <label className="block text-xs font-medium text-ink-muted mb-1">Brutto (Rp)</label>
               <input
                 type="text"
                 value={nilaiAnggaranStr}
@@ -171,18 +171,18 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1">
+            <label className="block text-xs font-medium text-ink-muted mb-1">
               Forecast Netto <span className="text-green-600 text-[10px]">AUTO</span>
             </label>
             <input
               type="text"
               value={forecastNetto > 0 ? formatDotted(forecastNetto) : '0'}
               readOnly
-              className="form-input bg-[#F5F5F2] text-[#A0A09A] cursor-not-allowed"
+              className="form-input bg-page text-ink-hint cursor-not-allowed"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1">Keterangan</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1">Keterangan</label>
             <textarea
               value={keterangan}
               onChange={(e) => setKeterangan(e.target.value)}
@@ -195,14 +195,14 @@ export default function EditLeadModal({ lead, open, onClose, onSaved }: EditLead
         <DialogFooter>
           <button
             onClick={onClose}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-ink-muted bg-page hover:bg-line border border-line transition-colors"
           >
             Batal
           </button>
           <button
             onClick={handleSave}
             disabled={loading}
-            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#1A1A18] hover:bg-[#2A2A28] disabled:opacity-50 transition-colors"
+            className="px-5 py-2 rounded-lg text-sm font-semibold text-accent-on bg-accent-solid hover:bg-accent-solid-hover disabled:opacity-50 transition-colors"
           >
             {loading ? 'Menyimpan...' : 'Simpan'}
           </button>

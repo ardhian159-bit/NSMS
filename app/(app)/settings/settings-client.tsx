@@ -4,7 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { supabase } from '@/lib/supabase'
 import type { Profile } from '@/lib/types'
-import { KeyRound, User, Download, LogOut, BookOpen } from 'lucide-react'
+import { KeyRound, User, Download, LogOut, BookOpen, Palette } from 'lucide-react'
+import ThemeToggle from '@/components/theme/ThemeToggle'
 
 interface SettingsClientProps {
   profile: Profile
@@ -68,48 +69,58 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
     <div className="p-4 md:p-6 space-y-6 max-w-2xl">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Pengaturan</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">Kelola akun kamu</p>
+        <h1 className="text-xl font-semibold text-ink">Pengaturan</h1>
+        <p className="text-sm text-ink-hint mt-0.5">Kelola akun kamu</p>
       </div>
 
       {/* Info Akun */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
-        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-[#EBEBE7]">
-          <div className="w-10 h-10 rounded-full bg-[#F0FDF4] flex items-center justify-center flex-shrink-0">
-            <User className="w-5 h-5 text-[#064E3B]" />
+      <div className="bg-surface rounded-lg border border-line p-5">
+        <div className="flex items-center gap-3 mb-4 pb-4 border-b border-line">
+          <div className="w-10 h-10 rounded-full bg-brand-soft flex items-center justify-center flex-shrink-0">
+            <User className="w-5 h-5 text-brand" />
           </div>
           <div>
-            <p className="font-medium text-[#1A1A18]">{profile.picName || profile.username}</p>
-            <p className="text-xs text-[#A0A09A] capitalize">{profile.role}</p>
+            <p className="font-medium text-ink">{profile.picName || profile.username}</p>
+            <p className="text-xs text-ink-hint capitalize">{profile.role}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Email</span>
-            <p className="text-[#6B6B65] mt-0.5">{email}</p>
+            <span className="text-[10px] text-ink-hint uppercase tracking-wider">Email</span>
+            <p className="text-ink-muted mt-0.5">{email}</p>
           </div>
           <div>
-            <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Role</span>
+            <span className="text-[10px] text-ink-hint uppercase tracking-wider">Role</span>
             <p className="mt-0.5">
-              <span className="text-xs px-2 py-0.5 rounded-full bg-[#F5F5F2] text-[#6B6B65] font-medium capitalize">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-page text-ink-muted font-medium capitalize">
                 {profile.role}
               </span>
             </p>
           </div>
           {profile.branch && (
             <div>
-              <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Branch</span>
-              <p className="text-[#6B6B65] mt-0.5">{profile.branch}</p>
+              <span className="text-[10px] text-ink-hint uppercase tracking-wider">Branch</span>
+              <p className="text-ink-muted mt-0.5">{profile.branch}</p>
             </div>
           )}
         </div>
       </div>
 
+      {/* Tampilan */}
+      <div className="bg-surface rounded-lg border border-line p-5">
+        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-line">
+          <Palette className="w-4 h-4 text-ink-muted" />
+          <h2 className="text-sm font-semibold text-ink">Tampilan</h2>
+        </div>
+        <p className="text-sm text-ink-muted mb-4">Pilih mode terang atau gelap. Default mengikuti pengaturan sistem.</p>
+        <ThemeToggle variant="row" />
+      </div>
+
       {/* Ganti Password */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
-        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#EBEBE7]">
-          <KeyRound className="w-4 h-4 text-[#6B6B65]" />
-          <h2 className="text-sm font-semibold text-[#1A1A18]">Ganti Password</h2>
+      <div className="bg-surface rounded-lg border border-line p-5">
+        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-line">
+          <KeyRound className="w-4 h-4 text-ink-muted" />
+          <h2 className="text-sm font-semibold text-ink">Ganti Password</h2>
         </div>
 
         {error && (
@@ -125,7 +136,7 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
 
         <div className="space-y-3">
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
               Password Saat Ini *
             </label>
             <input
@@ -137,7 +148,7 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
               Password Baru *
             </label>
             <input
@@ -149,7 +160,7 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">
               Konfirmasi Password Baru *
             </label>
             <input
@@ -166,7 +177,7 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
           <button
             onClick={handleChangePassword}
             disabled={loading || !currentPassword || !newPassword || !confirmPassword}
-            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] disabled:opacity-50 transition-colors"
+            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-brand-solid hover:bg-brand-solid-hover disabled:opacity-50 transition-colors"
           >
             {loading ? 'Menyimpan...' : 'Ubah Password'}
           </button>
@@ -175,12 +186,12 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
 
       {/* Export Data */}
       {profile.role !== 'guest' && (
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
-          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#EBEBE7]">
-            <Download className="w-4 h-4 text-[#6B6B65]" />
-            <h2 className="text-sm font-semibold text-[#1A1A18]">Export Data</h2>
+        <div className="bg-surface rounded-lg border border-line p-5">
+          <div className="flex items-center gap-2 mb-5 pb-3 border-b border-line">
+            <Download className="w-4 h-4 text-ink-muted" />
+            <h2 className="text-sm font-semibold text-ink">Export Data</h2>
           </div>
-          <p className="text-sm text-[#6B6B65] mb-4">
+          <p className="text-sm text-ink-muted mb-4">
             {isAdmin
               ? 'Download semua data leads dan tracker dalam format Excel.'
               : 'Download data leads dan tracker milik Anda dalam format Excel.'}
@@ -189,7 +200,7 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
             <button
               onClick={handleExport}
               disabled={isExporting}
-              className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] disabled:opacity-50 transition-colors flex items-center gap-2"
+              className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-brand-solid hover:bg-brand-solid-hover disabled:opacity-50 transition-colors flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
               {isExporting ? 'Menyiapkan file...' : 'Export Excel'}
@@ -199,16 +210,16 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
       )}
 
       {/* Panduan */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
-        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#EBEBE7]">
-          <BookOpen className="w-4 h-4 text-[#6B6B65]" />
-          <h2 className="text-sm font-semibold text-[#1A1A18]">Panduan</h2>
+      <div className="bg-surface rounded-lg border border-line p-5">
+        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-line">
+          <BookOpen className="w-4 h-4 text-ink-muted" />
+          <h2 className="text-sm font-semibold text-ink">Panduan</h2>
         </div>
-        <p className="text-sm text-[#6B6B65] mb-4">Buka kembali panduan penggunaan NSMS.</p>
+        <p className="text-sm text-ink-muted mb-4">Buka kembali panduan penggunaan NSMS.</p>
         <div className="flex justify-end">
           <button
             onClick={() => window.dispatchEvent(new Event('nsms-show-onboarding'))}
-            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#064E3B] hover:bg-[#065F46] transition-colors flex items-center gap-2"
+            className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-brand-solid hover:bg-brand-solid-hover transition-colors flex items-center gap-2"
           >
             <BookOpen className="w-4 h-4" />
             Buka Panduan
@@ -217,12 +228,12 @@ export default function SettingsClient({ profile, email }: SettingsClientProps) 
       </div>
 
       {/* Logout */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
-        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-[#EBEBE7]">
-          <LogOut className="w-4 h-4 text-[#6B6B65]" />
-          <h2 className="text-sm font-semibold text-[#1A1A18]">Akun</h2>
+      <div className="bg-surface rounded-lg border border-line p-5">
+        <div className="flex items-center gap-2 mb-5 pb-3 border-b border-line">
+          <LogOut className="w-4 h-4 text-ink-muted" />
+          <h2 className="text-sm font-semibold text-ink">Akun</h2>
         </div>
-        <p className="text-sm text-[#6B6B65] mb-4">Keluar dari akun NSMS Anda.</p>
+        <p className="text-sm text-ink-muted mb-4">Keluar dari akun NSMS Anda.</p>
         <div className="flex justify-end">
           <button
             onClick={async () => {

@@ -48,21 +48,21 @@ export default function MapClient({ provinsiData, kabKotaData, profile }: MapCli
   return (
     <div className="p-4 md:p-6 space-y-4">
       <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Peta Sebaran</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">
+        <h1 className="text-xl font-semibold text-ink">Peta Sebaran</h1>
+        <p className="text-sm text-ink-hint mt-0.5">
           Distribusi leads {mapView === 'provinsi' ? 'per provinsi' : 'per kab/kota'}
         </p>
       </div>
 
-      <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5 w-fit">
+      <div className="flex items-center gap-1 bg-page rounded-full p-0.5 w-fit">
         {(['provinsi', 'kabkota'] as const).map((v) => (
           <button
             key={v}
             onClick={() => handleViewChange(v)}
             className={`text-xs px-4 py-1.5 rounded-full transition-all duration-200 font-medium ${
               mapView === v
-                ? 'bg-white text-[#1A1A18] shadow-sm'
-                : 'text-[#6B6B65] hover:text-[#1A1A18]'
+                ? 'bg-surface text-ink shadow-sm'
+                : 'text-ink-muted hover:text-ink'
             }`}
           >
             {v === 'provinsi' ? 'Per Provinsi' : 'Per Kab/Kota'}
@@ -71,7 +71,7 @@ export default function MapClient({ provinsiData, kabKotaData, profile }: MapCli
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-lg border border-[#EBEBE7] overflow-hidden" style={{ height: '480px' }}>
+        <div className="lg:col-span-2 bg-surface rounded-lg border border-line overflow-hidden" style={{ height: '480px' }}>
           <LeafletMap
             data={activeData}
             mode={mapView}
@@ -82,48 +82,48 @@ export default function MapClient({ provinsiData, kabKotaData, profile }: MapCli
           />
         </div>
 
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
+        <div className="bg-surface rounded-lg border border-line p-4">
           {!selected ? (
             <div className="flex flex-col items-center justify-center h-full min-h-[300px] text-center">
-              <p className="text-sm font-medium text-[#1A1A18]">
+              <p className="text-sm font-medium text-ink">
                 Klik {mapView === 'provinsi' ? 'provinsi' : 'kab/kota'}
               </p>
-              <p className="text-xs text-[#A0A09A] mt-1">untuk melihat detail leads</p>
+              <p className="text-xs text-ink-hint mt-1">untuk melihat detail leads</p>
             </div>
           ) : (
             <div>
               <div className="flex items-start justify-between mb-4">
                 <div>
-                  <h3 className="text-sm font-semibold text-[#1A1A18]">{selected}</h3>
+                  <h3 className="text-sm font-semibold text-ink">{selected}</h3>
                   {selectedData && (
-                    <p className="text-xs text-[#A0A09A] mt-0.5">
+                    <p className="text-xs text-ink-hint mt-0.5">
                       {selectedData.count} leads · {formatRupiahShort(selectedData.totalNetto)}
                     </p>
                   )}
                 </div>
                 <button
                   onClick={() => setSelected(null)}
-                  className="p-1 rounded text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2]"
+                  className="p-1 rounded text-ink-hint hover:text-ink hover:bg-page"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
               </div>
               {!selectedData ? (
-                <p className="text-xs text-[#A0A09A] text-center py-6">
+                <p className="text-xs text-ink-hint text-center py-6">
                   Belum ada leads di {mapView === 'provinsi' ? 'provinsi' : 'kab/kota'} ini
                 </p>
               ) : (
                 <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
                   {selectedData.leads.map((lead, i) => (
-                    <div key={i} className="p-3 bg-[#FAFAF8] rounded-lg border border-[#EBEBE7]">
-                      <p className="text-xs font-medium text-[#1A1A18] leading-snug">{lead.namaPaket || '-'}</p>
-                      <p className="text-xs text-[#A0A09A]">{lead.kabKota || '-'}</p>
-                      <p className="text-[10px] text-[#A0A09A] mt-0.5">{lead.ownerName}</p>
+                    <div key={i} className="p-3 bg-surface-alt rounded-lg border border-line">
+                      <p className="text-xs font-medium text-ink leading-snug">{lead.namaPaket || '-'}</p>
+                      <p className="text-xs text-ink-hint">{lead.kabKota || '-'}</p>
+                      <p className="text-[10px] text-ink-hint mt-0.5">{lead.ownerName}</p>
                       <div className="flex items-center justify-between mt-1.5">
-                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#F5F5F2] text-[#6B6B65]">{lead.status}</span>
+                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-page text-ink-muted">{lead.status}</span>
                         <div className="text-right">
-                          <span className="text-xs font-semibold text-[#1A1A18]">{formatRupiahShort(lead.netto)}</span>
-                          <p className="text-[10px] text-[#A0A09A]">Brutto: {formatRupiahShort(lead.nilaiAnggaran || 0)}</p>
+                          <span className="text-xs font-semibold text-ink">{formatRupiahShort(lead.netto)}</span>
+                          <p className="text-[10px] text-ink-hint">Brutto: {formatRupiahShort(lead.nilaiAnggaran || 0)}</p>
                         </div>
                       </div>
                     </div>
@@ -136,16 +136,16 @@ export default function MapClient({ provinsiData, kabKotaData, profile }: MapCli
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="text-[10px] text-[#A0A09A]">Rendah</span>
+        <span className="text-[10px] text-ink-hint">Rendah</span>
         <div className="flex gap-0.5">
           {['#BBF7D0', '#6EE7B7', '#34D399', '#10B981', '#064E3B'].map((c) => (
             <div key={c} style={{ background: c }} className="w-6 h-2 rounded-sm" />
           ))}
         </div>
-        <span className="text-[10px] text-[#A0A09A]">Tinggi</span>
+        <span className="text-[10px] text-ink-hint">Tinggi</span>
         <div className="ml-3 flex items-center gap-1">
           <div className="w-4 h-2 rounded-sm bg-[#E5E7EB]" />
-          <span className="text-[10px] text-[#A0A09A]">Belum ada leads</span>
+          <span className="text-[10px] text-ink-hint">Belum ada leads</span>
         </div>
       </div>
     </div>

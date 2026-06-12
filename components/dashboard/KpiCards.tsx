@@ -15,19 +15,19 @@ export default function KpiCards({ kpis }: KpiCardsProps) {
       sub: kpis.gagalBrutto > 0
         ? `▼ ${formatRupiahShort(kpis.gagalBrutto)} (${kpis.gagalPercent}% gagal)`
         : undefined,
-      valueColor: '#1A1A18',
+      valueColor: 'var(--ink)',
     },
     {
       label: 'Forecast Netto',
       value: formatRupiahShort(kpis.totalNetto),
       sub: 'Setelah PPN & CB',
-      valueColor: '#1A1A18',
+      valueColor: 'var(--ink)',
     },
     {
       label: 'Total Pipeline',
       value: `${kpis.totalPipeline} Paket`,
       sub: 'Paket aktif',
-      valueColor: '#1A1A18',
+      valueColor: 'var(--ink)',
     },
     {
       label: 'Closing',
@@ -42,10 +42,10 @@ export default function KpiCards({ kpis }: KpiCardsProps) {
       {cards.map((card) => (
         <div
           key={card.label}
-          className="bg-white rounded-[14px] border border-[#EBEBE7]"
+          className="bg-surface rounded-[14px] border border-line"
           style={{ padding: '14px 18px' }}
         >
-          <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-[#A0A09A]">
+          <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-ink-hint">
             {card.label}
           </p>
           <p
@@ -55,7 +55,7 @@ export default function KpiCards({ kpis }: KpiCardsProps) {
             {card.value}
           </p>
           {card.sub && (
-            <p className="text-[11px] text-[#A0A09A] mt-0.5">{card.sub}</p>
+            <p className="text-[11px] text-ink-hint mt-0.5">{card.sub}</p>
           )}
         </div>
       ))}

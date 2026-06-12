@@ -37,12 +37,12 @@ export default function UpdateForm({ lead, trackerHistory, onUpdated }: UpdateFo
 
   if (!lead) {
     return (
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
-        <div className="w-14 h-14 rounded-full bg-[#F5F5F2] flex items-center justify-center mb-4">
+      <div className="bg-surface rounded-lg border border-line p-8 flex flex-col items-center justify-center text-center min-h-[400px]">
+        <div className="w-14 h-14 rounded-full bg-page flex items-center justify-center mb-4">
           <span className="text-2xl">📋</span>
         </div>
-        <p className="font-semibold text-[#1A1A18]">Pilih project dari daftar kiri</p>
-        <p className="text-sm text-[#A0A09A] mt-1">untuk mulai mengisi update mingguan</p>
+        <p className="font-semibold text-ink">Pilih project dari daftar kiri</p>
+        <p className="text-sm text-ink-hint mt-1">untuk mulai mengisi update mingguan</p>
       </div>
     )
   }
@@ -101,37 +101,37 @@ export default function UpdateForm({ lead, trackerHistory, onUpdated }: UpdateFo
   return (
     <div className="space-y-4">
       {/* Lead Info Card */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
+      <div className="bg-surface rounded-lg border border-line p-4">
         <div className="flex items-start justify-between mb-3">
           <div>
-            <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-[#A0A09A]">{lead.funnelId}</span>
-            <h3 className="text-base font-semibold text-[#1A1A18] mt-0.5">{lead.namaPaket || '-'}</h3>
+            <span className="text-[10px] font-[family-name:var(--font-dm-mono)] text-ink-hint">{lead.funnelId}</span>
+            <h3 className="text-base font-semibold text-ink mt-0.5">{lead.namaPaket || '-'}</h3>
           </div>
           <Badge tk={lead.tk} />
         </div>
         <div className="grid grid-cols-2 gap-3 text-sm">
           <div>
-            <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Instansi</span>
-            <p className="text-[#6B6B65]">{lead.instansi || '-'}</p>
+            <span className="text-[10px] text-ink-hint uppercase tracking-wider">Instansi</span>
+            <p className="text-ink-muted">{lead.instansi || '-'}</p>
           </div>
           <div>
-            <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Wilayah</span>
-            <p className="text-[#6B6B65]">{lead.wilayah || lead.kabKota || '-'}</p>
+            <span className="text-[10px] text-ink-hint uppercase tracking-wider">Wilayah</span>
+            <p className="text-ink-muted">{lead.wilayah || lead.kabKota || '-'}</p>
           </div>
           <div>
-            <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Brutto</span>
-            <p className="text-[#1A1A18] font-semibold">{formatRupiahShort(lead.nilaiAnggaran)}</p>
+            <span className="text-[10px] text-ink-hint uppercase tracking-wider">Brutto</span>
+            <p className="text-ink font-semibold">{formatRupiahShort(lead.nilaiAnggaran)}</p>
           </div>
           <div>
-            <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Netto</span>
-            <p className="text-[#1A1A18] font-semibold">{formatRupiahShort(lead.forecastNetto)}</p>
+            <span className="text-[10px] text-ink-hint uppercase tracking-wider">Netto</span>
+            <p className="text-ink font-semibold">{formatRupiahShort(lead.forecastNetto)}</p>
           </div>
         </div>
       </div>
 
       {/* Update Form */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-        <h3 className="text-sm font-semibold text-[#1A1A18] mb-4 pb-3 border-b border-[#EBEBE7]">
+      <div className="bg-surface rounded-lg border border-line p-4">
+        <h3 className="text-sm font-semibold text-ink mb-4 pb-3 border-b border-line">
           Update Mingguan
         </h3>
 
@@ -150,7 +150,7 @@ export default function UpdateForm({ lead, trackerHistory, onUpdated }: UpdateFo
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">Status Baru *</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">Status Baru *</label>
             <select value={tk} onChange={(e) => setTk(e.target.value)} className="form-select" disabled={isLocked || loading}>
               {TK_VALUES_ALL.map((t) => (
                 <option key={t} value={t}>{t}% — {TK_STATUS_MAP[t]}</option>
@@ -158,18 +158,18 @@ export default function UpdateForm({ lead, trackerHistory, onUpdated }: UpdateFo
             </select>
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">Week</label>
+            <label className="block text-xs font-medium text-ink-muted mb-1.5">Week</label>
             <input
               type="text"
               value={week}
               readOnly
-              className="form-input font-[family-name:var(--font-dm-mono)] bg-[#F5F5F2] cursor-not-allowed text-[#A0A09A]"
+              className="form-input font-[family-name:var(--font-dm-mono)] bg-page cursor-not-allowed text-ink-hint"
             />
           </div>
         </div>
 
         <div className="mb-4">
-          <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">Notes</label>
+          <label className="block text-xs font-medium text-ink-muted mb-1.5">Notes</label>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
@@ -183,39 +183,39 @@ export default function UpdateForm({ lead, trackerHistory, onUpdated }: UpdateFo
         <button
           onClick={handleSubmit}
           disabled={isLocked || loading}
-          className="w-full px-5 py-2.5 rounded-lg text-sm font-semibold text-white bg-[#1A1A18] hover:bg-[#2A2A28] disabled:opacity-50 transition-colors"
+          className="w-full px-5 py-2.5 rounded-lg text-sm font-semibold text-accent-on bg-accent-solid hover:bg-accent-solid-hover disabled:opacity-50 transition-colors"
         >
           {loading ? 'Menyimpan...' : 'Simpan Update'}
         </button>
       </div>
 
       {/* Tracker History */}
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-        <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">Riwayat Update</h3>
+      <div className="bg-surface rounded-lg border border-line p-4">
+        <h3 className="text-sm font-semibold text-ink mb-3">Riwayat Update</h3>
         {trackerHistory.length === 0 ? (
-          <p className="text-sm text-[#A0A09A] text-center py-4">Belum ada riwayat update</p>
+          <p className="text-sm text-ink-hint text-center py-4">Belum ada riwayat update</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="text-xs text-[#A0A09A] uppercase border-b border-[#EBEBE7]">
+                <tr className="text-xs text-ink-hint uppercase border-b border-line">
                   <th className="text-left px-3 py-2 font-medium">Week</th>
                   <th className="text-left px-3 py-2 font-medium">Status</th>
                   <th className="text-right px-3 py-2 font-medium">Netto</th>
                   <th className="text-left px-3 py-2 font-medium">Notes</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#EBEBE7]">
+              <tbody className="divide-y divide-line">
                 {trackerHistory.map((t) => (
-                  <tr key={`${t.funnelId}-${t.week}`} className="hover:bg-[#FAFAF8]">
-                    <td className="px-3 py-2 font-[family-name:var(--font-dm-mono)] text-xs text-[#1A1A18]">{t.week}</td>
+                  <tr key={`${t.funnelId}-${t.week}`} className="hover:bg-surface-alt">
+                    <td className="px-3 py-2 font-[family-name:var(--font-dm-mono)] text-xs text-ink">{t.week}</td>
                     <td className="px-3 py-2">
-                      <span className="px-2 py-0.5 rounded-full bg-[#F5F5F2] text-xs text-[#6B6B65]">{t.statusBaru || '-'}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-page text-xs text-ink-muted">{t.statusBaru || '-'}</span>
                     </td>
-                    <td className="px-3 py-2 text-right font-semibold text-[#1A1A18]">
+                    <td className="px-3 py-2 text-right font-semibold text-ink">
                       {t.forecastNetto ? formatRupiahShort(t.forecastNetto) : '-'}
                     </td>
-                    <td className="px-3 py-2 text-[#6B6B65] max-w-[200px] truncate">{t.notes || '-'}</td>
+                    <td className="px-3 py-2 text-ink-muted max-w-[200px] truncate">{t.notes || '-'}</td>
                   </tr>
                 ))}
               </tbody>

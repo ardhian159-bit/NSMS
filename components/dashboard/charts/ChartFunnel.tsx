@@ -37,10 +37,10 @@ export default function ChartFunnel({ data, metricMode }: ChartFunnelProps) {
   }))
 
   return (
-    <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
+    <div className="bg-surface rounded-lg border border-line p-4">
       <div className="mb-4">
-        <h3 className="text-sm font-semibold text-[#1A1A18]">Sales Funnel</h3>
-        <p className="text-xs text-[#A0A09A] mt-0.5">Nilai dalam {metricMode === 'netto' ? 'Forecast Netto' : 'Bruto'}</p>
+        <h3 className="text-sm font-semibold text-ink">Sales Funnel</h3>
+        <p className="text-xs text-ink-hint mt-0.5">Nilai dalam {metricMode === 'netto' ? 'Forecast Netto' : 'Bruto'}</p>
       </div>
       <div>
         <ResponsiveContainer width="100%" height={280} minWidth={0}>
@@ -49,7 +49,7 @@ export default function ChartFunnel({ data, metricMode }: ChartFunnelProps) {
             <YAxis
               type="category"
               dataKey="label"
-              tick={{ fontSize: 11, fill: '#6B6B65' }}
+              tick={{ fontSize: 11, fill: 'var(--ink-muted)' }}
               width={isMobile ? 80 : 130}
               axisLine={false}
               tickLine={false}
@@ -61,7 +61,7 @@ export default function ChartFunnel({ data, metricMode }: ChartFunnelProps) {
               <LabelList
                 dataKey="displayLabel"
                 position="right"
-                style={{ fontSize: isMobile ? 9 : 10, fill: '#6B6B65' }}
+                style={{ fontSize: isMobile ? 9 : 10, fill: 'var(--ink-muted)' }}
               />
             </Bar>
           </BarChart>

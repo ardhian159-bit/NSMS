@@ -266,8 +266,8 @@ export default function InputLeadForm({
   }
 
   return (
-    <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
-      <h3 className="text-sm font-semibold text-[#1A1A18] mb-5 pb-3 border-b border-[#EBEBE7]">
+    <div className="bg-surface rounded-lg border border-line p-5">
+      <h3 className="text-sm font-semibold text-ink mb-5 pb-3 border-b border-line">
         {isEditMode ? `Edit Lead — ${editLead?.funnelId}` : 'Input Funnel Baru'}
       </h3>
 
@@ -291,7 +291,7 @@ export default function InputLeadForm({
               type="text"
               value={form.ownerName}
               readOnly
-              className="form-input bg-[#F5F5F2] cursor-not-allowed text-[#6B6B65]"
+              className="form-input bg-page cursor-not-allowed text-ink-muted"
             />
           ) : (
             <select value={form.ownerName} onChange={(e) => update('ownerName', e.target.value)} className="form-select">
@@ -421,12 +421,12 @@ export default function InputLeadForm({
           </select>
         </div>
         <div>
-          <Label>Status <span className="text-[#A0A09A] text-[10px] normal-case">(otomatis dari TK)</span></Label>
+          <Label>Status <span className="text-ink-hint text-[10px] normal-case">(otomatis dari TK)</span></Label>
           <input
             type="text"
             value={status}
             readOnly
-            className="form-input bg-[#F5F5F2] text-[#A0A09A] cursor-not-allowed"
+            className="form-input bg-page text-ink-hint cursor-not-allowed"
           />
         </div>
       </div>
@@ -522,10 +522,10 @@ export default function InputLeadForm({
             value={forecastNetto > 0 ? formatDotted(forecastNetto) : ''}
             readOnly
             placeholder="0"
-            className="form-input bg-[#F5F5F2] text-[#A0A09A] cursor-not-allowed"
+            className="form-input bg-page text-ink-hint cursor-not-allowed"
           />
           {brutto > 0 && (
-            <p className="text-[11px] text-[#A0A09A] mt-1">
+            <p className="text-[11px] text-ink-hint mt-1">
               DPP: {formatDotted(dpp)} | CB: {cb}% | Netto: {formatDotted(forecastNetto)}
             </p>
           )}
@@ -543,11 +543,11 @@ export default function InputLeadForm({
       </div>
 
       {/* Actions */}
-      <div className="flex justify-end gap-3 pt-3 border-t border-[#EBEBE7]">
+      <div className="flex justify-end gap-3 pt-3 border-t border-line">
         {isEditMode && (
           <button
             onClick={() => { reset(); onCancelEdit?.() }}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-ink-muted bg-page hover:bg-line border border-line transition-colors"
           >
             Batal Edit
           </button>
@@ -555,7 +555,7 @@ export default function InputLeadForm({
         {!isEditMode && (
           <button
             onClick={reset}
-            className="px-4 py-2 rounded-lg text-sm font-medium text-[#6B6B65] bg-[#F5F5F2] hover:bg-[#EBEBE7] border border-[#EBEBE7] transition-colors"
+            className="px-4 py-2 rounded-lg text-sm font-medium text-ink-muted bg-page hover:bg-line border border-line transition-colors"
           >
             Reset
           </button>
@@ -563,7 +563,7 @@ export default function InputLeadForm({
         <button
           onClick={handleSubmit}
           disabled={loading}
-          className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#1A1A18] hover:bg-[#2A2A28] disabled:opacity-50 transition-colors"
+          className="px-5 py-2 rounded-lg text-sm font-semibold text-accent-on bg-accent-solid hover:bg-accent-solid-hover disabled:opacity-50 transition-colors"
         >
           {loading ? 'Menyimpan...' : isEditMode ? 'Simpan Perubahan' : 'Tambah ke Pipeline'}
         </button>
@@ -576,6 +576,6 @@ export default function InputLeadForm({
 
 function Label({ children }: { children: React.ReactNode }) {
   return (
-    <label className="block text-xs font-medium text-[#6B6B65] mb-1.5">{children}</label>
+    <label className="block text-xs font-medium text-ink-muted mb-1.5">{children}</label>
   )
 }

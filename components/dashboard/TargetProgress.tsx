@@ -54,11 +54,11 @@ export default function TargetProgress({ leads, targets, metricMode, onToggle }:
     <div className="space-y-3">
       {/* Summary bar */}
       <div className="flex items-center justify-between px-1">
-        <span className="text-xs text-[#A0A09A]">
+        <span className="text-xs text-ink-hint">
           Target {metricMode === 'netto' ? 'Netto' : 'Bruto'} 2026
         </span>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-[#6B6B65]">{formatRupiahShort(totalClosing)} / {formatRupiahShort(totalTarget)}</span>
+          <span className="text-xs text-ink-muted">{formatRupiahShort(totalClosing)} / {formatRupiahShort(totalTarget)}</span>
           <span className={`text-xs font-semibold ${totalPct >= 70 ? 'text-emerald-600' : totalPct >= 30 ? 'text-amber-600' : 'text-red-500'}`}>
             {totalPct.toFixed(1)}%
           </span>
@@ -77,19 +77,19 @@ export default function TargetProgress({ leads, targets, metricMode, onToggle }:
         const isDone = QUARTERS.indexOf(q) < QUARTERS.indexOf(currentQ)
 
         const barColor = pct >= 70 ? 'bg-emerald-500' : pct >= 30 ? 'bg-amber-400' : 'bg-red-400'
-        const pctColor = pct >= 70 ? 'text-emerald-600' : pct >= 30 ? 'text-amber-600' : isDone && pct < 30 ? 'text-red-500' : 'text-[#A0A09A]'
+        const pctColor = pct >= 70 ? 'text-emerald-600' : pct >= 30 ? 'text-amber-600' : isDone && pct < 30 ? 'text-red-500' : 'text-ink-hint'
 
         return (
           <div
             key={q}
-            className={`bg-white rounded-lg border p-4 transition-shadow hover:shadow-sm ${
-              isActive ? 'border-[#BBF7D0]' : 'border-[#EBEBE7]'
+            className={`bg-surface rounded-lg border p-4 transition-shadow hover:shadow-sm ${
+              isActive ? 'border-brand-soft' : 'border-line'
             }`}
           >
             {/* Header */}
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider">
+                <span className="text-xs font-medium text-ink-hint uppercase tracking-wider">
                   Target {q}
                 </span>
                 {isActive && (
@@ -102,15 +102,15 @@ export default function TargetProgress({ leads, targets, metricMode, onToggle }:
             </div>
 
             {/* Closing value */}
-            <p className="text-lg font-semibold text-[#1A1A18] mb-1">
+            <p className="text-lg font-semibold text-ink mb-1">
               {formatRupiahShort(closing)}
             </p>
-            <p className="text-[11px] text-[#A0A09A] mb-3">
+            <p className="text-[11px] text-ink-hint mb-3">
               dari {formatRupiahShort(targetVal)}
             </p>
 
             {/* Progress bar */}
-            <div className="h-1.5 bg-[#EBEBE7] rounded-full overflow-hidden">
+            <div className="h-1.5 bg-line rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${barColor}`}
                 style={{ width: `${pct}%` }}

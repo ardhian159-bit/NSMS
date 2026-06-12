@@ -20,8 +20,8 @@ export default function ChartJenisProduk({ data }: ChartJenisProdukProps) {
   if (data.length === 0) return null
 
   return (
-    <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-      <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Breakdown Jenis Produk</h3>
+    <div className="bg-surface rounded-lg border border-line p-4">
+      <h3 className="text-sm font-semibold text-ink mb-4">Breakdown Jenis Produk</h3>
       
       <div style={{ height: Math.max(200, data.length * 44) }} className="w-full">
         <ResponsiveContainer width="100%" height="100%">
@@ -37,18 +37,18 @@ export default function ChartJenisProduk({ data }: ChartJenisProdukProps) {
               width={120}
               axisLine={false}
               tickLine={false}
-              tick={{ fontSize: 12, fill: '#6B6B65', fontFamily: 'var(--font-dm-sans)' }}
+              tick={{ fontSize: 12, fill: 'var(--ink-muted)', fontFamily: 'var(--font-dm-sans)' }}
             />
             <Tooltip
-              cursor={{ fill: '#F5F5F2' }}
+              cursor={{ fill: 'var(--surface-alt)' }}
               content={({ active, payload }) => {
                 if (active && payload && payload.length) {
                   const d = payload[0].payload
                   return (
-                    <div className="bg-white border border-[#EBEBE7] shadow-sm rounded-lg p-3">
-                      <p className="text-xs font-semibold text-[#1A1A18] mb-1">{d.name}</p>
-                      <p className="text-[11px] text-[#A0A09A] mb-0.5">{d.count} Paket</p>
-                      <p className="text-xs text-[#064E3B] font-mono font-medium">
+                    <div className="bg-surface border border-line shadow-sm rounded-lg p-3">
+                      <p className="text-xs font-semibold text-ink mb-1">{d.name}</p>
+                      <p className="text-[11px] text-ink-hint mb-0.5">{d.count} Paket</p>
+                      <p className="text-xs text-brand font-mono font-medium">
                         {formatRupiahShort(d.netto)}
                       </p>
                     </div>
@@ -75,7 +75,7 @@ export default function ChartJenisProduk({ data }: ChartJenisProdukProps) {
                     <text
                       x={x + width + 8}
                       y={y + height / 2 + 4}
-                      fill="#6B6B65"
+                      fill="var(--ink-muted)"
                       textAnchor="start"
                       style={{ fontSize: '11px', fontWeight: 500, fontFamily: 'var(--font-dm-sans)' }}
                     >

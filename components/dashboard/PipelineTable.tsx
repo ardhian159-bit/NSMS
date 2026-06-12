@@ -38,22 +38,22 @@ export default function PipelineTable({
   startIndex, endIndex, onPageChange, onRowClick,
 }: PipelineTableProps) {
   const SortIcon = ({ col }: { col: string }) => {
-    if (sort.column !== col) return <span className="text-[#A0A09A] ml-0.5 text-[10px]">↕</span>
+    if (sort.column !== col) return <span className="text-ink-hint ml-0.5 text-[10px]">↕</span>
     return sort.ascending
-      ? <ChevronUp className="w-3 h-3 text-[#1A1A18] ml-0.5 inline" />
-      : <ChevronDown className="w-3 h-3 text-[#1A1A18] ml-0.5 inline" />
+      ? <ChevronUp className="w-3 h-3 text-ink ml-0.5 inline" />
+      : <ChevronDown className="w-3 h-3 text-ink ml-0.5 inline" />
   }
 
   return (
-    <div className="bg-white rounded-lg border border-[#EBEBE7] overflow-hidden">
+    <div className="bg-surface rounded-lg border border-line overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm text-left">
-          <thead className="text-xs text-[#A0A09A] uppercase bg-[#FAFAF8] border-b border-[#EBEBE7]">
+          <thead className="text-xs text-ink-hint uppercase bg-surface-alt border-b border-line">
             <tr>
               {COLUMNS.map((col) => (
                 <th
                   key={col.key}
-                  className={`px-3 py-3 font-medium ${col.className} ${col.sortable ? 'cursor-pointer hover:text-[#1A1A18] select-none' : ''}`}
+                  className={`px-3 py-3 font-medium ${col.className} ${col.sortable ? 'cursor-pointer hover:text-ink select-none' : ''}`}
                   onClick={col.sortable ? () => onSort(col.key) : undefined}
                 >
                   {col.label}
@@ -62,10 +62,10 @@ export default function PipelineTable({
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#EBEBE7]">
+          <tbody className="divide-y divide-line">
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={COLUMNS.length} className="px-4 py-10 text-center text-[#A0A09A]">
+                <td colSpan={COLUMNS.length} className="px-4 py-10 text-center text-ink-hint">
                   Tidak ada data ditemukan
                 </td>
               </tr>
@@ -73,34 +73,34 @@ export default function PipelineTable({
               rows.map((row) => (
                 <tr
                   key={row.funnelId}
-                  className="hover:bg-[#FAFAF8] transition-colors cursor-pointer"
+                  className="hover:bg-surface-alt transition-colors cursor-pointer"
                   onClick={() => onRowClick(row.funnelId)}
                 >
-                  <td className="px-3 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-[#A0A09A]">
+                  <td className="px-3 py-3 font-[family-name:var(--font-dm-mono)] text-xs text-ink-hint">
                     {row.funnelId}
                   </td>
-                  <td className="px-3 py-3 text-[#1A1A18] whitespace-nowrap">{row.ownerName}</td>
-                  <td className="px-3 py-3 font-medium text-[#1A1A18]">{row.principal}</td>
-                  <td className="px-3 py-3 text-[#1A1A18]" title={row.namaPaket}>
+                  <td className="px-3 py-3 text-ink whitespace-nowrap">{row.ownerName}</td>
+                  <td className="px-3 py-3 font-medium text-ink">{row.principal}</td>
+                  <td className="px-3 py-3 text-ink" title={row.namaPaket}>
                     {truncateText(row.namaPaket, 40)}
                   </td>
-                  <td className="px-3 py-3 text-[#6B6B65]">{row.wilayah}</td>
-                  <td className="px-3 py-3 text-[#6B6B65]" title={row.instansi}>
+                  <td className="px-3 py-3 text-ink-muted">{row.wilayah}</td>
+                  <td className="px-3 py-3 text-ink-muted" title={row.instansi}>
                     {truncateText(row.instansi, 28)}
                   </td>
                   <td className="px-3 py-3">
-                    <span className="px-2 py-0.5 bg-[#F5F5F2] rounded text-xs text-[#6B6B65] border border-[#EBEBE7]">
+                    <span className="px-2 py-0.5 bg-page rounded text-xs text-ink-muted border border-line">
                       {row.sumberDana || '-'}
                     </span>
                   </td>
-                  <td className="px-3 py-3 text-right text-[#6B6B65]">
+                  <td className="px-3 py-3 text-right text-ink-muted">
                     {formatRupiahShort(row.nilaiAnggaran)}
                   </td>
-                  <td className="px-3 py-3 text-right font-semibold text-[#1A1A18]">
+                  <td className="px-3 py-3 text-right font-semibold text-ink">
                     {formatRupiahShort(row.forecastNetto)}
                   </td>
                   <td className="px-3 py-3 text-center">
-                    <span className="px-2 py-0.5 rounded bg-[#F5F5F2] text-xs font-medium text-[#6B6B65]">
+                    <span className="px-2 py-0.5 rounded bg-page text-xs font-medium text-ink-muted">
                       {row.quarter || '-'}
                     </span>
                   </td>
@@ -115,25 +115,25 @@ export default function PipelineTable({
       </div>
 
       {/* Pagination */}
-      <div className="flex items-center justify-between px-4 py-3 border-t border-[#EBEBE7] bg-[#FAFAF8]">
-        <p className="text-xs text-[#A0A09A]">
+      <div className="flex items-center justify-between px-4 py-3 border-t border-line bg-surface-alt">
+        <p className="text-xs text-ink-hint">
           {totalItems > 0 ? `${startIndex + 1}–${endIndex} dari ${totalItems} data` : '0 data'}
         </p>
         <div className="flex items-center gap-2">
           <button
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
-            className="p-1.5 rounded border border-[#EBEBE7] bg-white text-[#6B6B65] disabled:opacity-30 hover:bg-[#F5F5F2] transition-colors"
+            className="p-1.5 rounded border border-line bg-surface text-ink-muted disabled:opacity-30 hover:bg-page transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          <span className="text-xs text-[#6B6B65] font-medium">
+          <span className="text-xs text-ink-muted font-medium">
             {page} / {totalPages}
           </span>
           <button
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
-            className="p-1.5 rounded border border-[#EBEBE7] bg-white text-[#6B6B65] disabled:opacity-30 hover:bg-[#F5F5F2] transition-colors"
+            className="p-1.5 rounded border border-line bg-surface text-ink-muted disabled:opacity-30 hover:bg-page transition-colors"
           >
             <ChevronRight className="w-4 h-4" />
           </button>

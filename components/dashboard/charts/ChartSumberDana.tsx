@@ -16,8 +16,8 @@ export default function ChartSumberDana({ data }: ChartSumberDanaProps) {
   const total = data.reduce((sum, d) => sum + d.brutto, 0)
 
   return (
-    <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-      <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Sumber Dana</h3>
+    <div className="bg-surface rounded-lg border border-line p-4">
+      <h3 className="text-sm font-semibold text-ink mb-4">Sumber Dana</h3>
       <div className="flex flex-col md:flex-row items-center gap-4">
         {/* Chart */}
         <div className="w-[200px] relative flex-shrink-0">
@@ -42,8 +42,8 @@ export default function ChartSumberDana({ data }: ChartSumberDanaProps) {
           </ResponsiveContainer>
           {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-[10px] text-[#A0A09A]">Total Bruto</span>
-            <span className="text-xs font-semibold text-[#1A1A18]">{formatRupiahShort(total)}</span>
+            <span className="text-[10px] text-ink-hint">Total Bruto</span>
+            <span className="text-xs font-semibold text-ink">{formatRupiahShort(total)}</span>
           </div>
         </div>
 
@@ -55,9 +55,9 @@ export default function ChartSumberDana({ data }: ChartSumberDanaProps) {
                 className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
                 style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
               />
-              <span className="flex-1 text-[#1A1A18] font-medium">{item.name}</span>
-              <span className="text-[#A0A09A]">{item.percent}%</span>
-              <span className="text-[#6B6B65]">
+              <span className="flex-1 text-ink font-medium">{item.name}</span>
+              <span className="text-ink-hint">{item.percent}%</span>
+              <span className="text-ink-muted">
                 {formatRupiahShort(item.brutto)}
               </span>
             </div>

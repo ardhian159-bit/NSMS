@@ -45,15 +45,15 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
 
   const pillClass = (active: boolean) =>
     `px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-      active ? 'bg-[#1A1A18] text-white' : 'bg-[#F5F5F2] text-[#6B6B65] hover:bg-[#EBEBE7]'
+      active ? 'bg-accent-solid text-accent-on' : 'bg-page text-ink-muted hover:bg-line'
     }`
 
   return (
-    <div className="bg-white rounded-lg border border-[#EBEBE7] p-4 space-y-4">
+    <div className="bg-surface rounded-lg border border-line p-4 space-y-4">
       {/* Row 1: Quarter pills */}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider mr-1">Quarter</span>
+          <span className="text-xs font-medium text-ink-hint uppercase tracking-wider mr-1">Quarter</span>
           <button onClick={() => update({ quarter: [] })} className={pillClass(filters.quarter.length === 0)}>
             Semua
           </button>
@@ -67,7 +67,7 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
           <button
             onClick={onExport}
             disabled={isExporting}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#EBEBE7] bg-white text-xs font-medium text-[#064E3B] hover:bg-[#F0FDF4] hover:border-[#064E3B] transition-colors disabled:opacity-50 flex-shrink-0"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-line bg-surface text-xs font-medium text-brand hover:bg-brand-soft hover:border-brand transition-colors disabled:opacity-50 flex-shrink-0"
           >
             <Download className="w-3.5 h-3.5" />
             {isExporting ? 'Menyiapkan...' : 'Export Excel'}
@@ -77,7 +77,7 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
 
       {/* Row 2: TK pills */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium text-[#A0A09A] uppercase tracking-wider mr-1">Stage</span>
+        <span className="text-xs font-medium text-ink-hint uppercase tracking-wider mr-1">Stage</span>
         <button onClick={() => update({ tk: [] })} className={pillClass(filters.tk.length === 0)}>
           Semua
         </button>
@@ -133,18 +133,18 @@ export default function FilterBar({ filters, onFilterChange, options, onExport, 
         {/* Search + Reset */}
         <div className="flex gap-2 col-span-2 md:col-span-4 lg:col-span-1">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#A0A09A]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-hint" />
             <input
               type="text"
               value={filters.search}
               onChange={(e) => update({ search: e.target.value })}
               placeholder="Cari paket, instansi..."
-              className="w-full rounded-lg border border-[#EBEBE7] bg-white text-sm text-[#1A1A18] pl-9 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-[#1A1A18] placeholder:text-[#A0A09A]"
+              className="w-full rounded-lg border border-line bg-surface text-sm text-ink pl-9 pr-3 py-2 focus:outline-none focus:ring-1 focus:ring-accent-solid placeholder:text-ink-hint"
             />
           </div>
           <button
             onClick={reset}
-            className="p-2 rounded-lg border border-[#EBEBE7] bg-white text-[#A0A09A] hover:text-[#1A1A18] hover:border-[#1A1A18] transition-colors"
+            className="p-2 rounded-lg border border-line bg-surface text-ink-hint hover:text-ink hover:border-accent-solid transition-colors"
             title="Reset Filter"
           >
             <RotateCcw className="w-4 h-4" />

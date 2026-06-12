@@ -33,30 +33,30 @@ export default function ChartQuarter({ data, targets = [], metricMode = 'netto' 
   const targetLabel = metricMode === 'netto' ? 'Target Netto' : 'Target Bruto'
 
   return (
-    <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
-      <h3 className="text-sm font-semibold text-[#1A1A18] mb-4">Distribusi Quarter</h3>
+    <div className="bg-surface rounded-lg border border-line p-4">
+      <h3 className="text-sm font-semibold text-ink mb-4">Distribusi Quarter</h3>
       <div>
         <ResponsiveContainer width="100%" height={280} minWidth={0}>
           <BarChart data={enriched} margin={{ top: 20, right: 10, left: 10, bottom: 5 }}>
             <XAxis
               dataKey="quarter"
-              tick={{ fontSize: 12, fill: '#6B6B65' }}
+              tick={{ fontSize: 12, fill: 'var(--ink-muted)' }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
               tickFormatter={(v) => formatMilyar(Number(v))}
-              tick={{ fontSize: 10, fill: '#A0A09A' }}
+              tick={{ fontSize: 10, fill: 'var(--ink-hint)' }}
               axisLine={false}
               tickLine={false}
             />
-            <Legend wrapperStyle={{ fontSize: 11, color: '#6B6B65' }} />
+            <Legend wrapperStyle={{ fontSize: 11, color: 'var(--ink-muted)' }} />
             <Bar dataKey="brutto" name="Brutto" fill="#3b82f6" radius={[4, 4, 0, 0]} barSize={20}>
               <LabelList
                 dataKey="brutto"
                 position="top"
                 formatter={((v: unknown) => formatMilyar(Number(v ?? 0))) as never}
-                style={{ fontSize: 9, fill: '#6B6B65' }}
+                style={{ fontSize: 9, fill: 'var(--ink-muted)' }}
               />
             </Bar>
             <Bar dataKey="netto" name="Netto" fill="#10b981" radius={[4, 4, 0, 0]} barSize={20}>
@@ -64,7 +64,7 @@ export default function ChartQuarter({ data, targets = [], metricMode = 'netto' 
                 dataKey="netto"
                 position="top"
                 formatter={((v: unknown) => formatMilyar(Number(v ?? 0))) as never}
-                style={{ fontSize: 9, fill: '#6B6B65' }}
+                style={{ fontSize: 9, fill: 'var(--ink-muted)' }}
               />
             </Bar>
             <Bar dataKey="target" name={targetLabel} fill="#f59e0b" radius={[4, 4, 0, 0]} barSize={20}>
@@ -72,7 +72,7 @@ export default function ChartQuarter({ data, targets = [], metricMode = 'netto' 
                 dataKey="target"
                 position="top"
                 formatter={((v: unknown) => formatMilyar(Number(v ?? 0))) as never}
-                style={{ fontSize: 9, fill: '#6B6B65' }}
+                style={{ fontSize: 9, fill: 'var(--ink-muted)' }}
               />
             </Bar>
           </BarChart>

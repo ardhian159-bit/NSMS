@@ -20,6 +20,7 @@ import {
 import type { Profile } from '@/lib/types'
 import { supabase } from '@/lib/supabase'
 import Logo from '@/components/layout/Logo'
+import ThemeToggle from '@/components/theme/ThemeToggle'
 import {
   Tooltip,
   TooltipContent,
@@ -91,13 +92,13 @@ export default function Sidebar({ profile }: SidebarProps) {
       <aside
         className={`
           hidden md:flex md:flex-col md:fixed md:inset-y-0 md:left-0
-          bg-white border-r border-[#EBEBE7] z-30
+          bg-surface border-r border-line z-30
           transition-all duration-200 ease-in-out
           ${collapsed ? 'md:w-16' : 'md:w-[220px]'}
         `}
       >
         {/* Header: Logo + Toggle */}
-        <div className="h-16 flex items-center border-b border-[#EBEBE7] px-3">
+        <div className="h-16 flex items-center border-b border-line px-3">
           <div className={`flex items-center w-full ${collapsed ? 'justify-center' : 'justify-between px-2'}`}>
             <button onClick={toggle} className="flex-shrink-0">
               <Logo collapsed={collapsed} />
@@ -105,7 +106,7 @@ export default function Sidebar({ profile }: SidebarProps) {
             {!collapsed && (
               <button
                 onClick={toggle}
-                className="p-1.5 rounded-md text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors"
+                className="p-1.5 rounded-md text-ink-hint hover:text-ink hover:bg-page transition-colors"
               >
                 <PanelLeftClose className="w-4 h-4" />
               </button>
@@ -125,8 +126,8 @@ export default function Sidebar({ profile }: SidebarProps) {
                   relative flex items-center gap-3 rounded-lg text-sm font-medium transition-colors
                   ${collapsed ? 'justify-center px-0 py-2.5' : 'px-3 py-2.5'}
                   ${isActive
-                    ? 'bg-[#1A1A18] text-white'
-                    : 'text-[#6B6B65] hover:bg-[#F5F5F2] hover:text-[#1A1A18]'
+                    ? 'bg-accent-solid text-accent-on'
+                    : 'text-ink-muted hover:bg-page hover:text-ink'
                   }
                 `}
               >
@@ -156,7 +157,7 @@ export default function Sidebar({ profile }: SidebarProps) {
               <TooltipTrigger asChild>
                 <button
                   onClick={toggle}
-                  className="flex items-center justify-center w-full py-2.5 rounded-lg text-[#A0A09A] hover:text-[#1A1A18] hover:bg-[#F5F5F2] transition-colors mt-2"
+                  className="flex items-center justify-center w-full py-2.5 rounded-lg text-ink-hint hover:text-ink hover:bg-page transition-colors mt-2"
                 >
                   <PanelLeftOpen className="w-[18px] h-[18px]" />
                 </button>
@@ -169,13 +170,13 @@ export default function Sidebar({ profile }: SidebarProps) {
         </nav>
 
         {/* Footer: User Info */}
-        <div className="border-t border-[#EBEBE7] p-3">
+        <div className="border-t border-line p-3">
           {collapsed ? (
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex justify-center">
-                  <div className="w-8 h-8 rounded-full bg-[#F5F5F2] flex items-center justify-center">
-                    <span className="text-xs font-semibold text-[#1A1A18]">
+                  <div className="w-8 h-8 rounded-full bg-page flex items-center justify-center">
+                    <span className="text-xs font-semibold text-ink">
                       {(profile.picName || profile.username || '?').charAt(0).toUpperCase()}
                     </span>
                   </div>
@@ -188,22 +189,25 @@ export default function Sidebar({ profile }: SidebarProps) {
             </Tooltip>
           ) : (
             <>
+              <div className="mb-3">
+                <ThemeToggle variant="compact" />
+              </div>
               <div className="flex items-center gap-3 mb-3 px-1">
-                <div className="w-8 h-8 rounded-full bg-[#F5F5F2] flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs font-semibold text-[#1A1A18]">
+                <div className="w-8 h-8 rounded-full bg-page flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs font-semibold text-ink">
                     {(profile.picName || profile.username || '?').charAt(0).toUpperCase()}
                   </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-[#1A1A18] truncate">
+                  <p className="text-sm font-medium text-ink truncate">
                     {profile.picName || profile.username}
                   </p>
-                  <p className="text-[11px] text-[#A0A09A] capitalize">{profile.role}</p>
+                  <p className="text-[11px] text-ink-hint capitalize">{profile.role}</p>
                 </div>
               </div>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 text-xs text-[#A0A09A] hover:text-[#1A1A18] transition-colors w-full px-1"
+                className="flex items-center gap-2 text-xs text-ink-hint hover:text-ink transition-colors w-full px-1"
               >
                 <LogOut className="w-3.5 h-3.5" />
                 Logout

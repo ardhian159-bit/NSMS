@@ -59,20 +59,20 @@ export default function LeadDetailDrawer({
       />
 
       {/* Drawer */}
-      <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-white border-l border-[#EBEBE7] shadow-xl z-50 overflow-y-auto">
+      <div className="fixed inset-y-0 right-0 w-full max-w-lg bg-surface border-l border-line shadow-xl z-50 overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-[#EBEBE7] px-6 py-4 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-surface border-b border-line px-6 py-4 flex items-center justify-between z-10">
           <div>
-            <p className="text-xs font-[family-name:var(--font-dm-mono)] text-[#A0A09A]">
+            <p className="text-xs font-[family-name:var(--font-dm-mono)] text-ink-hint">
               {lead.funnelId}
             </p>
-            <h2 className="text-base font-semibold text-[#1A1A18] mt-0.5">
+            <h2 className="text-base font-semibold text-ink mt-0.5">
               {lead.namaPaket || '-'}
             </h2>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-[#F5F5F2] text-[#A0A09A] hover:text-[#1A1A18] transition-colors"
+            className="p-2 rounded-lg hover:bg-page text-ink-hint hover:text-ink transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -89,7 +89,7 @@ export default function LeadDetailDrawer({
             <DetailField label="Sumber Dana" value={lead.sumberDana} />
             <DetailField label="Quarter" value={lead.quarter} />
             <div>
-              <p className="text-[10px] text-[#A0A09A] uppercase tracking-wider mb-1">Stage (TK)</p>
+              <p className="text-[10px] text-ink-hint uppercase tracking-wider mb-1">Stage (TK)</p>
               <Badge tk={lead.tk} />
             </div>
             <DetailField label="Nilai Anggaran" value={formatRupiahLong(lead.nilaiAnggaran)} mono />
@@ -100,28 +100,28 @@ export default function LeadDetailDrawer({
 
           {lead.keterangan && (
             <div>
-              <p className="text-[10px] text-[#A0A09A] uppercase tracking-wider mb-1">Keterangan</p>
-              <p className="text-sm text-[#6B6B65]">{lead.keterangan}</p>
+              <p className="text-[10px] text-ink-hint uppercase tracking-wider mb-1">Keterangan</p>
+              <p className="text-sm text-ink-muted">{lead.keterangan}</p>
             </div>
           )}
 
           {/* Tulis Notes */}
           {(profile.role === 'superadmin' || profile.role === 'admin') && (
             <div>
-              <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">Tulis Notes</h3>
+              <h3 className="text-sm font-semibold text-ink mb-3">Tulis Notes</h3>
               <div className="space-y-2">
                 <textarea
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Tulis catatan untuk lead ini..."
                   rows={3}
-                  className="w-full text-sm rounded-lg border border-[#EBEBE7] px-3 py-2 text-[#1A1A18] focus:border-[#064E3B] focus:ring-1 focus:ring-[#064E3B] outline-none resize-none transition-colors"
+                  className="w-full text-sm rounded-lg border border-line px-3 py-2 text-ink focus:border-brand focus:ring-1 focus:ring-brand outline-none resize-none transition-colors"
                 />
                 <div className="flex items-center gap-3">
                   <button
                     onClick={handleSubmitNotes}
                     disabled={submitting || !notes.trim()}
-                    className="bg-[#064E3B] text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-[#064E3B]/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="bg-brand-solid text-white px-4 py-2 rounded-lg text-xs font-semibold hover:bg-brand-solid/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Kirim Notes
                   </button>
@@ -135,29 +135,29 @@ export default function LeadDetailDrawer({
 
           {/* Tracker History */}
           <div>
-            <h3 className="text-sm font-semibold text-[#1A1A18] mb-3">Riwayat Update</h3>
+            <h3 className="text-sm font-semibold text-ink mb-3">Riwayat Update</h3>
             {trackerHistory.length === 0 ? (
-              <p className="text-sm text-[#A0A09A]">Belum ada riwayat update.</p>
+              <p className="text-sm text-ink-hint">Belum ada riwayat update.</p>
             ) : (
               <div className="space-y-3">
                 {trackerHistory.map((t) => (
                   <div
                     key={`${t.funnelId}-${t.week}`}
-                    className="border border-[#EBEBE7] rounded-lg p-3"
+                    className="border border-line rounded-lg p-3"
                   >
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs font-semibold text-[#1A1A18] font-[family-name:var(--font-dm-mono)]">
+                      <span className="text-xs font-semibold text-ink font-[family-name:var(--font-dm-mono)]">
                         {t.week || '-'}
                       </span>
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-[#F5F5F2] text-[#6B6B65]">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-page text-ink-muted">
                         {t.statusBaru || '-'}
                       </span>
                     </div>
-                    <p className="text-sm font-medium text-[#1A1A18]">
+                    <p className="text-sm font-medium text-ink">
                       {t.forecastNetto ? formatRupiahShort(t.forecastNetto) : '-'}
                     </p>
                     {t.notes && (
-                      <p className="text-xs text-[#6B6B65] mt-1">{t.notes}</p>
+                      <p className="text-xs text-ink-muted mt-1">{t.notes}</p>
                     )}
                     {t.adminNotes && (
                       <p className="text-xs text-red-500 mt-1">Admin: {t.adminNotes}</p>
@@ -183,8 +183,8 @@ function DetailField({
 }) {
   return (
     <div>
-      <p className="text-[10px] text-[#A0A09A] uppercase tracking-wider mb-1">{label}</p>
-      <p className={`text-sm ${highlight ? 'font-semibold text-[#1A1A18]' : 'text-[#6B6B65]'}`}>
+      <p className="text-[10px] text-ink-hint uppercase tracking-wider mb-1">{label}</p>
+      <p className={`text-sm ${highlight ? 'font-semibold text-ink' : 'text-ink-muted'}`}>
         {value || '-'}
       </p>
     </div>

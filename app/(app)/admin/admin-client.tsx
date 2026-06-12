@@ -37,12 +37,12 @@ export default function AdminClient({ leads, trackers, settings, profile }: Admi
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-xl font-semibold text-[#1A1A18]">Admin Panel</h1>
-          <p className="text-sm text-[#A0A09A] mt-0.5">Kelola pipeline dan data funnel</p>
+          <h1 className="text-xl font-semibold text-ink">Admin Panel</h1>
+          <p className="text-sm text-ink-hint mt-0.5">Kelola pipeline dan data funnel</p>
         </div>
         <Link
           href="/admin/bulk-import"
-          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-[#EBEBE7] bg-white text-sm font-medium text-[#064E3B] hover:bg-[#F0FDF4] hover:border-[#064E3B] transition-colors flex-shrink-0"
+          className="flex items-center gap-2 px-4 py-2 rounded-lg border border-line bg-surface text-sm font-medium text-brand hover:bg-brand-soft hover:border-brand transition-colors flex-shrink-0"
         >
           <Upload className="w-4 h-4" />
           Import Massal
@@ -57,8 +57,8 @@ export default function AdminClient({ leads, trackers, settings, profile }: Admi
             onClick={() => setActiveTab(tab.key)}
             className={`px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap flex-shrink-0 ${
               activeTab === tab.key
-                ? 'bg-[#1A1A18] text-white'
-                : 'bg-white text-[#6B6B65] border border-[#EBEBE7] hover:bg-[#F5F5F2]'
+                ? 'bg-accent-solid text-accent-on'
+                : 'bg-surface text-ink-muted border border-line hover:bg-page'
             }`}
           >
             {tab.label}

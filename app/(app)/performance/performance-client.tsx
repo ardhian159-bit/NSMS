@@ -173,25 +173,25 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
     <div className="p-4 md:p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-semibold text-[#1A1A18]">Performance</h1>
-        <p className="text-sm text-[#A0A09A] mt-0.5">Closing per quarter per PIC</p>
+        <h1 className="text-xl font-semibold text-ink">Performance</h1>
+        <p className="text-sm text-ink-hint mt-0.5">Closing per quarter per PIC</p>
       </div>
 
       {/* Target vs Achievement */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold text-[#1A1A18]">
+          <h2 className="text-sm font-semibold text-ink">
             Target vs Achievement {new Date().getFullYear()}
           </h2>
-          <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5">
+          <div className="flex items-center gap-1 bg-page rounded-full p-0.5">
             {(['netto', 'bruto'] as const).map((m) => (
               <button
                 key={m}
                 onClick={() => setMetricMode(m)}
                 className={`text-xs px-3 py-1 rounded-full transition-all duration-200 font-medium ${
                   metricMode === m
-                    ? 'bg-white text-[#1A1A18] shadow-sm'
-                    : 'text-[#6B6B65] hover:text-[#1A1A18]'
+                    ? 'bg-surface text-ink shadow-sm'
+                    : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 {m === 'netto' ? 'Netto' : 'Bruto'}
@@ -208,21 +208,21 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
             return (
               <div
                 key={quarter}
-                className={`bg-white rounded-lg border p-4 space-y-3 transition-all ${
+                className={`bg-surface rounded-lg border p-4 space-y-3 transition-all ${
                   isCurrent
                     ? 'border-emerald-300 shadow-sm shadow-emerald-50'
-                    : 'border-[#EBEBE7]'
+                    : 'border-line'
                 } ${!isPast && !isCurrent ? 'opacity-60' : ''}`}
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-semibold text-[#1A1A18]">{quarter}</span>
+                  <span className="text-sm font-semibold text-ink">{quarter}</span>
                   {isCurrent && (
                     <span className="text-[10px] font-medium text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full">
                       Aktif
                     </span>
                   )}
                   {isPast && (
-                    <span className="text-[10px] font-medium text-[#A0A09A] bg-[#F5F5F2] border border-[#EBEBE7] px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-medium text-ink-hint bg-page border border-line px-2 py-0.5 rounded-full">
                       Selesai
                     </span>
                   )}
@@ -235,7 +235,7 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
                       {ach.toFixed(1)}%
                     </span>
                   </div>
-                  <div className="w-full h-1.5 bg-[#F5F5F2] rounded-full overflow-hidden">
+                  <div className="w-full h-1.5 bg-page rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{ width: `${clampedAch}%`, backgroundColor: color.bar }}
@@ -246,25 +246,25 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
                 {/* Stats */}
                 <div className="space-y-1.5">
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Closing</span>
-                    <span className="text-xs font-semibold text-[#1A1A18] font-[family-name:var(--font-dm-mono)]">
+                    <span className="text-[10px] text-ink-hint uppercase tracking-wider">Closing</span>
+                    <span className="text-xs font-semibold text-ink font-[family-name:var(--font-dm-mono)]">
                       {closing > 0 ? formatRupiahShort(closing) : '—'}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Target</span>
-                    <span className="text-xs text-[#6B6B65] font-[family-name:var(--font-dm-mono)]">
+                    <span className="text-[10px] text-ink-hint uppercase tracking-wider">Target</span>
+                    <span className="text-xs text-ink-muted font-[family-name:var(--font-dm-mono)]">
                       {formatRupiahShort(targetVal)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-[10px] text-[#A0A09A] uppercase tracking-wider">Gap</span>
+                    <span className="text-[10px] text-ink-hint uppercase tracking-wider">Gap</span>
                     <span className="text-xs text-red-500 font-[family-name:var(--font-dm-mono)]">
                       {gap > 0 ? formatRupiahShort(gap) : '✓'}
                     </span>
                   </div>
                 </div>
-                <div className="pt-2 mt-1 border-t border-[#EBEBE7] flex justify-between items-center">
+                <div className="pt-2 mt-1 border-t border-line flex justify-between items-center">
                   <span className="text-[10px] text-red-600 uppercase tracking-wider font-semibold">
                     Target Realisasi
                   </span>
@@ -278,16 +278,16 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
         </div>
 
         {/* Summary Card */}
-        <div className="bg-white rounded-lg border border-[#EBEBE7] p-4">
+        <div className="bg-surface rounded-lg border border-line p-4">
           <div className="flex flex-col md:flex-row md:items-center gap-4">
             <div className="flex-1 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#1A1A18]">Total Achievement</span>
+                <span className="text-xs font-semibold text-ink">Total Achievement</span>
                 <span className={`text-sm font-bold ${achColor(achievementData.totalAch).text}`}>
                   {achievementData.totalAch.toFixed(1)}%
                 </span>
               </div>
-              <div className="w-full h-2 bg-[#F5F5F2] rounded-full overflow-hidden">
+              <div className="w-full h-2 bg-page rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{
@@ -296,20 +296,20 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
                   }}
                 />
               </div>
-              <div className="flex justify-between text-[10px] text-[#A0A09A] font-[family-name:var(--font-dm-mono)]">
+              <div className="flex justify-between text-[10px] text-ink-hint font-[family-name:var(--font-dm-mono)]">
                 <span>Closing: {formatRupiahShort(achievementData.totalClosing)}</span>
                 <span>Target: {formatRupiahShort(achievementData.totalTarget)}</span>
               </div>
             </div>
             {achievementData.forecastNextQ > 0 && (
-              <div className="md:border-l md:border-[#EBEBE7] md:pl-4">
-                <p className="text-[10px] text-[#A0A09A] uppercase tracking-wider mb-1">
+              <div className="md:border-l md:border-line md:pl-4">
+                <p className="text-[10px] text-ink-hint uppercase tracking-wider mb-1">
                   Beban per Q sisa
                 </p>
-                <p className="text-lg font-bold text-[#1A1A18] font-[family-name:var(--font-dm-mono)]">
+                <p className="text-lg font-bold text-ink font-[family-name:var(--font-dm-mono)]">
                   {formatRupiahShort(achievementData.forecastNextQ)}
                 </p>
-                <p className="text-[10px] text-[#A0A09A]">
+                <p className="text-[10px] text-ink-hint">
                   dibagi {4 - achievementData.currentQ} quarter tersisa
                 </p>
               </div>
@@ -318,18 +318,18 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
+      <div className="bg-surface rounded-lg border border-line p-5">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-[#1A1A18]">Pilih PIC (Maks. 4)</h2>
-          <div className="flex items-center gap-1 bg-[#F5F5F2] rounded-full p-0.5">
+          <h2 className="text-sm font-semibold text-ink">Pilih PIC (Maks. 4)</h2>
+          <div className="flex items-center gap-1 bg-page rounded-full p-0.5">
             {PENGGARAP_FILTERS.map((f) => (
               <button
                 key={f || 'all'}
                 onClick={() => changePenggarap(f)}
                 className={`text-xs px-3 py-1 rounded-full transition-all duration-200 font-medium ${
                   filterPenggarap === f
-                    ? 'bg-white text-[#1A1A18] shadow-sm'
-                    : 'text-[#6B6B65] hover:text-[#1A1A18]'
+                    ? 'bg-surface text-ink shadow-sm'
+                    : 'text-ink-muted hover:text-ink'
                 }`}
               >
                 {f === '' ? 'Semua' : f}
@@ -339,7 +339,7 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
         </div>
         <div className="flex flex-wrap gap-2">
           {filteredPicAgg.length === 0 && (
-            <p className="text-xs text-[#A0A09A] py-1">Tidak ada PIC untuk penggarap ini</p>
+            <p className="text-xs text-ink-hint py-1">Tidak ada PIC untuk penggarap ini</p>
           )}
           {filteredPicAgg.map((p) => {
             const isSelected = selectedPics.includes(p.name)
@@ -352,10 +352,10 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
                 className={`
                   px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-200 border
                   ${isSelected
-                    ? 'bg-[#1A1A18] text-white border-[#1A1A18]'
+                    ? 'bg-accent-solid text-accent-on border-accent-solid'
                     : isDisabled
                       ? 'bg-neutral-50 text-neutral-400 border-neutral-200 cursor-not-allowed opacity-60'
-                      : 'bg-white text-[#6B6B65] border-[#EBEBE7] hover:border-[#1A1A18] hover:text-[#1A1A18]'}
+                      : 'bg-surface text-ink-muted border-line hover:border-accent-solid hover:text-ink'}
                 `}
               >
                 {p.name}
@@ -365,39 +365,39 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-[#EBEBE7] p-5">
+      <div className="bg-surface rounded-lg border border-line p-5">
         <div className="h-[380px] w-full pt-4">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={chartData}
               margin={{ top: 20, right: 30, left: 10, bottom: 20 }}
             >
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#EBEBE7" />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--line)" />
               <XAxis
                 dataKey="quarter"
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: '#6B6B65', fontFamily: 'var(--font-dm-sans)' }}
+                tick={{ fontSize: 12, fill: 'var(--ink-muted)', fontFamily: 'var(--font-dm-sans)' }}
                 dy={10}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(val) => formatRupiahShort(val)}
-                tick={{ fontSize: 12, fill: '#6B6B65', fontFamily: 'var(--font-dm-mono)' }}
+                tick={{ fontSize: 12, fill: 'var(--ink-muted)', fontFamily: 'var(--font-dm-mono)' }}
               />
               <Tooltip
-                cursor={{ fill: '#F5F5F2' }}
+                cursor={{ fill: 'var(--surface-alt)' }}
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="bg-white border border-[#EBEBE7] shadow-sm rounded-lg p-3 space-y-1">
-                        <p className="text-xs font-semibold text-[#1A1A18] mb-1">{label}</p>
+                      <div className="bg-surface border border-line shadow-sm rounded-lg p-3 space-y-1">
+                        <p className="text-xs font-semibold text-ink mb-1">{label}</p>
                         {payload.map((p, i) => (
                           <div key={i} className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.fill }} />
-                            <span className="text-xs text-[#6B6B65]">{String(p.dataKey)}</span>
-                            <span className="text-xs font-medium text-[#1A1A18] font-mono">
+                            <span className="text-xs text-ink-muted">{String(p.dataKey)}</span>
+                            <span className="text-xs font-medium text-ink font-mono">
                               {formatRupiahShort(p.value as number)}
                             </span>
                           </div>
@@ -428,7 +428,7 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
             const isPositive = next >= curr
             return (
               <div key={i} className="flex-1 flex items-center justify-center gap-1">
-                <span className="text-[#A0A09A] text-[10px] font-[family-name:var(--font-dm-mono)]">
+                <span className="text-ink-hint text-[10px] font-[family-name:var(--font-dm-mono)]">
                   Q{i + 1}→Q{i + 2}
                 </span>
                 <span className={`text-[10px] font-medium font-[family-name:var(--font-dm-mono)] px-2 py-0.5 rounded-full border ${
