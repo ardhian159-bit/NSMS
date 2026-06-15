@@ -45,7 +45,14 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
   const [page, setPage] = useState(1)
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null)
   const [metricMode, setMetricMode] = useState<'netto' | 'bruto'>('netto')
+  const [targetView, setTargetView] = useState<'global' | 'MP' | 'SP'>('global')
   const [isExporting, setIsExporting] = useState(false)
+
+  // Lead untuk gauge target: global (semua) atau capaian divisi MP/SP (by penggarap)
+  const targetLeads = useMemo(
+    () => (targetView === 'global' ? leads : leads.filter((l) => l.ketPenggarap === targetView)),
+    [leads, targetView]
+  )
 
   // --- Derived data (pure functions) ---
   const filterOptions = useMemo(() => getUniqueFilterOptions(leads), [leads])
@@ -148,12 +155,27 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
         )
       })()}
 
-      {/* Target Gauge — hero */}
-      <TargetGauge
-        leads={leads}
-        targets={companyTargets}
-        metricMode={metricMode}
-      />
+      {/* Target Gauge — hero + toggle divisi */}
+      <div className="space-y-2">
+        <div className="flex items-center gap-1 bg-surface-alt rounded-full p-0.5 w-fit border border-line">
+          {([['global', 'Global'], ['MP', 'Divisi MP'], ['SP', 'Divisi SP']] as const).map(([k, label]) => (
+            <button
+              key={k}
+              onClick={() => setTargetView(k)}
+              className={`text-xs px-3 py-1 rounded-full font-medium transition-colors ${
+                targetView === k ? 'bg-accent-solid text-accent-on' : 'text-ink-muted hover:text-ink'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        <TargetGauge
+          leads={targetLeads}
+          targets={companyTargets}
+          metricMode={metricMode}
+        />
+      </div>
 
       {/* KPI Cards */}
       <KpiCards kpis={kpis} />
