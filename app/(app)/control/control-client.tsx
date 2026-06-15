@@ -32,7 +32,7 @@ const TABS: { key: Tab; label: string }[] = [
   { key: 'targets', label: 'Quarter Target' },
 ]
 
-const ROLE_OPTIONS = ['superadmin', 'admin', 'sales', 'guest', 'mp', 'sp', 'am', 'dirut']
+const ROLE_OPTIONS = ['superadmin', 'admin', 'guest', 'sales', 'managerial']
 
 const CATEGORIES = [
   { key: 'picNames', label: 'PIC Names' },
@@ -54,6 +54,7 @@ export default function ControlClient({
   const [localProfiles, setLocalProfiles] = useState(profiles)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editRole, setEditRole] = useState('')
+  const [editPenggarap, setEditPenggarap] = useState('')
   const [editPicName, setEditPicName] = useState('')
   const [saving, setSaving] = useState(false)
 
@@ -63,13 +64,14 @@ export default function ControlClient({
       .from('profiles')
       .update({
         role: editRole,
+        penggarap: editPenggarap || null,
         pic_name: editPicName,
         updated_at: new Date().toISOString(),
       })
       .eq('id', id)
     setLocalProfiles((prev) =>
       prev.map((p) =>
-        p.id === id ? { ...p, role: editRole as Profile['role'], picName: editPicName } : p
+        p.id === id ? { ...p, role: editRole as Profile['role'], penggarap: editPenggarap, picName: editPicName } : p
       )
     )
     setEditingId(null)
@@ -105,6 +107,7 @@ export default function ControlClient({
   const [newPassword, setNewPassword] = useState('')
   const [newPicName, setNewPicName] = useState('')
   const [newRole, setNewRole] = useState('sales')
+  const [newPenggarap, setNewPenggarap] = useState('')
   const [newBranch, setNewBranch] = useState('')
   const [addingUser, setAddingUser] = useState(false)
   const [addUserError, setAddUserError] = useState('')
@@ -120,6 +123,7 @@ export default function ControlClient({
         password: newPassword,
         picName: newPicName,
         role: newRole,
+        penggarap: newPenggarap,
         branch: newBranch,
       }),
     })
@@ -136,6 +140,7 @@ export default function ControlClient({
         username: newEmail,
         picName: newPicName,
         role: newRole as Profile['role'],
+        penggarap: newPenggarap,
         branch: newBranch || null,
       } as Profile,
     ])
@@ -144,6 +149,7 @@ export default function ControlClient({
     setNewPassword('')
     setNewPicName('')
     setNewRole('sales')
+    setNewPenggarap('')
     setNewBranch('')
     setAddingUser(false)
   }
@@ -155,6 +161,7 @@ export default function ControlClient({
   const [addingCategory, setAddingCategory] = useState<string | null>(null)
 
   const categoryItems = localSettings.filter((s) => s.category === activeCategory)
+  const penggarapOptions = localSettings.filter((s) => s.category === 'ketPenggarap').map((s) => s.value)
 
   const handleAddItem = async (category: string, value: string) => {
     if (!value.trim()) return
@@ -261,6 +268,7 @@ export default function ControlClient({
                   <th className="px-4 py-3 font-medium">PIC Name</th>
                   <th className="px-4 py-3 font-medium">Username</th>
                   <th className="px-4 py-3 font-medium">Role</th>
+                  <th className="px-4 py-3 font-medium">Penggarap</th>
                   <th className="px-4 py-3 font-medium">Branch</th>
                   <th className="px-4 py-3 font-medium w-28 text-center">Aksi</th>
                 </tr>
@@ -289,6 +297,18 @@ export default function ControlClient({
                               <option key={r} value={r}>
                                 {r}
                               </option>
+                            ))}
+                          </select>
+                        </td>
+                        <td className="px-4 py-2.5">
+                          <select
+                            value={editPenggarap}
+                            onChange={(e) => setEditPenggarap(e.target.value)}
+                            className="form-select text-sm"
+                          >
+                            <option value="">-</option>
+                            {penggarapOptions.map((pg) => (
+                              <option key={pg} value={pg}>{pg}</option>
                             ))}
                           </select>
                         </td>
@@ -322,6 +342,11 @@ export default function ControlClient({
                             {p.role}
                           </span>
                         </td>
+                        <td className="px-4 py-3">
+                          {p.penggarap
+                            ? <span className="text-xs px-2 py-0.5 rounded-full bg-brand-soft text-brand font-medium">{p.penggarap}</span>
+                            : <span className="text-ink-hint">-</span>}
+                        </td>
                         <td className="px-4 py-3 text-ink-muted">{p.branch || '-'}</td>
                         <td className="px-4 py-3">
                           <div className="flex items-center justify-center gap-1">
@@ -329,6 +354,7 @@ export default function ControlClient({
                               onClick={() => {
                                 setEditingId(p.id)
                                 setEditRole(p.role)
+                                setEditPenggarap(p.penggarap || '')
                                 setEditPicName(p.picName)
                               }}
                               className="p-1.5 rounded-md text-ink-hint hover:text-ink hover:bg-page transition-colors"
@@ -709,6 +735,19 @@ export default function ControlClient({
                 >
                   {ROLE_OPTIONS.map((r) => (
                     <option key={r} value={r}>{r}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[10px] text-ink-hint uppercase tracking-wider">Penggarap</label>
+                <select
+                  value={newPenggarap}
+                  onChange={(e) => setNewPenggarap(e.target.value)}
+                  className="form-select mt-1 w-full"
+                >
+                  <option value="">-- Pilih (opsional) --</option>
+                  {penggarapOptions.map((pg) => (
+                    <option key={pg} value={pg}>{pg}</option>
                   ))}
                 </select>
               </div>

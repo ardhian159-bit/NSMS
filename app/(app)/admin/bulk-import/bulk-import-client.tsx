@@ -25,7 +25,6 @@ interface BulkImportClientProps {
   knownOwners: KnownOwnerRef[]
 }
 
-const KET_PENGGARAP_MAP: Record<string, string> = { sales: 'SP', sp: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN' }
 const DISPLAY_HEADERS = LEADS_COLUMNS.filter((c) => c.import !== 'ignore').map((c) => c.header)
 const FUZZY_HEADERS = new Set(['Principal', 'Sumber Dana', 'Kab/Kota', 'Wilayah', 'PIC'])
 
@@ -38,7 +37,7 @@ export default function BulkImportClient({ pics, principals, sumberDana, existin
   const resolvePicInfo = useCallback((value: string): { ownerId: string | null; ket: string | null } => {
     const norm = normStr(value)
     const prof = picByName.get(norm)
-    if (prof) return { ownerId: prof.id, ket: KET_PENGGARAP_MAP[prof.role] ?? null }
+    if (prof) return { ownerId: prof.id, ket: prof.penggarap ?? null }
     const known = knownOwnerByName.get(norm)
     if (known) return { ownerId: known.ownerId, ket: known.ketPenggarap }
     return { ownerId: null, ket: 'REKANAN' }

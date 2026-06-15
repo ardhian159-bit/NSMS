@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation'
 import type { ProfileRow, SettingRowRaw } from '@/lib/types'
 import BulkImportClient from './bulk-import-client'
 
-export interface PicRef { id: string; picName: string; role: string }
+export interface PicRef { id: string; picName: string; penggarap: string | null }
 export interface ExistingLeadRef { funnelId: string; namaPaket: string; instansi: string; nilaiAnggaran: number }
 export interface KnownOwnerRef { name: string; ownerId: string | null; ketPenggarap: string | null }
 
@@ -18,14 +18,14 @@ export default async function BulkImportPage() {
   }
 
   const [{ data: profileRows }, { data: settingRows }, { data: leadRows }] = await Promise.all([
-    supabase.from('profiles').select('id, pic_name, role').not('pic_name', 'is', null),
+    supabase.from('profiles').select('id, pic_name, penggarap').not('pic_name', 'is', null),
     supabase.from('settings').select('*').order('sort_order', { ascending: true }),
     supabase.from('leads').select('funnel_id, nama_paket, instansi, nilai_anggaran, owner_name, owner_id, ket_penggarap'),
   ])
 
-  const pics: PicRef[] = (profileRows as { id: string; pic_name: string; role: string }[] | null ?? [])
+  const pics: PicRef[] = (profileRows as { id: string; pic_name: string; penggarap: string | null }[] | null ?? [])
     .filter((p) => p.pic_name)
-    .map((p) => ({ id: p.id, picName: p.pic_name, role: p.role ?? '' }))
+    .map((p) => ({ id: p.id, picName: p.pic_name, penggarap: p.penggarap ?? null }))
 
   const principals: string[] = []
   const sumberDana: string[] = []

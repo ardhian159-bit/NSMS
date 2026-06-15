@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase-server'
 import { redirect } from 'next/navigation'
 import { mapProfileRow } from '@/lib/types'
 import type { ProfileRow, SettingRowRaw, AppSettings } from '@/lib/types'
-import { fetchPicOptions } from '@/lib/api'
+import { fetchPicOptions, fetchPicPenggarap } from '@/lib/api'
 import InputLeadForm from '@/components/shared/InputLeadForm'
 
 export default async function NewLeadPage() {
@@ -31,6 +31,7 @@ export default async function NewLeadPage() {
     principals: [],
     sumberDana: [],
     jenisProduk: [],
+    ketPenggarap: [],
   }
 
   ;(settingRows as SettingRowRaw[] | null)?.forEach((row) => {
@@ -39,9 +40,11 @@ export default async function NewLeadPage() {
       case 'principals':  settings.principals.push(row.value); break
       case 'sumberDana':  settings.sumberDana.push(row.value); break
       case 'jenisProduk': settings.jenisProduk.push(row.value); break
+      case 'ketPenggarap': settings.ketPenggarap.push(row.value); break
     }
   })
   settings.picNames = await fetchPicOptions(settings.picNames)
+  const picPenggarap = await fetchPicPenggarap()
 
   return (
     <div className="p-4 md:p-6 space-y-6">
@@ -53,6 +56,7 @@ export default async function NewLeadPage() {
         defaultOwnerName={profile.picName}
         settings={settings}
         profile={profile}
+        picPenggarap={picPenggarap}
       />
     </div>
   )

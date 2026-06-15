@@ -8,7 +8,7 @@ export default async function MonitoringPage() {
     fetchTrackers(),
   ])
   if (!profile) redirect('/login')
-  if (!['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'].includes(profile.role)) {
+  if (!['superadmin', 'admin', 'sales', 'managerial'].includes(profile.role)) {
     redirect('/dashboard')
   }
 

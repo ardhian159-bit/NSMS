@@ -14,6 +14,8 @@ interface InputLeadFormProps {
   defaultOwnerName?: string
   /** Show PIC as dropdown with these options (admin mode) */
   picOptions?: string[]
+  /** Peta nama PIC (ternormalisasi) → penggarap, untuk auto-isi saat admin pilih PIC */
+  picPenggarap?: Record<string, string>
   /** Settings for dropdowns */
   settings: AppSettings
   /** Current user profile */
@@ -45,18 +47,10 @@ interface FormData {
   nilaiAnggaran: string
   keterangan: string
   ownerName: string
+  ketPenggarap: string
 }
 
-// Auto-label penggarap dari role user — invisible ke user, di-set saat insert.
-// admin/superadmin → null (bisa di-set manual via Control Panel/PUSAT).
-const KET_PENGGARAP_MAP: Record<string, string> = {
-  sales: 'SP',
-  sp: 'SP',
-  mp: 'MP',
-  am: 'MP',
-  dirut: 'MP',
-  rekanan: 'REKANAN',
-}
+const normName = (s: string) => (s ?? '').toLowerCase().trim().replace(/\s+/g, ' ')
 
 const INITIAL_FORM: FormData = {
   namaPaket: '',
@@ -77,17 +71,20 @@ const INITIAL_FORM: FormData = {
   nilaiAnggaran: '',
   keterangan: '',
   ownerName: '',
+  ketPenggarap: '',
 }
 
 export default function InputLeadForm({
   defaultOwnerName,
   picOptions,
+  picPenggarap = {},
   settings,
   profile,
   onSuccess,
   editLead,
   onCancelEdit,
 }: InputLeadFormProps) {
+  const isSales = profile.role === 'sales'
   const [form, setForm] = useState<FormData>({
     ...INITIAL_FORM,
     ownerName: defaultOwnerName ?? '',
@@ -119,11 +116,25 @@ export default function InputLeadForm({
         nilaiAnggaran: editLead.nilaiAnggaran > 0 ? formatDotted(editLead.nilaiAnggaran) : '',
         keterangan: editLead.keterangan || '',
         ownerName: editLead.ownerName || defaultOwnerName || '',
+        ketPenggarap: editLead.ketPenggarap || '',
       })
       setError('')
       setSuccess('')
     }
   }, [editLead])
+
+  // Admin: saat pilih PIC, auto-isi penggarap dari profil PIC (kalau berakun);
+  // kalau tak dikenal (rekanan/tanpa akun) default REKANAN, bisa diubah manual.
+  useEffect(() => {
+    if (isSales || isEditMode) return
+    const auto = picPenggarap[normName(form.ownerName)]
+    const next = auto ?? (form.ownerName ? 'REKANAN' : '')
+    setForm((f) => (f.ketPenggarap === next ? f : { ...f, ketPenggarap: next }))
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.ownerName])
+
+  // penggarap PIC terpilih sudah punya akun? (→ auto, dropdown dikunci)
+  const picHasAccount = !isSales && !!picPenggarap[normName(form.ownerName)]
 
   // Auto-calc netto
   const brutto = parseCurrency(form.nilaiAnggaran)
@@ -204,6 +215,7 @@ export default function InputLeadForm({
             dpp,
             forecast_netto: forecastNetto,
             keterangan: form.keterangan,
+            ket_penggarap: (isSales ? profile.penggarap : form.ketPenggarap) || null,
             updated_at: new Date().toISOString(),
           })
           .eq('id', editLead.id)
@@ -242,10 +254,10 @@ export default function InputLeadForm({
           dpp,
           forecast_netto: forecastNetto,
           keterangan: form.keterangan,
-          ket_penggarap: KET_PENGGARAP_MAP[profile.role] ?? null,
+          ket_penggarap: (isSales ? profile.penggarap : form.ketPenggarap) || null,
           owner_name: form.ownerName,
           owner_id: user?.id ?? null,
-          mp_id: profile.role === 'mp' ? user?.id ?? null : null,
+          mp_id: profile.role === 'managerial' ? user?.id ?? null : null,
           input_week_label: weekLabel,
           input_week: parseInt(weekLabel.replace('W', '').split('-')[0]),
           input_year: now.getFullYear(),
@@ -286,7 +298,7 @@ export default function InputLeadForm({
         {/* PIC */}
         <div>
           <Label>PIC *</Label>
-          {profile.role === 'sales' ? (
+          {isSales ? (
             <input
               type="text"
               value={form.ownerName}
@@ -300,6 +312,25 @@ export default function InputLeadForm({
             </select>
           )}
         </div>
+
+        {/* Penggarap — sales pakai penggarap sendiri (auto); admin pilih/auto dari PIC */}
+        {!isSales && (
+          <div>
+            <Label>Penggarap *</Label>
+            <select
+              value={form.ketPenggarap}
+              onChange={(e) => update('ketPenggarap', e.target.value)}
+              disabled={picHasAccount}
+              className={`form-select ${picHasAccount ? 'bg-page cursor-not-allowed text-ink-muted' : ''}`}
+            >
+              <option value="">-- Pilih Penggarap --</option>
+              {settings.ketPenggarap.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+            <p className="text-[11px] text-ink-hint mt-1">
+              {picHasAccount ? 'Otomatis dari akun PIC.' : 'PIC tanpa akun (rekanan) — pilih manual.'}
+            </p>
+          </div>
+        )}
 
         {/* Nama Paket */}
         <div>

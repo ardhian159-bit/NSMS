@@ -47,14 +47,14 @@ function NavPending({ collapsed }: { collapsed: boolean }) {
 }
 
 const NAV_ITEMS = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, roles: ['superadmin', 'admin', 'guest', 'sales', 'managerial'] },
   { href: '/performance', label: 'Performance', icon: BarChart2, roles: ['superadmin', 'admin'] },
-  { href: '/pipeline', label: 'Pipeline', icon: GitBranch, roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
+  { href: '/pipeline', label: 'Pipeline', icon: GitBranch, roles: ['superadmin', 'admin', 'sales', 'managerial'] },
   { href: '/admin', label: 'Admin Panel', icon: ShieldCheck, roles: ['superadmin', 'admin'] },
-  { href: '/monitoring', label: 'Monitoring', icon: Eye, roles: ['superadmin', 'admin', 'sales', 'am', 'mp', 'sp', 'dirut'] },
-  { href: '/map', label: 'Peta Sebaran', icon: MapPin, roles: ['superadmin', 'admin', 'mp', 'sp', 'dirut', 'am'] },
+  { href: '/monitoring', label: 'Monitoring', icon: Eye, roles: ['superadmin', 'admin', 'sales', 'managerial'] },
+  { href: '/map', label: 'Peta Sebaran', icon: MapPin, roles: ['superadmin', 'admin', 'sales', 'managerial'] },
   { href: '/control', label: 'Control Panel', icon: Settings, roles: ['superadmin'] },
-  { href: '/settings', label: 'Pengaturan', icon: UserCog, roles: ['superadmin', 'admin', 'sales', 'am', 'guest', 'mp', 'sp', 'dirut'] },
+  { href: '/settings', label: 'Pengaturan', icon: UserCog, roles: ['superadmin', 'admin', 'guest', 'sales', 'managerial'] },
 ]
 
 export default function Sidebar({ profile }: SidebarProps) {

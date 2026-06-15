@@ -26,7 +26,8 @@ export default async function PipelinePage() {
     .select('*')
     .order('created_at', { ascending: false })
 
-  if (!['superadmin', 'admin'].includes(profile.role)) {
+  // managerial (oversight) + admin/superadmin lihat semua; sales hanya miliknya
+  if (!['superadmin', 'admin', 'managerial'].includes(profile.role)) {
     leadsQuery = leadsQuery.ilike('owner_name', profile.picName)
   }
 
@@ -58,6 +59,7 @@ export default async function PipelinePage() {
     principals: [],
     sumberDana: [],
     jenisProduk: [],
+    ketPenggarap: [],
   }
 
   ;(settingRows as SettingRowRaw[] | null)?.forEach((row) => {
@@ -66,6 +68,7 @@ export default async function PipelinePage() {
       case 'principals':  settings.principals.push(row.value); break
       case 'sumberDana':  settings.sumberDana.push(row.value); break
       case 'jenisProduk': settings.jenisProduk.push(row.value); break
+      case 'ketPenggarap': settings.ketPenggarap.push(row.value); break
     }
   })
   settings.picNames = await fetchPicOptions(settings.picNames)

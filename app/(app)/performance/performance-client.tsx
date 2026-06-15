@@ -22,11 +22,17 @@ interface PerformanceClientProps {
 
 const COLORS = ['#10B981', '#F59E0B', '#EF4444', '#8B5CF6']
 const QUARTERS = ['Q1', 'Q2', 'Q3', 'Q4']
-const PENGGARAP_FILTERS = ['', 'SP', 'MP', 'REKANAN']
 
 
 
 export default function PerformanceClient({ initialLeads, companyTargets }: PerformanceClientProps) {
+  // Daftar filter penggarap dinamis dari data ('' = semua)
+  const penggarapFilters = useMemo(() => {
+    const set = new Set<string>()
+    initialLeads.forEach((l) => { if (l.ket_penggarap) set.add(l.ket_penggarap) })
+    return ['', ...[...set].sort()]
+  }, [initialLeads])
+
   // Map owner_name → ket_penggarap (untuk pre-filter chip list)
   const picKeteranganMap = useMemo(() => {
     const map: Record<string, string> = {}
@@ -322,7 +328,7 @@ export default function PerformanceClient({ initialLeads, companyTargets }: Perf
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-ink">Pilih PIC (Maks. 4)</h2>
           <div className="flex items-center gap-1 bg-page rounded-full p-0.5">
-            {PENGGARAP_FILTERS.map((f) => (
+            {penggarapFilters.map((f) => (
               <button
                 key={f || 'all'}
                 onClick={() => changePenggarap(f)}

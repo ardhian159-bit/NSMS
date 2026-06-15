@@ -49,6 +49,7 @@ export default async function AdminPage() {
     principals: [],
     sumberDana: [],
     jenisProduk: [],
+    ketPenggarap: [],
   }
 
   ;(settingRows as SettingRowRaw[] | null)?.forEach((row) => {
@@ -57,6 +58,7 @@ export default async function AdminPage() {
       case 'principals':  settings.principals.push(row.value); break
       case 'sumberDana':  settings.sumberDana.push(row.value); break
       case 'jenisProduk': settings.jenisProduk.push(row.value); break
+      case 'ketPenggarap': settings.ketPenggarap.push(row.value); break
     }
   })
   settings.picNames = await fetchPicOptions(settings.picNames)

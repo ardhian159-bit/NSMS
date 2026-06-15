@@ -18,7 +18,7 @@ export async function POST(req: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   )
 
-  const { email, password, picName, role, branch } = await req.json()
+  const { email, password, picName, role, branch, penggarap } = await req.json()
 
   if (!email || !password || !picName || !role) {
     return NextResponse.json({ error: 'Field tidak lengkap' }, { status: 400 })
@@ -41,6 +41,7 @@ export async function POST(req: Request) {
       username: email,
       pic_name: picName,
       role,
+      penggarap: penggarap || null,
       branch: branch || null,
     }, { onConflict: 'id' })
 

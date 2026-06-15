@@ -37,7 +37,7 @@ export interface KnownOwner {
 }
 
 export interface ReferenceData {
-  pics: { id: string; picName: string; role: string }[]
+  pics: { id: string; picName: string; penggarap: string | null }[]
   principals: string[]
   sumberDana: string[]
   existingLeads: { funnelId: string; namaPaket: string; instansi: string; nilaiAnggaran: number }[]

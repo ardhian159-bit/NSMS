@@ -11,12 +11,12 @@ export default async function MapPage() {
   const profile = await fetchCurrentProfile()
   if (!profile) redirect('/login')
 
-  if (!['superadmin', 'admin', 'mp', 'sp', 'dirut', 'am', 'sales'].includes(profile.role)) {
+  if (!['superadmin', 'admin', 'sales', 'managerial'].includes(profile.role)) {
     redirect('/dashboard')
   }
 
-  // Ambil agregasi leads per provinsi — sales/mp hanya lihat leads miliknya
-  const isRestricted = ['sales', 'mp'].includes(profile.role)
+  // Ambil agregasi leads per provinsi — hanya sales yang dibatasi ke leads miliknya
+  const isRestricted = profile.role === 'sales'
   let query = supabase
     .from('leads')
     .select('provinsi, forecast_netto, owner_name, nama_paket, status, kab_kota, nilai_anggaran')

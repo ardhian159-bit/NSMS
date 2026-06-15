@@ -8,13 +8,9 @@
 export type UserRole =
   | 'superadmin'
   | 'admin'
-  | 'sales'
   | 'guest'
-  | 'mp'
-  | 'sp'
-  | 'am'
-  | 'rekanan'
-  | 'dirut'
+  | 'sales'
+  | 'managerial'
 
 export type FunnelStatus =
   | 'Gagal'
@@ -94,6 +90,8 @@ export interface Profile {
   id: string
   username: string
   role: UserRole
+  /** fungsi org (penggarap): SP/MP/BM/SR/BO/PUSAT/REKANAN — dinamis dari settings */
+  penggarap: string
   picName: string
   branch: string
   superiorId: string | null
@@ -116,6 +114,7 @@ export interface AppSettings {
   principals: string[]
   sumberDana: string[]
   jenisProduk: string[]
+  ketPenggarap: string[]
 }
 
 /** Maps to Supabase `targets` table */
@@ -225,6 +224,7 @@ export interface ProfileRow {
   id: string
   username: string | null
   role: string | null
+  penggarap: string | null
   pic_name: string | null
   branch: string | null
   superior_id: string | null
@@ -317,6 +317,7 @@ export function mapProfileRow(row: ProfileRow): Profile {
     id: row.id,
     username: row.username ?? '',
     role: (row.role ?? 'guest') as UserRole,
+    penggarap: row.penggarap ?? '',
     picName: row.pic_name ?? '',
     branch: row.branch ?? '',
     superiorId: row.superior_id,

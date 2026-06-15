@@ -11,10 +11,6 @@ import {
 import { detectFileDuplicates, detectDbDuplicates } from './dedupe'
 import type { ProcessedRow, CellResult, RowStatus, ReferenceData } from './types'
 
-const KET_PENGGARAP_MAP: Record<string, string> = {
-  sales: 'SP', sp: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN',
-}
-
 // Region: semua kab/kota + reverse map ke provinsi + exact map + bare-name index
 const ALL_KABKOTA: string[] = []
 const KABKOTA_TO_PROV: Record<string, string> = {}
@@ -171,7 +167,7 @@ export function processRows(raw: Record<string, string>[], ref: ReferenceData): 
         // 1. Punya akun
         cells['PIC'] = { raw: rawPic, value: prof.picName, status: 'ok' }
         ownerId = prof.id
-        ketPenggarap = KET_PENGGARAP_MAP[prof.role] ?? null
+        ketPenggarap = prof.penggarap ?? null
       } else if (known) {
         // 2. Tanpa akun tapi sudah ada di DB → pakai ket_penggarap aslinya
         cells['PIC'] = { raw: rawPic, value: known.name, status: 'ok' }

@@ -126,14 +126,16 @@ export async function fetchSettings(): Promise<AppSettings> {
     principals: [],
     sumberDana: [],
     jenisProduk: [],
+    ketPenggarap: [],
   }
 
   rows.forEach((row) => {
     switch (row.category) {
-      case 'picNames':    result.picNames.push(row.value); break
-      case 'principals':  result.principals.push(row.value); break
-      case 'sumberDana':  result.sumberDana.push(row.value); break
-      case 'jenisProduk': result.jenisProduk.push(row.value); break
+      case 'picNames':     result.picNames.push(row.value); break
+      case 'principals':   result.principals.push(row.value); break
+      case 'sumberDana':   result.sumberDana.push(row.value); break
+      case 'jenisProduk':  result.jenisProduk.push(row.value); break
+      case 'ketPenggarap': result.ketPenggarap.push(row.value); break
     }
   })
 
@@ -161,6 +163,25 @@ export async function fetchPicOptions(manual: string[] = []): Promise<string[]> 
   ;(leads as { owner_name: string | null }[] | null ?? []).forEach((l) => add(l.owner_name))
   manual.forEach(add)
   return [...byKey.values()].sort((a, b) => a.localeCompare(b, 'id'))
+}
+
+/**
+ * Peta nama PIC (ternormalisasi) → penggarap, dari profiles yang punya penggarap.
+ * Dipakai InputLeadForm untuk auto-isi penggarap saat admin pilih PIC berakun.
+ */
+export async function fetchPicPenggarap(): Promise<Record<string, string>> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('profiles')
+    .select('pic_name, penggarap')
+    .not('pic_name', 'is', null)
+    .not('penggarap', 'is', null)
+  const map: Record<string, string> = {}
+  ;(data as { pic_name: string | null; penggarap: string | null }[] | null ?? []).forEach((p) => {
+    const k = (p.pic_name ?? '').toLowerCase().trim().replace(/\s+/g, ' ')
+    if (k && p.penggarap) map[k] = p.penggarap
+  })
+  return map
 }
 
 // =============================================================================
