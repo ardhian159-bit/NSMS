@@ -27,7 +27,7 @@ interface BulkImportClientProps {
 
 const KET_PENGGARAP_MAP: Record<string, string> = { sales: 'SP', sp: 'SP', mp: 'MP', am: 'MP', dirut: 'MP', rekanan: 'REKANAN' }
 const DISPLAY_HEADERS = LEADS_COLUMNS.filter((c) => c.import !== 'ignore').map((c) => c.header)
-const FUZZY_HEADERS = new Set(['Principal', 'Sumber Dana', 'Kab/Kota', 'PIC'])
+const FUZZY_HEADERS = new Set(['Principal', 'Sumber Dana', 'Kab/Kota', 'Wilayah', 'PIC'])
 
 export default function BulkImportClient({ pics, principals, sumberDana, existingLeads, knownOwners }: BulkImportClientProps) {
   const ref: ReferenceData = useMemo(() => ({ pics, principals, sumberDana, existingLeads, knownOwners }), [pics, principals, sumberDana, existingLeads, knownOwners])

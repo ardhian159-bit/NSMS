@@ -37,6 +37,12 @@ for (const [prov, list] of Object.entries(REGION_DATA)) {
   })
 }
 
+// Provinsi (untuk wilayah level-provinsi). Key normStr → nama provinsi bare.
+const PROVINCE_EXACT = new Map<string, string>()
+for (const prov of Object.keys(REGION_DATA)) {
+  PROVINCE_EXACT.set(normStr(prov), prov)
+}
+
 export function provinsiOf(kabKota: string): string {
   return KABKOTA_TO_PROV[normStr(kabKota)] ?? ''
 }
@@ -62,6 +68,19 @@ function resolveKabKota(raw: string, fuzzy: ReturnType<typeof makeMatcher>): Cel
   // fuzzy typo fallback
   const m = fuzzy(norm)
   return { raw, value: m.value, status: m.status, candidates: m.candidates, message: m.status === 'error' ? 'Tidak match region' : undefined }
+}
+
+/**
+ * Resolusi wilayah: bisa level kab/kota ATAU provinsi (pengadaan skala provinsi).
+ * Provinsi (mis. "Kalimantan Barat" / "Provinsi Kalbar") → nama provinsi bare.
+ * Selain itu diperlakukan sama seperti kab/kota (normalisasi prefix/bare/fuzzy).
+ */
+function resolveWilayah(raw: string, fuzzy: ReturnType<typeof makeMatcher>): CellResult {
+  const t = (raw ?? '').toString().trim()
+  if (!t) return { raw: raw ?? '', value: '', status: 'error', message: 'Wajib diisi' }
+  const prov = PROVINCE_EXACT.get(normStr(t).replace(/^provinsi\s+/, ''))
+  if (prov) return { raw: t, value: prov, status: 'ok' }
+  return resolveKabKota(t, fuzzy)
 }
 
 // --- helpers cell ---
@@ -96,7 +115,7 @@ export function processRows(raw: Record<string, string>[], ref: ReferenceData): 
 
     cells['Nama Paket'] = reqText(r['Nama Paket'])
     cells['Instansi'] = reqText(r['Instansi'])
-    cells['Wilayah'] = reqText(r['Wilayah'])
+    cells['Wilayah'] = resolveWilayah(r['Wilayah'] ?? '', kabKotaMatcher)
 
     // Principal (alias + fuzzy)
     {
