@@ -197,18 +197,23 @@ forecastNetto = Math.round(dpp * (1 - perkiraanCb / 100))
 
 ---
 
-## Roles
+## Roles & Penggarap (DUA SUMBU TERPISAH)
 
+> ⚠️ **`role` = hak AKSES. `penggarap` = FUNGSI org.** Jangan campur. `ket_penggarap` lead diisi dari **`profile.penggarap` PIC pemilik** (BUKAN dari role). `KET_PENGGARAP_MAP` sudah DIHAPUS.
+
+### `role` (kolom `profiles.role`) — 5 nilai, ada CHECK constraint `profiles_role_check`
 | Role | Akses |
 |---|---|
-| `superadmin` | Semua halaman |
-| `admin` | Dashboard, monitoring, admin panel |
-| `sales` | Pipeline (input + update) saja |
-| `guest` | Dashboard read-only |
-| `mp` | Branch view (future) |
-| `sp` | Team view (future) |
-| `am` | Personal pipeline (future) |
-| `dirut` | Sama seperti MP untuk sekarang |
+| `superadmin` | Semua halaman (control, create/reset user) |
+| `admin` | Dashboard, monitoring, performance, pipeline (semua lead), admin panel, bulk import |
+| `sales` | Pipeline (input + update) — **scoped: hanya lead miliknya** |
+| `guest` | Dashboard read-only (tanpa export) |
+| `managerial` | Dashboard, pipeline, monitoring, map — **lihat SEMUA lead** (oversight), tanpa akses admin/performance/control |
+
+> Tambah nilai role baru = update `UserRole` (`lib/types.ts`), `ROLE_OPTIONS` (`control-client.tsx`), nav arrays (3 file), guard halaman, **dan** CHECK constraint `profiles_role_check` (DDL manual).
+
+### `penggarap` (kolom `profiles.penggarap`) — fungsi org, DINAMIS
+Nilai dari Control Panel → Dropdown Settings → **"Ket Penggarap"** (settings category `ketPenggarap`): SP, MP, BM, SR, BO, PUSAT, REKANAN, … Admin set per-user di Control Panel → Users. Saat input lead: sales pakai penggarap-nya sendiri; admin pilih PIC → auto dari penggarap PIC (kalau berakun) atau dropdown manual (rekanan/tanpa akun).
 
 ---
 
