@@ -45,14 +45,19 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
   const [page, setPage] = useState(1)
   const [selectedFunnelId, setSelectedFunnelId] = useState<string | null>(null)
   const [metricMode, setMetricMode] = useState<'netto' | 'bruto'>('netto')
-  const [targetView, setTargetView] = useState<'global' | 'MP' | 'SP'>('global')
+  const [targetView, setTargetView] = useState<'global' | 'project' | 'lain' | 'rekanan'>('global')
   const [isExporting, setIsExporting] = useState(false)
 
-  // Lead untuk gauge target: global (semua) atau capaian divisi MP/SP (by penggarap)
-  const targetLeads = useMemo(
-    () => (targetView === 'global' ? leads : leads.filter((l) => l.ketPenggarap === targetView)),
-    [leads, targetView]
-  )
+  // Lead untuk gauge target by penggarap: Project = MP+SP, Rekanan = REKANAN,
+  // Lainnya = selain itu (BM/SR/BO/PUSAT/dll), Global = semua.
+  const targetLeads = useMemo(() => {
+    switch (targetView) {
+      case 'project': return leads.filter((l) => l.ketPenggarap === 'MP' || l.ketPenggarap === 'SP')
+      case 'rekanan': return leads.filter((l) => l.ketPenggarap === 'REKANAN')
+      case 'lain':    return leads.filter((l) => !['MP', 'SP', 'REKANAN'].includes(l.ketPenggarap))
+      default:        return leads
+    }
+  }, [leads, targetView])
 
   // --- Derived data (pure functions) ---
   const filterOptions = useMemo(() => getUniqueFilterOptions(leads), [leads])
@@ -158,7 +163,7 @@ export default function DashboardClient({ leads, trackers, profile, companyTarge
       {/* Target Gauge — hero + toggle divisi */}
       <div className="space-y-2">
         <div className="flex items-center gap-1 bg-surface-alt rounded-full p-0.5 w-fit border border-line">
-          {([['global', 'Global'], ['MP', 'Divisi MP'], ['SP', 'Divisi SP']] as const).map(([k, label]) => (
+          {([['global', 'Global'], ['project', 'Project (MP & SP)'], ['lain', 'Lainnya'], ['rekanan', 'Rekanan']] as const).map(([k, label]) => (
             <button
               key={k}
               onClick={() => setTargetView(k)}
